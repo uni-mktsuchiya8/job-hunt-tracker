@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { CompanyAutocomplete } from "@/components/CompanyAutocomplete";
+import { JobPostingExtractor } from "@/components/JobPostingExtractor";
 import {
   APPLICATION_ROUTES,
   APPLICATION_STATUSES,
   REMOTE_OPTIONS,
   type Company,
 } from "@/lib/database.types";
+import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
 
 export function CompanyForm({
   company,
@@ -23,6 +25,20 @@ export function CompanyForm({
   const [info, setInfo] = useState(company?.info ?? "");
   const [extracting, setExtracting] = useState(false);
   const [extractMessage, setExtractMessage] = useState<string | null>(null);
+
+  const [salary, setSalary] = useState(company?.salary ?? "");
+  const [workLocation, setWorkLocation] = useState(company?.work_location ?? "");
+  const [remoteType, setRemoteType] = useState(company?.remote_type ?? "");
+  const [jobRequirements, setJobRequirements] = useState(
+    company?.job_requirements ?? "",
+  );
+
+  function handleJobExtract(guess: JobFieldGuess) {
+    if (guess.salary) setSalary(guess.salary);
+    if (guess.workLocation) setWorkLocation(guess.workLocation);
+    if (guess.remoteType) setRemoteType(guess.remoteType);
+    if (guess.jobRequirements) setJobRequirements(guess.jobRequirements);
+  }
 
   async function handleExtractFromUrl() {
     if (!website.trim()) {
@@ -110,10 +126,13 @@ export function CompanyForm({
         )}
       </div>
 
-      <fieldset className="rounded-md border border-slate-200 p-3">
+      <fieldset className="space-y-4 rounded-md border border-slate-200 p-3">
         <legend className="px-1 text-xs font-medium text-slate-500">
           募集条件
         </legend>
+
+        <JobPostingExtractor onExtract={handleJobExtract} />
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700">
@@ -121,7 +140,8 @@ export function CompanyForm({
             </label>
             <input
               name="salary"
-              defaultValue={company?.salary ?? ""}
+              value={salary}
+              onChange={(e) => setSalary(e.target.value)}
               placeholder="例: 500万〜700万円"
               className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
             />
@@ -132,19 +152,21 @@ export function CompanyForm({
             </label>
             <input
               name="work_location"
-              defaultValue={company?.work_location ?? ""}
+              value={workLocation}
+              onChange={(e) => setWorkLocation(e.target.value)}
               placeholder="例: 東京都渋谷区"
               className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
             />
           </div>
         </div>
-        <div className="mt-4">
+        <div>
           <label className="block text-sm font-medium text-slate-700">
             リモート可否
           </label>
           <select
             name="remote_type"
-            defaultValue={company?.remote_type ?? ""}
+            value={remoteType}
+            onChange={(e) => setRemoteType(e.target.value)}
             className="mt-1 w-full max-w-[12rem] rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
           >
             <option value="">未選択</option>
@@ -155,14 +177,15 @@ export function CompanyForm({
             ))}
           </select>
         </div>
-        <div className="mt-4">
+        <div>
           <label className="block text-sm font-medium text-slate-700">
             求人要件(その他詳細)
           </label>
           <textarea
             name="job_requirements"
             rows={4}
-            defaultValue={company?.job_requirements ?? ""}
+            value={jobRequirements}
+            onChange={(e) => setJobRequirements(e.target.value)}
             placeholder="必須スキル、募集要項の貼り付けなど"
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
           />
