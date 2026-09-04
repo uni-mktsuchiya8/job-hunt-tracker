@@ -18,7 +18,39 @@ export function CompanyForm({
   action: (formData: FormData) => void;
   submitLabel: string;
 }) {
+  const [name, setName] = useState(company?.name ?? "");
   const [website, setWebsite] = useState(company?.website ?? "");
+  const [info, setInfo] = useState(company?.info ?? "");
+  const [extracting, setExtracting] = useState(false);
+  const [extractMessage, setExtractMessage] = useState<string | null>(null);
+
+  async function handleExtractFromUrl() {
+    if (!website.trim()) {
+      setExtractMessage("先にURLを入力してください");
+      return;
+    }
+    setExtracting(true);
+    setExtractMessage(null);
+    try {
+      const res = await fetch(
+        `/api/companies/extract?url=${encodeURIComponent(website.trim())}`,
+      );
+      if (!res.ok) {
+        setExtractMessage("取得に失敗しました。手入力してください。");
+        return;
+      }
+      const data = await res.json();
+      if (data.name) setName(data.name);
+      if (data.description && !info.trim()) setInfo(data.description);
+      if (!data.name) {
+        setExtractMessage("会社名を特定できませんでした。手入力してください。");
+      }
+    } catch {
+      setExtractMessage("取得に失敗しました。手入力してください。");
+    } finally {
+      setExtracting(false);
+    }
+  }
 
   return (
     <form action={action} className="space-y-4">
@@ -27,7 +59,8 @@ export function CompanyForm({
           会社名 *
         </label>
         <CompanyAutocomplete
-          name={company?.name ?? ""}
+          value={name}
+          onValueChange={setName}
           excludeId={company?.id}
           onSelect={(s) => setWebsite(s.website)}
         />
@@ -43,7 +76,8 @@ export function CompanyForm({
         <textarea
           name="info"
           rows={4}
-          defaultValue={company?.info ?? ""}
+          value={info}
+          onChange={(e) => setInfo(e.target.value)}
           placeholder="業界、事業内容、規模、社風など"
           className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
         />
@@ -53,14 +87,27 @@ export function CompanyForm({
         <label className="block text-sm font-medium text-slate-700">
           企業サイト URL
         </label>
-        <input
-          name="website"
-          type="url"
-          value={website}
-          onChange={(e) => setWebsite(e.target.value)}
-          placeholder="https://..."
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-        />
+        <div className="mt-1 flex gap-2">
+          <input
+            name="website"
+            type="url"
+            value={website}
+            onChange={(e) => setWebsite(e.target.value)}
+            placeholder="https://..."
+            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+          />
+          <button
+            type="button"
+            onClick={handleExtractFromUrl}
+            disabled={extracting}
+            className="shrink-0 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+          >
+            {extracting ? "取得中..." : "ページから会社名を取得"}
+          </button>
+        </div>
+        {extractMessage && (
+          <p className="mt-1 text-xs text-amber-600">{extractMessage}</p>
+        )}
       </div>
 
       <fieldset className="rounded-md border border-slate-200 p-3">

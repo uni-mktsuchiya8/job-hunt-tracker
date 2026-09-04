@@ -49,15 +49,18 @@ async function fetchNtaSuggestions(
 }
 
 export function CompanyAutocomplete({
-  name,
+  value,
+  onValueChange,
   excludeId,
   onSelect,
 }: {
-  name: string;
+  value: string;
+  onValueChange: (value: string) => void;
   excludeId?: string;
   onSelect: (suggestion: { name: string; website: string }) => void;
 }) {
-  const [query, setQuery] = useState(name);
+  const query = value;
+  const setQuery = onValueChange;
   const [open, setOpen] = useState(false);
   const [ownCompanies, setOwnCompanies] = useState<OwnCompany[]>([]);
   const [webSuggestions, setWebSuggestions] = useState<WebSuggestion[]>([]);
