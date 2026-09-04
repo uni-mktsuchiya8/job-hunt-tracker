@@ -11,6 +11,13 @@ function str(formData: FormData, key: string): string | null {
   return value.trim();
 }
 
+function int(formData: FormData, key: string): number | null {
+  const value = str(formData, key);
+  if (value === null) return null;
+  const n = Number.parseInt(value, 10);
+  return Number.isFinite(n) ? n : null;
+}
+
 export async function createCompany(formData: FormData) {
   const supabase = await createClient();
   const {
@@ -28,6 +35,12 @@ export async function createCompany(formData: FormData) {
       name,
       info: str(formData, "info"),
       website: str(formData, "website"),
+      job_requirements: str(formData, "job_requirements"),
+      salary: str(formData, "salary"),
+      work_location: str(formData, "work_location"),
+      remote_type: str(formData, "remote_type"),
+      priority_rank: int(formData, "priority_rank"),
+      priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
       status: (str(formData, "status") as ApplicationStatus) ?? "検討中",
     })
@@ -51,6 +64,12 @@ export async function updateCompany(companyId: string, formData: FormData) {
       name,
       info: str(formData, "info"),
       website: str(formData, "website"),
+      job_requirements: str(formData, "job_requirements"),
+      salary: str(formData, "salary"),
+      work_location: str(formData, "work_location"),
+      remote_type: str(formData, "remote_type"),
+      priority_rank: int(formData, "priority_rank"),
+      priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
       status: (str(formData, "status") as ApplicationStatus) ?? "検討中",
     })
@@ -92,6 +111,9 @@ export async function createStage(companyId: string, formData: FormData) {
     user_id: user.id,
     stage_name: stageName,
     scheduled_at: scheduledAtRaw ? new Date(scheduledAtRaw).toISOString() : null,
+    method: str(formData, "method"),
+    interviewer: str(formData, "interviewer"),
+    conversation_notes: str(formData, "conversation_notes"),
     impression: str(formData, "impression"),
     result: (str(formData, "result") as StageResult) ?? "未定",
   });
@@ -119,6 +141,9 @@ export async function updateStage(
       scheduled_at: scheduledAtRaw
         ? new Date(scheduledAtRaw).toISOString()
         : null,
+      method: str(formData, "method"),
+      interviewer: str(formData, "interviewer"),
+      conversation_notes: str(formData, "conversation_notes"),
       impression: str(formData, "impression"),
       result: (str(formData, "result") as StageResult) ?? "未定",
     })

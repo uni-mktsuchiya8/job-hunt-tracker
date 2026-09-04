@@ -100,6 +100,44 @@ export function CompanyDetail({
                 {company.application_route || "-"}
               </dd>
             </div>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <dt className="text-xs text-slate-400">年収</dt>
+                <dd className="text-slate-700">{company.salary || "-"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-400">勤務地</dt>
+                <dd className="text-slate-700">
+                  {company.work_location || "-"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-400">リモート可否</dt>
+                <dd className="text-slate-700">
+                  {company.remote_type || "-"}
+                </dd>
+              </div>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-400">求人要件</dt>
+              <dd className="whitespace-pre-wrap text-slate-700">
+                {company.job_requirements || "-"}
+              </dd>
+            </div>
+            <div className="grid grid-cols-[6rem_1fr] gap-4">
+              <div>
+                <dt className="text-xs text-slate-400">志望順位</dt>
+                <dd className="text-slate-700">
+                  {company.priority_rank ? `第${company.priority_rank}志望` : "-"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-400">志望理由</dt>
+                <dd className="whitespace-pre-wrap text-slate-700">
+                  {company.priority_reason || "-"}
+                </dd>
+              </div>
+            </div>
           </dl>
         )}
       </section>

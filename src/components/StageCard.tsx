@@ -36,18 +36,36 @@ export function StageCard({
   return (
     <li className="rounded-lg border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h4 className="font-medium text-slate-900">{stage.stage_name}</h4>
             <ResultBadge result={stage.result} />
           </div>
           <p className="mt-0.5 text-xs text-slate-500">
             {formatDateTime(stage.scheduled_at)}
+            {stage.method && <> ・ {stage.method}</>}
           </p>
-          {stage.impression && (
-            <p className="mt-2 whitespace-pre-wrap text-sm text-slate-700">
-              {stage.impression}
+          {stage.interviewer && (
+            <p className="mt-2 text-sm text-slate-700">
+              <span className="text-xs text-slate-400">面接官: </span>
+              {stage.interviewer}
             </p>
+          )}
+          {stage.conversation_notes && (
+            <div className="mt-2">
+              <p className="text-xs text-slate-400">会話内容</p>
+              <p className="whitespace-pre-wrap text-sm text-slate-700">
+                {stage.conversation_notes}
+              </p>
+            </div>
+          )}
+          {stage.impression && (
+            <div className="mt-2">
+              <p className="text-xs text-slate-400">印象</p>
+              <p className="whitespace-pre-wrap text-sm text-slate-700">
+                {stage.impression}
+              </p>
+            </div>
           )}
         </div>
         <div className="flex shrink-0 gap-2 text-xs">

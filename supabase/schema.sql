@@ -9,6 +9,12 @@ create table if not exists companies (
   name text not null,
   info text,                -- 会社情報 (業界・規模・URLなど自由記述)
   website text,
+  job_requirements text,    -- 求人要件 (募集要項を貼り付け・上の構造化項目に無い詳細)
+  salary text,              -- 年収
+  work_location text,       -- 勤務地
+  remote_type text,         -- リモート可否 (フルリモート / 一部リモート / リモート不可 / 不明)
+  priority_rank int,        -- 志望順位
+  priority_reason text,     -- 志望理由
   application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
   status text not null default '検討中', -- 検討中 / 応募済み / 選考中 / 内定 / 不合格 / 辞退
   created_at timestamptz not null default now(),
@@ -21,11 +27,25 @@ create table if not exists interview_stages (
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
   stage_name text not null,     -- 書類選考 / 一次面接 / 二次面接 / 最終面接 / オファー面談 など
   scheduled_at timestamptz,     -- 選考日程
-  impression text,              -- 面接の印象メモ
+  method text,                  -- 実施方法 (対面 / オンライン / 電話 / その他)
+  interviewer text,             -- 面接官名
+  conversation_notes text,      -- 会話内容の詳細
+  impression text,              -- 面接の印象メモ(所感)
   result text not null default '未定', -- 未定 / 通過 / 不合格 / 辞退 / 保留
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Run this if you already created the tables before this update:
+-- alter table companies add column if not exists job_requirements text;
+-- alter table interview_stages add column if not exists method text;
+-- alter table interview_stages add column if not exists interviewer text;
+-- alter table interview_stages add column if not exists conversation_notes text;
+-- alter table companies add column if not exists salary text;
+-- alter table companies add column if not exists work_location text;
+-- alter table companies add column if not exists remote_type text;
+-- alter table companies add column if not exists priority_rank int;
+-- alter table companies add column if not exists priority_reason text;
 
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);

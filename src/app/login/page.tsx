@@ -42,7 +42,7 @@ export default function LoginPage() {
               name="email"
               required
               autoComplete="email"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
             />
           </div>
           <div>
@@ -57,7 +57,7 @@ export default function LoginPage() {
               autoComplete={
                 mode === "signin" ? "current-password" : "new-password"
               }
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
             />
           </div>
 

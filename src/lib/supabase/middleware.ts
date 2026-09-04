@@ -35,7 +35,13 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(path),
   );
 
-  if (!user && !isPublicPath) {
+  // API routes must never get redirected to /login: a redirect turns into
+  // login-page HTML for any fetch() caller, which silently breaks JSON
+  // parsing instead of surfacing a clear 401. Route handlers are
+  // responsible for checking auth themselves (see /api/companies).
+  const isApiPath = request.nextUrl.pathname.startsWith("/api/");
+
+  if (!user && !isPublicPath && !isApiPath) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

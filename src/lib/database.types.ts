@@ -25,14 +25,14 @@ export const STAGE_RESULTS: StageResult[] = [
   "保留",
 ];
 
-export const APPLICATION_ROUTE_SUGGESTIONS = [
+export const APPLICATION_ROUTES = [
   "直接応募",
   "転職エージェント",
   "リファラル",
   "スカウト",
   "転職サイト経由",
   "その他",
-];
+] as const;
 
 export const STAGE_NAME_SUGGESTIONS = [
   "書類選考",
@@ -43,12 +43,27 @@ export const STAGE_NAME_SUGGESTIONS = [
   "オファー面談",
 ];
 
+export const STAGE_METHODS = ["対面", "オンライン", "電話", "その他"] as const;
+
+export const REMOTE_OPTIONS = [
+  "フルリモート",
+  "一部リモート",
+  "リモート不可",
+  "不明",
+] as const;
+
 export interface Company {
   id: string;
   user_id: string;
   name: string;
   info: string | null;
   website: string | null;
+  job_requirements: string | null;
+  salary: string | null;
+  work_location: string | null;
+  remote_type: string | null;
+  priority_rank: number | null;
+  priority_reason: string | null;
   application_route: string | null;
   status: ApplicationStatus;
   created_at: string;
@@ -61,6 +76,9 @@ export interface InterviewStage {
   user_id: string;
   stage_name: string;
   scheduled_at: string | null;
+  method: string | null;
+  interviewer: string | null;
+  conversation_notes: string | null;
   impression: string | null;
   result: StageResult;
   created_at: string;
