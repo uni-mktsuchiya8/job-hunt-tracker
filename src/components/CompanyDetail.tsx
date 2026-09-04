@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CompanyForm } from "@/components/CompanyForm";
 import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
-import type { Company, InterviewStage } from "@/lib/database.types";
+import { formatRemoteDays, type Company, type InterviewStage } from "@/lib/database.types";
 
 export function CompanyDetail({
   company,
@@ -112,9 +112,21 @@ export function CompanyDetail({
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-400">リモート可否</dt>
+                <dt className="text-xs text-slate-400">リモート可能日数</dt>
                 <dd className="text-slate-700">
-                  {company.remote_type || "-"}
+                  {formatRemoteDays(company.remote_type) || "-"}
+                </dd>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <dt className="text-xs text-slate-400">福利厚生</dt>
+                <dd className="text-slate-700">{company.benefits || "-"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-400">残業時間の目安</dt>
+                <dd className="text-slate-700">
+                  {company.overtime_hours || "-"}
                 </dd>
               </div>
             </div>
@@ -137,6 +149,12 @@ export function CompanyDetail({
                   {company.priority_reason || "-"}
                 </dd>
               </div>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-400">決め手・懸念点</dt>
+              <dd className="whitespace-pre-wrap text-slate-700">
+                {company.decision_notes || "-"}
+              </dd>
             </div>
           </dl>
         )}

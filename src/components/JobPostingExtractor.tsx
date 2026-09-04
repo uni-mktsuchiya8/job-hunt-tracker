@@ -21,6 +21,7 @@ async function fetchFromText(text: string): Promise<JobFieldGuess> {
 
 function summarize(guess: JobFieldGuess): string {
   const filled = [
+    guess.companyName && "会社名",
     guess.salary && "年収",
     guess.workLocation && "勤務地",
     guess.remoteType && "リモート可否",

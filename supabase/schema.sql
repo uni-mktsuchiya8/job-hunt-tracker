@@ -12,7 +12,10 @@ create table if not exists companies (
   job_requirements text,    -- 求人要件 (募集要項を貼り付け・上の構造化項目に無い詳細)
   salary text,              -- 年収
   work_location text,       -- 勤務地
-  remote_type text,         -- リモート可否 (フルリモート / 一部リモート / リモート不可 / 不明)
+  remote_type text,         -- リモート可能日数/週 ("1"〜"5"、5=フルリモート)
+  benefits text,            -- 福利厚生
+  overtime_hours text,      -- 残業時間の目安
+  decision_notes text,      -- 決め手・懸念点(意思決定メモ)
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
   application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
@@ -46,6 +49,12 @@ create table if not exists interview_stages (
 -- alter table companies add column if not exists remote_type text;
 -- alter table companies add column if not exists priority_rank int;
 -- alter table companies add column if not exists priority_reason text;
+-- alter table companies add column if not exists benefits text;
+-- alter table companies add column if not exists overtime_hours text;
+-- alter table companies add column if not exists decision_notes text;
+-- Note: remote_type previously stored a free-text label (フルリモート等);
+-- it now stores "1"〜"5" (weekly remote-capable days). Old text values are
+-- simply displayed as-is (formatRemoteDays() falls back to the raw value).
 
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);

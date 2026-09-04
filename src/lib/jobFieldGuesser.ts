@@ -4,6 +4,7 @@
 // starting point the user reviews/edits, not a final answer.
 
 export interface JobFieldGuess {
+  companyName: string | null;
   salary: string | null;
   workLocation: string | null;
   remoteType: string | null;
@@ -11,6 +12,10 @@ export interface JobFieldGuess {
 }
 
 const STOP_LABELS = [
+  "会社名",
+  "企業名",
+  "運営会社",
+  "雇用主",
   "年収",
   "給与",
   "月給",
@@ -64,10 +69,29 @@ function grabAfterLabel(
   return null;
 }
 
+// Salary labels are often followed by explanatory asides — "500万円〜800万円
+// (経験・スキルに応じて決定)" — that aren't part of the number itself. Pull
+// out just the amount/range and drop the rest.
+function cleanSalary(raw: string): string {
+  const match = raw.match(
+    /[0-9,]+\s*万?円?\s*(?:[〜~\-–ー]\s*[0-9,]+\s*万?円?)?\s*(?:以上|程度)?/,
+  );
+  const cleaned = match?.[0]?.replace(/\s+/g, "");
+  return cleaned && cleaned.length > 0 ? cleaned : raw;
+}
+
 export function guessJobFieldsFromText(rawText: string): JobFieldGuess {
   const text = rawText.replace(/\r/g, "").replace(/[ \t]+/g, " ");
 
-  const salary = grabAfterLabel(text, ["想定年収", "年収", "給与", "月給"], 60);
+  const companyName = grabAfterLabel(
+    text,
+    ["会社名", "企業名", "運営会社", "雇用主"],
+    60,
+  );
+
+  const rawSalary = grabAfterLabel(text, ["想定年収", "年収", "給与", "月給"], 60);
+  const salary = rawSalary ? cleanSalary(rawSalary) : null;
+
   const workLocation = grabAfterLabel(
     text,
     ["勤務地", "勤務場所", "就業場所"],
@@ -75,12 +99,16 @@ export function guessJobFieldsFromText(rawText: string): JobFieldGuess {
   );
 
   let remoteType: string | null = null;
-  if (/フルリモート|完全リモート|リモートワーク可\(フル\)/.test(text)) {
-    remoteType = "フルリモート";
-  } else if (/リモート不可|出社必須|原則出社|フル出社/.test(text)) {
-    remoteType = "リモート不可";
-  } else if (/リモート可|一部リモート|ハイブリッド|テレワーク/.test(text)) {
-    remoteType = "一部リモート";
+  if (/フルリモート|完全リモート|週5日リモート/.test(text)) {
+    remoteType = "5";
+  } else if (/週4日.{0,3}リモート|リモート.{0,3}週4日/.test(text)) {
+    remoteType = "4";
+  } else if (/週3日.{0,3}リモート|リモート.{0,3}週3日|ハイブリッド/.test(text)) {
+    remoteType = "3";
+  } else if (/週2日.{0,3}リモート|リモート.{0,3}週2日/.test(text)) {
+    remoteType = "2";
+  } else if (/週1日.{0,3}リモート|リモート.{0,3}週1日|一部リモート|リモート可|テレワーク/.test(text)) {
+    remoteType = "1";
   }
 
   const jobRequirements = grabAfterLabel(
@@ -97,5 +125,5 @@ export function guessJobFieldsFromText(rawText: string): JobFieldGuess {
     500,
   );
 
-  return { salary, workLocation, remoteType, jobRequirements };
+  return { companyName, salary, workLocation, remoteType, jobRequirements };
 }

@@ -45,12 +45,20 @@ export const STAGE_NAME_SUGGESTIONS = [
 
 export const STAGE_METHODS = ["対面", "オンライン", "電話", "その他"] as const;
 
-export const REMOTE_OPTIONS = [
-  "フルリモート",
-  "一部リモート",
-  "リモート不可",
-  "不明",
+// リモート可能日数(週あたり)。remote_type カラムに "1"〜"5" の文字列で保存する。
+export const REMOTE_DAYS_OPTIONS = [
+  { value: "1", label: "週1日" },
+  { value: "2", label: "週2日" },
+  { value: "3", label: "週3日" },
+  { value: "4", label: "週4日" },
+  { value: "5", label: "週5日(フルリモート)" },
 ] as const;
+
+export function formatRemoteDays(remoteType: string | null): string | null {
+  if (!remoteType) return null;
+  const match = REMOTE_DAYS_OPTIONS.find((o) => o.value === remoteType);
+  return match ? match.label : remoteType; // fall back to raw value for old data
+}
 
 export interface Company {
   id: string;
@@ -62,6 +70,9 @@ export interface Company {
   salary: string | null;
   work_location: string | null;
   remote_type: string | null;
+  benefits: string | null;
+  overtime_hours: string | null;
+  decision_notes: string | null;
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;

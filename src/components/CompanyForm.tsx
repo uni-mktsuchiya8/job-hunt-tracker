@@ -6,7 +6,7 @@ import { JobPostingExtractor } from "@/components/JobPostingExtractor";
 import {
   APPLICATION_ROUTES,
   APPLICATION_STATUSES,
-  REMOTE_OPTIONS,
+  REMOTE_DAYS_OPTIONS,
   type Company,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
@@ -34,6 +34,7 @@ export function CompanyForm({
   );
 
   function handleJobExtract(guess: JobFieldGuess) {
+    if (guess.companyName) setName(guess.companyName);
     if (guess.salary) setSalary(guess.salary);
     if (guess.workLocation) setWorkLocation(guess.workLocation);
     if (guess.remoteType) setRemoteType(guess.remoteType);
@@ -161,21 +162,45 @@ export function CompanyForm({
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">
-            リモート可否
+            リモート可能日数(週あたり)
           </label>
           <select
             name="remote_type"
             value={remoteType}
             onChange={(e) => setRemoteType(e.target.value)}
-            className="mt-1 w-full max-w-[12rem] rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="mt-1 w-full max-w-[14rem] rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
           >
             <option value="">未選択</option>
-            {REMOTE_OPTIONS.map((r) => (
-              <option key={r} value={r}>
-                {r}
+            {REMOTE_DAYS_OPTIONS.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
               </option>
             ))}
           </select>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              福利厚生
+            </label>
+            <input
+              name="benefits"
+              defaultValue={company?.benefits ?? ""}
+              placeholder="例: 家賃補助、住宅手当、退職金制度"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              残業時間の目安
+            </label>
+            <input
+              name="overtime_hours"
+              defaultValue={company?.overtime_hours ?? ""}
+              placeholder="例: 月20時間程度"
+              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+            />
+          </div>
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">
@@ -194,7 +219,7 @@ export function CompanyForm({
 
       <fieldset className="rounded-md border border-slate-200 p-3">
         <legend className="px-1 text-xs font-medium text-slate-500">
-          志望度
+          志望度・検討メモ
         </legend>
         <div className="grid grid-cols-[8rem_1fr] gap-4">
           <div>
@@ -222,6 +247,18 @@ export function CompanyForm({
               className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
             />
           </div>
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-slate-700">
+            決め手・懸念点
+          </label>
+          <textarea
+            name="decision_notes"
+            rows={3}
+            defaultValue={company?.decision_notes ?? ""}
+            placeholder="入社を判断する上で気になっている点、後で比較したいポイントなど"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+          />
         </div>
       </fieldset>
 
