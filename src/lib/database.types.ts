@@ -69,6 +69,7 @@ export interface Company {
   job_requirements: string | null;
   salary: string | null;
   work_location: string | null;
+  nearest_station: string | null;
   remote_type: string | null;
   benefits: string | null;
   overtime_hours: string | null;

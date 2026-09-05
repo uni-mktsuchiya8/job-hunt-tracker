@@ -12,6 +12,7 @@ create table if not exists companies (
   job_requirements text,    -- 求人要件 (募集要項を貼り付け・上の構造化項目に無い詳細)
   salary text,              -- 年収
   work_location text,       -- 勤務地
+  nearest_station text,     -- 勤務地の最寄駅(自動取得)
   remote_type text,         -- リモート可能日数/週 ("1"〜"5"、5=フルリモート)
   benefits text,            -- 福利厚生
   overtime_hours text,      -- 残業時間の目安
@@ -52,6 +53,9 @@ create table if not exists interview_stages (
 -- alter table companies add column if not exists benefits text;
 -- alter table companies add column if not exists overtime_hours text;
 -- alter table companies add column if not exists decision_notes text;
+-- alter table companies add column if not exists nearest_station text;
+-- 自宅最寄り駅はテーブルではなく、Supabase Authのユーザーメタデータ
+-- (home_station) に保存しています。設定ページから登録できます。
 -- Note: remote_type previously stored a free-text label (フルリモート等);
 -- it now stores "1"〜"5" (weekly remote-capable days). Old text values are
 -- simply displayed as-is (formatRemoteDays() falls back to the raw value).

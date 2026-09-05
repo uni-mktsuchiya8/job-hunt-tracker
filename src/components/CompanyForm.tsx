@@ -28,6 +28,11 @@ export function CompanyForm({
 
   const [salary, setSalary] = useState(company?.salary ?? "");
   const [workLocation, setWorkLocation] = useState(company?.work_location ?? "");
+  const [nearestStation, setNearestStation] = useState(
+    company?.nearest_station ?? "",
+  );
+  const [stationLoading, setStationLoading] = useState(false);
+  const [stationMessage, setStationMessage] = useState<string | null>(null);
   const [remoteType, setRemoteType] = useState(company?.remote_type ?? "");
   const [jobRequirements, setJobRequirements] = useState(
     company?.job_requirements ?? "",
@@ -39,6 +44,31 @@ export function CompanyForm({
     if (guess.workLocation) setWorkLocation(guess.workLocation);
     if (guess.remoteType) setRemoteType(guess.remoteType);
     if (guess.jobRequirements) setJobRequirements(guess.jobRequirements);
+  }
+
+  async function handleFindStation() {
+    if (!workLocation.trim()) {
+      setStationMessage("先に勤務地を入力してください");
+      return;
+    }
+    setStationLoading(true);
+    setStationMessage(null);
+    try {
+      const res = await fetch(
+        `/api/companies/nearest-station?address=${encodeURIComponent(workLocation.trim())}`,
+      );
+      const data = await res.json();
+      if (data.station?.name) {
+        setNearestStation(data.station.name);
+        setStationMessage(null);
+      } else {
+        setStationMessage("最寄駅を特定できませんでした。手入力してください。");
+      }
+    } catch {
+      setStationMessage("取得に失敗しました。手入力してください。");
+    } finally {
+      setStationLoading(false);
+    }
   }
 
   async function handleExtractFromUrl() {
@@ -151,14 +181,39 @@ export function CompanyForm({
             <label className="block text-sm font-medium text-slate-700">
               勤務地
             </label>
-            <input
-              name="work_location"
-              value={workLocation}
-              onChange={(e) => setWorkLocation(e.target.value)}
-              placeholder="例: 東京都渋谷区"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-            />
+            <div className="mt-1 flex gap-2">
+              <input
+                name="work_location"
+                value={workLocation}
+                onChange={(e) => setWorkLocation(e.target.value)}
+                placeholder="例: 東京都渋谷区"
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+              />
+              <button
+                type="button"
+                onClick={handleFindStation}
+                disabled={stationLoading}
+                className="shrink-0 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+              >
+                {stationLoading ? "検索中..." : "最寄駅を取得"}
+              </button>
+            </div>
+            {stationMessage && (
+              <p className="mt-1 text-xs text-amber-600">{stationMessage}</p>
+            )}
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-slate-700">
+            最寄駅
+          </label>
+          <input
+            name="nearest_station"
+            value={nearestStation}
+            onChange={(e) => setNearestStation(e.target.value)}
+            placeholder="例: 渋谷"
+            className="mt-1 w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700">

@@ -4,11 +4,13 @@ import { useState } from "react";
 import { CompanyForm } from "@/components/CompanyForm";
 import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
+import { CommuteInfo } from "@/components/CommuteInfo";
 import { formatRemoteDays, type Company, type InterviewStage } from "@/lib/database.types";
 
 export function CompanyDetail({
   company,
   stages,
+  homeStation,
   updateCompanyAction,
   deleteCompanyAction,
   createStageAction,
@@ -16,6 +18,7 @@ export function CompanyDetail({
 }: {
   company: Company;
   stages: InterviewStage[];
+  homeStation: string | null;
   updateCompanyAction: (formData: FormData) => void;
   deleteCompanyAction: () => void;
   createStageAction: (formData: FormData) => void;
@@ -116,6 +119,18 @@ export function CompanyDetail({
                 <dd className="text-slate-700">
                   {formatRemoteDays(company.remote_type) || "-"}
                 </dd>
+              </div>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-400">最寄駅</dt>
+              <dd className="text-slate-700">
+                {company.nearest_station || "-"}
+              </dd>
+              <div className="mt-1">
+                <CommuteInfo
+                  homeStation={homeStation}
+                  companyStation={company.nearest_station}
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">

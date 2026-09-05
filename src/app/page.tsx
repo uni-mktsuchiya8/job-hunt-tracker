@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
 import { DashboardView } from "@/components/DashboardView";
@@ -26,6 +27,12 @@ export default async function DashboardPage() {
           </h1>
           <div className="flex items-center gap-3 text-sm text-slate-500">
             <span>{user?.email}</span>
+            <Link
+              href="/settings"
+              className="rounded-md border border-slate-300 px-3 py-1.5 hover:bg-slate-100"
+            >
+              設定
+            </Link>
             <form action={signOut}>
               <button className="rounded-md border border-slate-300 px-3 py-1.5 hover:bg-slate-100">
                 ログアウト

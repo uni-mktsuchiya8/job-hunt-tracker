@@ -20,6 +20,14 @@ export default async function CompanyDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const homeStation =
+    typeof user?.user_metadata?.home_station === "string"
+      ? user.user_metadata.home_station
+      : null;
+
   const { data: company } = await supabase
     .from("companies")
     .select("*")
@@ -60,6 +68,7 @@ export default async function CompanyDetailPage({
         <CompanyDetail
           company={company}
           stages={stages ?? []}
+          homeStation={homeStation}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           createStageAction={createStage.bind(null, id)}
