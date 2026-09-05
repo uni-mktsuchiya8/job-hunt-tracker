@@ -71,6 +71,7 @@ export interface Company {
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;
+  memo: string | null;
   created_at: string;
   updated_at: string;
 }

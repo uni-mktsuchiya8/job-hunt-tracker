@@ -67,6 +67,7 @@ export async function createCompany(formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
+      memo: str(formData, "memo"),
       status: "カジュアル面談", // legacy NOT NULL column — current status is derived from stages now
     })
     .select("id")
@@ -100,6 +101,7 @@ export async function updateCompany(companyId: string, formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
+      memo: str(formData, "memo"),
     })
     .eq("id", companyId);
 
@@ -107,6 +109,26 @@ export async function updateCompany(companyId: string, formData: FormData) {
 
   revalidatePath("/");
   revalidatePath(`/companies/${companyId}`);
+}
+
+// Quick memo edit directly from the dashboard list — lets you jot a note
+// without opening the full edit form.
+export async function updateCompanyMemo(companyId: string, memo: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const trimmed = memo.trim();
+  const { error } = await supabase
+    .from("companies")
+    .update({ memo: trimmed === "" ? null : trimmed })
+    .eq("id", companyId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
 }
 
 export async function deleteCompany(companyId: string) {

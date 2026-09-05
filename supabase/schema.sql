@@ -20,6 +20,7 @@ create table if not exists companies (
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
   application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
+  memo text,                -- 一覧画面から直接書き込める自由記入メモ(決め手・懸念点とは別枠)
   status text not null default 'カジュアル面談', -- legacy column, unused by the app (現在のステータスは選考ステージから算出)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -76,6 +77,7 @@ create table if not exists google_calendar_connections (
 -- alter table interview_stages add column if not exists google_event_id text;
 -- alter table interview_stages add column if not exists duration_minutes int not null default 60;
 -- alter table interview_stages add column if not exists memo text;
+-- alter table companies add column if not exists memo text;
 -- Note: 選考ステータス(company.status)は使われなくなりました。「現在のステータス」は
 -- 選考ステージ一覧から自動計算されます(日程が一番新しいステージ名、無ければ最後に
 -- 追加したステージ名)。「選考日程・面接記録」と「ステータス履歴」を1つのセクションに

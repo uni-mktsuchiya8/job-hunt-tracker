@@ -1,4 +1,14 @@
-import { NO_STAGE_STATUS } from "@/lib/database.types";
+import { NO_STAGE_STATUS, STAGE_NAME_SUGGESTIONS } from "@/lib/database.types";
+
+// Rough selection-progress order, for the dashboard's "選考ステータス順"
+// sort. Free-text status values that aren't in this list (e.g. custom
+// stage names) sort after everything else rather than erroring.
+const STATUS_PROGRESSION = [NO_STAGE_STATUS, ...STAGE_NAME_SUGGESTIONS];
+
+export function statusRank(status: string): number {
+  const index = STATUS_PROGRESSION.indexOf(status);
+  return index === -1 ? STATUS_PROGRESSION.length : index;
+}
 
 // The company's "current status" is derived from its 選考ステージ list
 // rather than stored separately — 選考ステージ and 選考ステータス were two

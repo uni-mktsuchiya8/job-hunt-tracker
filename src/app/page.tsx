@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
+import { updateCompanyMemo } from "@/app/companies/actions";
 import { DashboardView } from "@/components/DashboardView";
 import type { Company, InterviewStage } from "@/lib/database.types";
 
@@ -17,6 +18,10 @@ export default async function DashboardPage() {
     .select("*, interview_stages(*)")
     .order("updated_at", { ascending: false })
     .returns<CompanyWithStages[]>();
+
+  const memoActions = Object.fromEntries(
+    (companies ?? []).map((c) => [c.id, updateCompanyMemo.bind(null, c.id)]),
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -48,7 +53,9 @@ export default async function DashboardPage() {
             読み込みエラー: {error.message}
           </p>
         )}
-        {!error && <DashboardView companies={companies ?? []} />}
+        {!error && (
+          <DashboardView companies={companies ?? []} memoActions={memoActions} />
+        )}
       </main>
     </div>
   );
