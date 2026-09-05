@@ -3,15 +3,18 @@
 import { useState } from "react";
 import { StageForm } from "@/components/StageForm";
 import { ResultBadge } from "@/components/StatusBadge";
+import { AddToGoogleCalendarLink } from "@/components/AddToGoogleCalendarLink";
 import { formatDateTime } from "@/lib/format";
 import type { InterviewStage } from "@/lib/database.types";
 
 export function StageCard({
   stage,
+  companyName,
   onUpdate,
   onDelete,
 }: {
   stage: InterviewStage;
+  companyName: string;
   onUpdate: (formData: FormData) => void;
   onDelete: () => void;
 }) {
@@ -45,6 +48,15 @@ export function StageCard({
             {formatDateTime(stage.scheduled_at)}
             {stage.method && <> ・ {stage.method}</>}
           </p>
+          {stage.scheduled_at && (
+            <div className="mt-1">
+              <AddToGoogleCalendarLink
+                title={`${companyName} - ${stage.stage_name}`}
+                startISO={stage.scheduled_at}
+                details={stage.interviewer ? `面接官: ${stage.interviewer}` : null}
+              />
+            </div>
+          )}
           {stage.interviewer && (
             <p className="mt-2 text-sm text-slate-700">
               <span className="text-xs text-slate-400">面接官: </span>

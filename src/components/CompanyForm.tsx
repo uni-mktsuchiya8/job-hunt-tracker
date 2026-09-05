@@ -10,6 +10,7 @@ import {
   type Company,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
+import { toDateTimeLocalValue } from "@/lib/format";
 
 export function CompanyForm({
   company,
@@ -342,7 +343,7 @@ export function CompanyForm({
           </label>
           <select
             name="status"
-            defaultValue={company?.status ?? "検討中"}
+            defaultValue={company?.status ?? "カジュアル面談"}
             className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
           >
             {APPLICATION_STATUSES.map((s) => (
@@ -351,6 +352,18 @@ export function CompanyForm({
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700">
+            ステータスの実施日時
+          </label>
+          <input
+            name="status_changed_at"
+            type="datetime-local"
+            defaultValue={toDateTimeLocalValue(company?.status_changed_at ?? null)}
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+          />
         </div>
       </div>
 

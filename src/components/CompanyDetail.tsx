@@ -5,7 +5,9 @@ import { CompanyForm } from "@/components/CompanyForm";
 import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
 import { CommuteInfo } from "@/components/CommuteInfo";
+import { AddToGoogleCalendarLink } from "@/components/AddToGoogleCalendarLink";
 import { formatRemoteDays, type Company, type InterviewStage } from "@/lib/database.types";
+import { formatDateTime } from "@/lib/format";
 
 export function CompanyDetail({
   company,
@@ -102,6 +104,23 @@ export function CompanyDetail({
               <dd className="text-slate-700">
                 {company.application_route || "-"}
               </dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-400">
+                ステータス実施日時({company.status})
+              </dt>
+              <dd className="text-slate-700">
+                {formatDateTime(company.status_changed_at)}
+              </dd>
+              {company.status_changed_at && (
+                <div className="mt-1">
+                  <AddToGoogleCalendarLink
+                    title={`${company.name} - ${company.status}`}
+                    startISO={company.status_changed_at}
+                    location={company.nearest_station}
+                  />
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div>
@@ -216,6 +235,7 @@ export function CompanyDetail({
               <StageCard
                 key={stage.id}
                 stage={stage}
+                companyName={company.name}
                 onUpdate={actions.update}
                 onDelete={() => {
                   if (confirm(`「${stage.stage_name}」を削除しますか?`)) {

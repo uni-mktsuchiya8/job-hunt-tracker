@@ -18,6 +18,11 @@ function int(formData: FormData, key: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+function datetime(formData: FormData, key: string): string | null {
+  const value = str(formData, key);
+  return value ? new Date(value).toISOString() : null;
+}
+
 export async function createCompany(formData: FormData) {
   const supabase = await createClient();
   const {
@@ -46,7 +51,8 @@ export async function createCompany(formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
-      status: (str(formData, "status") as ApplicationStatus) ?? "検討中",
+      status: (str(formData, "status") as ApplicationStatus) ?? "カジュアル面談",
+      status_changed_at: datetime(formData, "status_changed_at"),
     })
     .select("id")
     .single();
@@ -79,7 +85,8 @@ export async function updateCompany(companyId: string, formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
-      status: (str(formData, "status") as ApplicationStatus) ?? "検討中",
+      status: (str(formData, "status") as ApplicationStatus) ?? "カジュアル面談",
+      status_changed_at: datetime(formData, "status_changed_at"),
     })
     .eq("id", companyId);
 

@@ -20,7 +20,8 @@ create table if not exists companies (
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
   application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
-  status text not null default '検討中', -- 検討中 / 応募済み / 選考中 / 内定 / 不合格 / 辞退
+  status text not null default 'カジュアル面談', -- カジュアル面談 / 書類選考 / 一次面接 / 二次面接 / 三次面接 / 選考中 / 内定 / 不合格 / 辞退
+  status_changed_at timestamptz, -- 現在のステータスの実施日時
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -59,6 +60,11 @@ create table if not exists interview_stages (
 -- Note: remote_type previously stored a free-text label (フルリモート等);
 -- it now stores "1"〜"5" (weekly remote-capable days). Old text values are
 -- simply displayed as-is (formatRemoteDays() falls back to the raw value).
+-- alter table companies add column if not exists status_changed_at timestamptz;
+-- Note: status values changed from 検討中/応募済み/選考中/... to
+-- カジュアル面談/書類選考/一次面接/二次面接/三次面接/選考中/内定/不合格/辞退.
+-- Existing rows keep their old value as free text; just re-pick from the
+-- dropdown next time you edit a company to move it onto the new list.
 
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);

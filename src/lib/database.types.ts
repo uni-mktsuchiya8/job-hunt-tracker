@@ -1,6 +1,9 @@
 export type ApplicationStatus =
-  | "検討中"
-  | "応募済み"
+  | "カジュアル面談"
+  | "書類選考"
+  | "一次面接"
+  | "二次面接"
+  | "三次面接"
   | "選考中"
   | "内定"
   | "不合格"
@@ -9,8 +12,11 @@ export type ApplicationStatus =
 export type StageResult = "未定" | "通過" | "不合格" | "辞退" | "保留";
 
 export const APPLICATION_STATUSES: ApplicationStatus[] = [
-  "検討中",
-  "応募済み",
+  "カジュアル面談",
+  "書類選考",
+  "一次面接",
+  "二次面接",
+  "三次面接",
   "選考中",
   "内定",
   "不合格",
@@ -35,6 +41,7 @@ export const APPLICATION_ROUTES = [
 ] as const;
 
 export const STAGE_NAME_SUGGESTIONS = [
+  "カジュアル面談",
   "書類選考",
   "一次面接",
   "二次面接",
@@ -78,6 +85,7 @@ export interface Company {
   priority_reason: string | null;
   application_route: string | null;
   status: ApplicationStatus;
+  status_changed_at: string | null;
   created_at: string;
   updated_at: string;
 }
