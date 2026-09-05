@@ -5,6 +5,7 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
 import { formatDateTime } from "@/lib/format";
+import { computeCurrentStatus } from "@/lib/currentStatus";
 import type { Company, InterviewStage } from "@/lib/database.types";
 
 type CompanyWithStages = Company & { interview_stages: InterviewStage[] };
@@ -103,7 +104,9 @@ export function DashboardView({ companies }: { companies: CompanyWithStages[] })
                           <h3 className="font-medium text-slate-900">
                             {company.name}
                           </h3>
-                          <StatusBadge status={company.status} />
+                          <StatusBadge
+                            status={computeCurrentStatus(company.interview_stages ?? [])}
+                          />
                         </div>
                         {company.application_route && (
                           <p className="mt-1 text-xs text-slate-500">

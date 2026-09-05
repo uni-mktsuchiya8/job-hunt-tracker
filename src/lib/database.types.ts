@@ -1,27 +1,8 @@
-export type ApplicationStatus =
-  | "カジュアル面談"
-  | "書類選考"
-  | "一次面接"
-  | "二次面接"
-  | "三次面接"
-  | "選考中"
-  | "内定"
-  | "不合格"
-  | "辞退";
-
 export type StageResult = "未定" | "通過" | "不合格" | "辞退" | "保留";
 
-export const APPLICATION_STATUSES: ApplicationStatus[] = [
-  "カジュアル面談",
-  "書類選考",
-  "一次面接",
-  "二次面接",
-  "三次面接",
-  "選考中",
-  "内定",
-  "不合格",
-  "辞退",
-];
+// The default status shown for a company with no 選考ステージ yet — not
+// stored anywhere, just what computeCurrentStatus() falls back to.
+export const NO_STAGE_STATUS = "検討中";
 
 export const STAGE_RESULTS: StageResult[] = [
   "未定",
@@ -40,6 +21,9 @@ export const APPLICATION_ROUTES = [
   "その他",
 ] as const;
 
+// Also doubles as the set of "current status" values shown around the
+// app (dashboard badges etc.) — 選考ステージ and 選考ステータス are the
+// same list now, merged into one section in the UI.
 export const STAGE_NAME_SUGGESTIONS = [
   "カジュアル面談",
   "書類選考",
@@ -48,6 +32,9 @@ export const STAGE_NAME_SUGGESTIONS = [
   "三次面接",
   "最終面接",
   "オファー面談",
+  "内定",
+  "不合格",
+  "辞退",
 ];
 
 export const STAGE_METHODS = ["対面", "オンライン", "電話", "その他"] as const;
@@ -84,19 +71,8 @@ export interface Company {
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;
-  status: ApplicationStatus; // 常に最新値。履歴は StatusHistory を参照
   created_at: string;
   updated_at: string;
-}
-
-export interface StatusHistoryEntry {
-  id: string;
-  company_id: string;
-  user_id: string;
-  status: ApplicationStatus;
-  changed_at: string;
-  google_event_id: string | null;
-  created_at: string;
 }
 
 export interface InterviewStage {

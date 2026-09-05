@@ -5,7 +5,6 @@ import { CompanyAutocomplete } from "@/components/CompanyAutocomplete";
 import { JobPostingExtractor } from "@/components/JobPostingExtractor";
 import {
   APPLICATION_ROUTES,
-  APPLICATION_STATUSES,
   REMOTE_DAYS_OPTIONS,
   type Company,
 } from "@/lib/database.types";
@@ -317,46 +316,25 @@ export function CompanyForm({
         </div>
       </fieldset>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700">
-            応募経路
-          </label>
-          <select
-            name="application_route"
-            defaultValue={company?.application_route ?? ""}
-            className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-          >
-            <option value="">選択してください</option>
-            {APPLICATION_ROUTES.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {!company && (
-          <div>
-            <label className="block text-sm font-medium text-slate-700">
-              選考ステータス
-            </label>
-            <select
-              name="status"
-              defaultValue="カジュアル面談"
-              className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-            >
-              {APPLICATION_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-            <p className="mt-1 text-xs text-slate-400">
-              以降のステータス変更は、詳細ページの「ステータス履歴」から追加します。
-            </p>
-          </div>
-        )}
+      <div>
+        <label className="block text-sm font-medium text-slate-700">
+          応募経路
+        </label>
+        <select
+          name="application_route"
+          defaultValue={company?.application_route ?? ""}
+          className="mt-1 w-full max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+        >
+          <option value="">選択してください</option>
+          {APPLICATION_ROUTES.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-slate-400">
+          選考の進み具合は下の「選考日程・面接記録」で管理します。
+        </p>
       </div>
 
       <button

@@ -8,7 +8,7 @@ import {
   syncDeleteEvent,
   syncUpdateOrCreateEvent,
 } from "@/lib/googleCalendarSync";
-import type { ApplicationStatus, StageResult } from "@/lib/database.types";
+import type { StageResult } from "@/lib/database.types";
 
 function str(formData: FormData, key: string): string | null {
   const value = formData.get(key);
@@ -56,7 +56,7 @@ export async function createCompany(formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
-      status: (str(formData, "status") as ApplicationStatus) ?? "カジュアル面談",
+      status: "カジュアル面談", // legacy NOT NULL column — current status is derived from stages now
     })
     .select("id")
     .single();
@@ -111,83 +111,9 @@ export async function deleteCompany(companyId: string) {
   redirect("/");
 }
 
-// --- Status history (選考ステータスの進捗) -------------------------------
-// Each entry is a point-in-time status change; companies.status always
-// mirrors the most recently added entry so badges/lists stay simple.
-
-export async function createStatusHistoryEntry(
-  companyId: string,
-  formData: FormData,
-) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const status = str(formData, "status") as ApplicationStatus | null;
-  if (!status) throw new Error("ステータスは必須です");
-  const changedAt = datetime(formData, "changed_at") ?? new Date().toISOString();
-
-  const { data: company } = await supabase
-    .from("companies")
-    .select("name")
-    .eq("id", companyId)
-    .single();
-
-  const googleEventId = await syncCreateEvent(supabase, user.id, {
-    summary: `${company?.name ?? "選考"} - ${status}`,
-    startISO: changedAt,
-  });
-
-  const { error: insertError } = await supabase.from("status_history").insert({
-    company_id: companyId,
-    user_id: user.id,
-    status,
-    changed_at: changedAt,
-    google_event_id: googleEventId,
-  });
-  if (insertError) throw new Error(insertError.message);
-
-  const { error: updateError } = await supabase
-    .from("companies")
-    .update({ status })
-    .eq("id", companyId);
-  if (updateError) throw new Error(updateError.message);
-
-  revalidatePath("/");
-  revalidatePath(`/companies/${companyId}`);
-}
-
-export async function deleteStatusHistoryEntry(
-  companyId: string,
-  historyId: string,
-) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: entry } = await supabase
-    .from("status_history")
-    .select("google_event_id")
-    .eq("id", historyId)
-    .single();
-
-  await syncDeleteEvent(supabase, user.id, entry?.google_event_id ?? null);
-
-  const { error } = await supabase
-    .from("status_history")
-    .delete()
-    .eq("id", historyId);
-  if (error) throw new Error(error.message);
-
-  revalidatePath("/");
-  revalidatePath(`/companies/${companyId}`);
-}
-
-// --- Interview stages ------------------------------------------------------
+// --- Interview stages -------------------------------------------------------
+// 選考ステージがそのまま「現在のステータス」の情報源(computeCurrentStatus)
+// も兼ねるので、別立てのステータス履歴は持たない。
 
 export async function createStage(companyId: string, formData: FormData) {
   const supabase = await createClient();

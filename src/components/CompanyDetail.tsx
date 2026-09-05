@@ -5,31 +5,21 @@ import { CompanyForm } from "@/components/CompanyForm";
 import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
 import { CommuteInfo } from "@/components/CommuteInfo";
-import { StatusHistoryForm } from "@/components/StatusHistoryForm";
 import { StatusBadge } from "@/components/StatusBadge";
-import {
-  formatRemoteDays,
-  type Company,
-  type InterviewStage,
-  type StatusHistoryEntry,
-} from "@/lib/database.types";
-import { formatDateTime } from "@/lib/format";
+import { formatRemoteDays, type Company, type InterviewStage } from "@/lib/database.types";
+import { computeCurrentStatus } from "@/lib/currentStatus";
 
 export function CompanyDetail({
   company,
   stages,
-  statusHistory,
   homeStation,
   updateCompanyAction,
   deleteCompanyAction,
   createStageAction,
   stageActions,
-  createStatusHistoryAction,
-  statusHistoryActions,
 }: {
   company: Company;
   stages: InterviewStage[];
-  statusHistory: StatusHistoryEntry[];
   homeStation: string | null;
   updateCompanyAction: (formData: FormData) => void;
   deleteCompanyAction: () => void;
@@ -38,12 +28,9 @@ export function CompanyDetail({
     string,
     { update: (formData: FormData) => void; delete: () => void }
   >;
-  createStatusHistoryAction: (formData: FormData) => void;
-  statusHistoryActions: Record<string, { delete: () => void }>;
 }) {
   const [editingCompany, setEditingCompany] = useState(false);
   const [addingStage, setAddingStage] = useState(false);
-  const [addingStatus, setAddingStatus] = useState(false);
 
   const sortedStages = [...stages].sort((a, b) => {
     const aTime = a.scheduled_at ? new Date(a.scheduled_at).getTime() : Infinity;
@@ -51,9 +38,7 @@ export function CompanyDetail({
     return aTime - bTime;
   });
 
-  const sortedStatusHistory = [...statusHistory].sort(
-    (a, b) => new Date(a.changed_at).getTime() - new Date(b.changed_at).getTime(),
-  );
+  const currentStatus = computeCurrentStatus(stages);
 
   return (
     <div className="space-y-8">
@@ -197,72 +182,7 @@ export function CompanyDetail({
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-500">
-            ステータス履歴(現在: <StatusBadge status={company.status} />)
-          </h2>
-          {!addingStatus && (
-            <button
-              onClick={() => setAddingStatus(true)}
-              className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700"
-            >
-              + ステータスを追加
-            </button>
-          )}
-        </div>
-
-        {addingStatus && (
-          <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-            <StatusHistoryForm
-              onCancel={() => setAddingStatus(false)}
-              action={(formData) => {
-                createStatusHistoryAction(formData);
-                setAddingStatus(false);
-              }}
-            />
-          </div>
-        )}
-
-        {sortedStatusHistory.length === 0 && !addingStatus && (
-          <p className="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-            まだステータス履歴がありません。
-          </p>
-        )}
-
-        <ul className="space-y-2">
-          {sortedStatusHistory.map((entry) => (
-            <li
-              key={entry.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2"
-            >
-              <div className="flex items-center gap-3">
-                <StatusBadge status={entry.status} />
-                <span className="text-sm text-slate-700">
-                  {formatDateTime(entry.changed_at)}
-                </span>
-                {entry.google_event_id && (
-                  <span className="text-xs text-emerald-600">
-                    ✓ Googleカレンダーに同期済み
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={() => {
-                  if (confirm(`「${entry.status}」の履歴を削除しますか?`)) {
-                    statusHistoryActions[entry.id].delete();
-                  }
-                }}
-                className="rounded-md border border-red-200 px-2 py-1 text-xs text-red-600 hover:bg-red-50"
-              >
-                削除
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-500">
-            選考日程・面接記録
+            選考日程・ステータス(現在: <StatusBadge status={currentStatus} />)
           </h2>
           {!addingStage && (
             <button
@@ -289,7 +209,12 @@ export function CompanyDetail({
 
         {sortedStages.length === 0 && !addingStage && (
           <p className="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-            まだ選考記録がありません。
+            まだ選考記録がありません。「+ 選考を追加」でカジュアル面談・書類選考・内定/不合格/辞退なども記録できます。
+          </p>
+        )}
+        {sortedStages.length > 0 && (
+          <p className="mb-2 text-xs text-slate-400">
+            日程が一番新しいステージが「現在のステータス」として上に表示されます。
           </p>
         )}
 

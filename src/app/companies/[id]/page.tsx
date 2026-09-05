@@ -3,16 +3,15 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusBadge } from "@/components/StatusBadge";
+import { computeCurrentStatus } from "@/lib/currentStatus";
 import {
   createStage,
-  createStatusHistoryEntry,
   deleteCompany,
   deleteStage,
-  deleteStatusHistoryEntry,
   updateCompany,
   updateStage,
 } from "@/app/companies/actions";
-import type { InterviewStage, StatusHistoryEntry } from "@/lib/database.types";
+import type { InterviewStage } from "@/lib/database.types";
 
 export default async function CompanyDetailPage({
   params,
@@ -54,19 +53,6 @@ export default async function CompanyDetailPage({
     ]),
   );
 
-  const { data: statusHistory } = await supabase
-    .from("status_history")
-    .select("*")
-    .eq("company_id", id)
-    .returns<StatusHistoryEntry[]>();
-
-  const statusHistoryActions = Object.fromEntries(
-    (statusHistory ?? []).map((entry) => [
-      entry.id,
-      { delete: deleteStatusHistoryEntry.bind(null, id, entry.id) },
-    ]),
-  );
-
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
@@ -77,20 +63,17 @@ export default async function CompanyDetailPage({
           <h1 className="text-xl font-semibold text-slate-900">
             {company.name}
           </h1>
-          <StatusBadge status={company.status} />
+          <StatusBadge status={computeCurrentStatus(stages ?? [])} />
         </div>
 
         <CompanyDetail
           company={company}
           stages={stages ?? []}
-          statusHistory={statusHistory ?? []}
           homeStation={homeStation}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           createStageAction={createStage.bind(null, id)}
           stageActions={stageActions}
-          createStatusHistoryAction={createStatusHistoryEntry.bind(null, id)}
-          statusHistoryActions={statusHistoryActions}
         />
       </main>
     </div>
