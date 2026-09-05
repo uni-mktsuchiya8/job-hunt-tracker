@@ -2,20 +2,21 @@
 
 import { useState } from "react";
 import { StageForm } from "@/components/StageForm";
-import { ResultBadge } from "@/components/StatusBadge";
 import { AddToGoogleCalendarLink } from "@/components/AddToGoogleCalendarLink";
 import { formatDateTime } from "@/lib/format";
-import type { InterviewStage } from "@/lib/database.types";
+import { STAGE_RESULTS, type InterviewStage, type StageResult } from "@/lib/database.types";
 
 export function StageCard({
   stage,
   companyName,
   onUpdate,
+  onResultChange,
   onDelete,
 }: {
   stage: InterviewStage;
   companyName: string;
   onUpdate: (formData: FormData) => void;
+  onResultChange: (result: StageResult) => void;
   onDelete: () => void;
 }) {
   const [editing, setEditing] = useState(false);
@@ -40,17 +41,32 @@ export function StageCard({
     <li className="rounded-lg border border-slate-200 bg-white p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h4 className="font-medium text-slate-900">{stage.stage_name}</h4>
-            <ResultBadge result={stage.result} />
-          </div>
+          <h4 className="font-medium text-slate-900">{stage.stage_name}</h4>
           <p className="mt-0.5 text-xs text-slate-500">
             {formatDateTime(stage.scheduled_at)}
             {stage.scheduled_at && <>({stage.duration_minutes ?? 60}分)</>}
             {stage.method && <> ・ {stage.method}</>}
           </p>
+
+          <div className="mt-2 flex flex-wrap gap-1">
+            {STAGE_RESULTS.map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => onResultChange(r)}
+                className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                  r === stage.result
+                    ? "bg-slate-900 text-white"
+                    : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+
           {stage.scheduled_at && (
-            <div className="mt-1">
+            <div className="mt-2">
               {stage.google_event_id ? (
                 <span className="text-xs text-emerald-600">
                   ✓ Googleカレンダーに同期済み

@@ -6,7 +6,12 @@ import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
 import { CommuteInfo } from "@/components/CommuteInfo";
 import { StatusBadge } from "@/components/StatusBadge";
-import { formatRemoteDays, type Company, type InterviewStage } from "@/lib/database.types";
+import {
+  formatRemoteDays,
+  type Company,
+  type InterviewStage,
+  type StageResult,
+} from "@/lib/database.types";
 import { computeCurrentStatus } from "@/lib/currentStatus";
 
 export function CompanyDetail({
@@ -26,7 +31,11 @@ export function CompanyDetail({
   createStageAction: (formData: FormData) => void;
   stageActions: Record<
     string,
-    { update: (formData: FormData) => void; delete: () => void }
+    {
+      update: (formData: FormData) => void;
+      delete: () => void;
+      setResult: (result: StageResult) => void;
+    }
   >;
 }) {
   const [editingCompany, setEditingCompany] = useState(false);
@@ -227,6 +236,7 @@ export function CompanyDetail({
                 stage={stage}
                 companyName={company.name}
                 onUpdate={actions.update}
+                onResultChange={actions.setResult}
                 onDelete={() => {
                   if (confirm(`「${stage.stage_name}」を削除しますか?`)) {
                     actions.delete();

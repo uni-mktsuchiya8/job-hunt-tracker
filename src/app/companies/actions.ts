@@ -23,9 +23,20 @@ function int(formData: FormData, key: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function datetime(formData: FormData, key: string): string | null {
-  const value = str(formData, key);
-  return value ? new Date(value).toISOString() : null;
+// Combines a <input type="date"> plus separate hour/minute <select>s (see
+// StageForm) into a single ISO datetime — easier to pick a specific time
+// with than scrubbing a native datetime-local widget.
+function datetimeFromParts(
+  formData: FormData,
+  dateKey: string,
+  hourKey: string,
+  minuteKey: string,
+): string | null {
+  const date = str(formData, dateKey);
+  if (!date) return null;
+  const hour = str(formData, hourKey) ?? "00";
+  const minute = str(formData, minuteKey) ?? "00";
+  return new Date(`${date}T${hour}:${minute}:00`).toISOString();
 }
 
 export async function createCompany(formData: FormData) {
@@ -125,7 +136,12 @@ export async function createStage(companyId: string, formData: FormData) {
   const stageName = str(formData, "stage_name");
   if (!stageName) throw new Error("選考ステータスは必須です");
 
-  const scheduledAt = datetime(formData, "scheduled_at");
+  const scheduledAt = datetimeFromParts(
+    formData,
+    "scheduled_date",
+    "scheduled_hour",
+    "scheduled_minute",
+  );
   const durationMinutes = int(formData, "duration_minutes") ?? 60;
   const interviewer = str(formData, "interviewer");
 
@@ -177,7 +193,12 @@ export async function updateStage(
   const stageName = str(formData, "stage_name");
   if (!stageName) throw new Error("選考ステータスは必須です");
 
-  const scheduledAt = datetime(formData, "scheduled_at");
+  const scheduledAt = datetimeFromParts(
+    formData,
+    "scheduled_date",
+    "scheduled_hour",
+    "scheduled_minute",
+  );
   const durationMinutes = int(formData, "duration_minutes") ?? 60;
   const interviewer = str(formData, "interviewer");
 
@@ -247,5 +268,29 @@ export async function deleteStage(companyId: string, stageId: string) {
 
   if (error) throw new Error(error.message);
 
+  revalidatePath(`/companies/${companyId}`);
+}
+
+// Quick one-field update for the result buttons on the card — skips the
+// full edit form when all you want to do is mark 通過/不合格/etc.
+export async function updateStageResult(
+  companyId: string,
+  stageId: string,
+  result: StageResult,
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("interview_stages")
+    .update({ result })
+    .eq("id", stageId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
   revalidatePath(`/companies/${companyId}`);
 }

@@ -8,6 +8,9 @@ import {
 } from "@/lib/database.types";
 import { toDateTimeLocalValue } from "@/lib/format";
 
+const HOURS = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, "0"));
+const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+
 export function StageForm({
   stage,
   action,
@@ -19,6 +22,22 @@ export function StageForm({
   submitLabel: string;
   onCancel?: () => void;
 }) {
+  // Split the stored datetime into separate date/hour/minute parts so the
+  // form can offer plain <select>s instead of a native datetime-local
+  // widget (whose time-of-day picker is fiddly to use with a mouse).
+  const [defaultDate, defaultTime] = toDateTimeLocalValue(
+    stage?.scheduled_at ?? null,
+  ).split("T");
+  const [defaultHour = "10", defaultMinuteRaw] = (defaultTime ?? "").split(":");
+  const defaultMinute = defaultMinuteRaw
+    ? MINUTES.reduce((closest, m) =>
+        Math.abs(Number(m) - Number(defaultMinuteRaw)) <
+        Math.abs(Number(closest) - Number(defaultMinuteRaw))
+          ? m
+          : closest,
+      )
+    : "00";
+
   return (
     <form action={action} className="space-y-3">
       <div>
@@ -39,18 +58,46 @@ export function StageForm({
         </datalist>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="block text-xs font-medium text-slate-700">
-            選考日程
-          </label>
+      <div>
+        <label className="block text-xs font-medium text-slate-700">
+          選考日程
+        </label>
+        <div className="mt-1 flex flex-wrap items-center gap-2">
           <input
-            name="scheduled_at"
-            type="datetime-local"
-            defaultValue={toDateTimeLocalValue(stage?.scheduled_at ?? null)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            name="scheduled_date"
+            type="date"
+            defaultValue={defaultDate}
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
           />
+          <select
+            name="scheduled_hour"
+            defaultValue={defaultHour}
+            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          >
+            {HOURS.map((h) => (
+              <option key={h} value={h}>
+                {h}時
+              </option>
+            ))}
+          </select>
+          <select
+            name="scheduled_minute"
+            defaultValue={defaultMinute}
+            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          >
+            {MINUTES.map((m) => (
+              <option key={m} value={m}>
+                {m}分
+              </option>
+            ))}
+          </select>
         </div>
+        <p className="mt-1 text-[11px] text-slate-400">
+          日付を入れないと未定として扱われます。
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-slate-700">
             所要時間(分)

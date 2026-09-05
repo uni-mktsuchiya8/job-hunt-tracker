@@ -10,6 +10,7 @@ import {
   deleteStage,
   updateCompany,
   updateStage,
+  updateStageResult,
 } from "@/app/companies/actions";
 import type { InterviewStage } from "@/lib/database.types";
 
@@ -49,6 +50,7 @@ export default async function CompanyDetailPage({
       {
         update: updateStage.bind(null, id, stage.id),
         delete: deleteStage.bind(null, id, stage.id),
+        setResult: updateStageResult.bind(null, id, stage.id),
       },
     ]),
   );
