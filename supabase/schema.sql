@@ -36,6 +36,7 @@ create table if not exists interview_stages (
   interviewer text,             -- 面接官名
   conversation_notes text,      -- 会話内容の詳細
   impression text,              -- 面接の印象メモ(所感)
+  memo text,                    -- 自由記入メモ
   result text not null default '未定', -- 未定 / 通過 / 不合格 / 辞退 / 保留
   google_event_id text,         -- 連携済みGoogleカレンダーの予定ID(自動同期用)
   created_at timestamptz not null default now(),
@@ -74,6 +75,7 @@ create table if not exists google_calendar_connections (
 -- simply displayed as-is (formatRemoteDays() falls back to the raw value).
 -- alter table interview_stages add column if not exists google_event_id text;
 -- alter table interview_stages add column if not exists duration_minutes int not null default 60;
+-- alter table interview_stages add column if not exists memo text;
 -- Note: 選考ステータス(company.status)は使われなくなりました。「現在のステータス」は
 -- 選考ステージ一覧から自動計算されます(日程が一番新しいステージ名、無ければ最後に
 -- 追加したステージ名)。「選考日程・面接記録」と「ステータス履歴」を1つのセクションに

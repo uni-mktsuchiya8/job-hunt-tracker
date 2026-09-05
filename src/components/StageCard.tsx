@@ -103,6 +103,14 @@ export function StageCard({
               </p>
             </div>
           )}
+          {stage.memo && (
+            <div className="mt-2">
+              <p className="text-xs text-slate-400">メモ</p>
+              <p className="whitespace-pre-wrap text-sm text-slate-700">
+                {stage.memo}
+              </p>
+            </div>
+          )}
         </div>
         <div className="flex shrink-0 gap-2 text-xs">
           <button

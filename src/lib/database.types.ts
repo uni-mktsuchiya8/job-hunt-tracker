@@ -86,6 +86,7 @@ export interface InterviewStage {
   interviewer: string | null;
   conversation_notes: string | null;
   impression: string | null;
+  memo: string | null;
   result: StageResult;
   google_event_id: string | null;
   created_at: string;

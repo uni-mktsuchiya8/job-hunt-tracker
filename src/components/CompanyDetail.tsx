@@ -41,10 +41,12 @@ export function CompanyDetail({
   const [editingCompany, setEditingCompany] = useState(false);
   const [addingStage, setAddingStage] = useState(false);
 
+  // Newest first — undated entries sort by when they were added instead,
+  // so they still land in a sensible spot rather than always at one end.
   const sortedStages = [...stages].sort((a, b) => {
-    const aTime = a.scheduled_at ? new Date(a.scheduled_at).getTime() : Infinity;
-    const bTime = b.scheduled_at ? new Date(b.scheduled_at).getTime() : Infinity;
-    return aTime - bTime;
+    const aTime = new Date(a.scheduled_at ?? a.created_at).getTime();
+    const bTime = new Date(b.scheduled_at ?? b.created_at).getTime();
+    return bTime - aTime;
   });
 
   const currentStatus = computeCurrentStatus(stages);

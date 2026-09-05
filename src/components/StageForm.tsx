@@ -170,6 +170,19 @@ export function StageForm({
 
       <div>
         <label className="block text-xs font-medium text-slate-700">
+          メモ
+        </label>
+        <textarea
+          name="memo"
+          rows={2}
+          defaultValue={stage?.memo ?? ""}
+          placeholder="自由記入(その他気になったこと、次回までにやることなど)"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+        />
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium text-slate-700">
           結果
         </label>
         <select

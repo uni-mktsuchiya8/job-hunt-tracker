@@ -170,6 +170,7 @@ export async function createStage(companyId: string, formData: FormData) {
     interviewer,
     conversation_notes: str(formData, "conversation_notes"),
     impression: str(formData, "impression"),
+    memo: str(formData, "memo"),
     result: (str(formData, "result") as StageResult) ?? "未定",
     google_event_id: googleEventId,
   });
@@ -236,6 +237,7 @@ export async function updateStage(
       interviewer,
       conversation_notes: str(formData, "conversation_notes"),
       impression: str(formData, "impression"),
+    memo: str(formData, "memo"),
       result: (str(formData, "result") as StageResult) ?? "未定",
       google_event_id: googleEventId,
     })
