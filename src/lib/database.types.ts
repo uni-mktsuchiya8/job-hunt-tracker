@@ -81,6 +81,7 @@ export interface InterviewStage {
   user_id: string;
   stage_name: string;
   scheduled_at: string | null;
+  duration_minutes: number | null;
   method: string | null;
   interviewer: string | null;
   conversation_notes: string | null;

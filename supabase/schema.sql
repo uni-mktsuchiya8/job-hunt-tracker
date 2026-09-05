@@ -31,6 +31,7 @@ create table if not exists interview_stages (
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
   stage_name text not null,     -- 書類選考 / 一次面接 / 二次面接 / 最終面接 / オファー面談 など
   scheduled_at timestamptz,     -- 選考日程
+  duration_minutes int not null default 60, -- 所要時間(分。Googleカレンダー同期に使用)
   method text,                  -- 実施方法 (対面 / オンライン / 電話 / その他)
   interviewer text,             -- 面接官名
   conversation_notes text,      -- 会話内容の詳細
@@ -72,6 +73,7 @@ create table if not exists google_calendar_connections (
 -- it now stores "1"〜"5" (weekly remote-capable days). Old text values are
 -- simply displayed as-is (formatRemoteDays() falls back to the raw value).
 -- alter table interview_stages add column if not exists google_event_id text;
+-- alter table interview_stages add column if not exists duration_minutes int not null default 60;
 -- Note: 選考ステータス(company.status)は使われなくなりました。「現在のステータス」は
 -- 選考ステージ一覧から自動計算されます(日程が一番新しいステージ名、無ければ最後に
 -- 追加したステージ名)。「選考日程・面接記録」と「ステータス履歴」を1つのセクションに

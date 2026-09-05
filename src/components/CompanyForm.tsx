@@ -333,7 +333,7 @@ export function CompanyForm({
           ))}
         </select>
         <p className="mt-1 text-xs text-slate-400">
-          選考の進み具合は下の「選考日程・面接記録」で管理します。
+          選考の進み具合は下の「選考ステータス」で管理します。
         </p>
       </div>
 

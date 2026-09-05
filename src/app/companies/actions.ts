@@ -123,9 +123,10 @@ export async function createStage(companyId: string, formData: FormData) {
   if (!user) redirect("/login");
 
   const stageName = str(formData, "stage_name");
-  if (!stageName) throw new Error("選考ステージ名は必須です");
+  if (!stageName) throw new Error("選考ステータスは必須です");
 
   const scheduledAt = datetime(formData, "scheduled_at");
+  const durationMinutes = int(formData, "duration_minutes") ?? 60;
   const interviewer = str(formData, "interviewer");
 
   let googleEventId: string | null = null;
@@ -136,9 +137,10 @@ export async function createStage(companyId: string, formData: FormData) {
       .eq("id", companyId)
       .single();
     googleEventId = await syncCreateEvent(supabase, user.id, {
-      summary: `${company?.name ?? "選考"} - ${stageName}`,
+      summary: `【${stageName}】${company?.name ?? "選考"}`,
       description: interviewer ? `面接官: ${interviewer}` : undefined,
       startISO: scheduledAt,
+      durationMinutes,
     });
   }
 
@@ -147,6 +149,7 @@ export async function createStage(companyId: string, formData: FormData) {
     user_id: user.id,
     stage_name: stageName,
     scheduled_at: scheduledAt,
+    duration_minutes: durationMinutes,
     method: str(formData, "method"),
     interviewer,
     conversation_notes: str(formData, "conversation_notes"),
@@ -172,9 +175,10 @@ export async function updateStage(
   if (!user) redirect("/login");
 
   const stageName = str(formData, "stage_name");
-  if (!stageName) throw new Error("選考ステージ名は必須です");
+  if (!stageName) throw new Error("選考ステータスは必須です");
 
   const scheduledAt = datetime(formData, "scheduled_at");
+  const durationMinutes = int(formData, "duration_minutes") ?? 60;
   const interviewer = str(formData, "interviewer");
 
   const { data: existing } = await supabase
@@ -191,9 +195,10 @@ export async function updateStage(
       .eq("id", companyId)
       .single();
     googleEventId = await syncUpdateOrCreateEvent(supabase, user.id, googleEventId, {
-      summary: `${company?.name ?? "選考"} - ${stageName}`,
+      summary: `【${stageName}】${company?.name ?? "選考"}`,
       description: interviewer ? `面接官: ${interviewer}` : undefined,
       startISO: scheduledAt,
+      durationMinutes,
     });
   } else if (googleEventId) {
     await syncDeleteEvent(supabase, user.id, googleEventId);
@@ -205,6 +210,7 @@ export async function updateStage(
     .update({
       stage_name: stageName,
       scheduled_at: scheduledAt,
+      duration_minutes: durationMinutes,
       method: str(formData, "method"),
       interviewer,
       conversation_notes: str(formData, "conversation_notes"),

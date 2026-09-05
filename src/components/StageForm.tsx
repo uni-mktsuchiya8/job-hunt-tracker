@@ -23,7 +23,7 @@ export function StageForm({
     <form action={action} className="space-y-3">
       <div>
         <label className="block text-xs font-medium text-slate-700">
-          選考ステージ *
+          選考ステータス *
         </label>
         <input
           name="stage_name"
@@ -39,7 +39,7 @@ export function StageForm({
         </datalist>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <div>
           <label className="block text-xs font-medium text-slate-700">
             選考日程
@@ -48,6 +48,19 @@ export function StageForm({
             name="scheduled_at"
             type="datetime-local"
             defaultValue={toDateTimeLocalValue(stage?.scheduled_at ?? null)}
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-700">
+            所要時間(分)
+          </label>
+          <input
+            name="duration_minutes"
+            type="number"
+            min={5}
+            step={5}
+            defaultValue={stage?.duration_minutes ?? 60}
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
           />
         </div>

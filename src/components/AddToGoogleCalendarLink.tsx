@@ -6,17 +6,19 @@ import { buildGoogleCalendarUrl } from "@/lib/googleCalendar";
 export function AddToGoogleCalendarLink({
   title,
   startISO,
+  durationMinutes,
   details,
   location,
 }: {
   title: string;
   startISO: string | null;
+  durationMinutes?: number;
   details?: string | null;
   location?: string | null;
 }) {
   if (!startISO) return null;
 
-  const url = buildGoogleCalendarUrl({ title, startISO, details, location });
+  const url = buildGoogleCalendarUrl({ title, startISO, durationMinutes, details, location });
 
   return (
     <a

@@ -46,6 +46,7 @@ export function StageCard({
           </div>
           <p className="mt-0.5 text-xs text-slate-500">
             {formatDateTime(stage.scheduled_at)}
+            {stage.scheduled_at && <>({stage.duration_minutes ?? 60}分)</>}
             {stage.method && <> ・ {stage.method}</>}
           </p>
           {stage.scheduled_at && (
@@ -56,8 +57,9 @@ export function StageCard({
                 </span>
               ) : (
                 <AddToGoogleCalendarLink
-                  title={`${companyName} - ${stage.stage_name}`}
+                  title={`【${stage.stage_name}】${companyName}`}
                   startISO={stage.scheduled_at}
+                  durationMinutes={stage.duration_minutes ?? 60}
                   details={stage.interviewer ? `面接官: ${stage.interviewer}` : null}
                 />
               )}
