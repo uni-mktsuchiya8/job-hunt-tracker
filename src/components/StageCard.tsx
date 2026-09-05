@@ -50,11 +50,17 @@ export function StageCard({
           </p>
           {stage.scheduled_at && (
             <div className="mt-1">
-              <AddToGoogleCalendarLink
-                title={`${companyName} - ${stage.stage_name}`}
-                startISO={stage.scheduled_at}
-                details={stage.interviewer ? `面接官: ${stage.interviewer}` : null}
-              />
+              {stage.google_event_id ? (
+                <span className="text-xs text-emerald-600">
+                  ✓ Googleカレンダーに同期済み
+                </span>
+              ) : (
+                <AddToGoogleCalendarLink
+                  title={`${companyName} - ${stage.stage_name}`}
+                  startISO={stage.scheduled_at}
+                  details={stage.interviewer ? `面接官: ${stage.interviewer}` : null}
+                />
+              )}
             </div>
           )}
           {stage.interviewer && (

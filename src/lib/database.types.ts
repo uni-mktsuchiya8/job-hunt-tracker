@@ -84,10 +84,19 @@ export interface Company {
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;
-  status: ApplicationStatus;
-  status_changed_at: string | null;
+  status: ApplicationStatus; // 常に最新値。履歴は StatusHistory を参照
   created_at: string;
   updated_at: string;
+}
+
+export interface StatusHistoryEntry {
+  id: string;
+  company_id: string;
+  user_id: string;
+  status: ApplicationStatus;
+  changed_at: string;
+  google_event_id: string | null;
+  created_at: string;
 }
 
 export interface InterviewStage {
@@ -101,6 +110,17 @@ export interface InterviewStage {
   conversation_notes: string | null;
   impression: string | null;
   result: StageResult;
+  google_event_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface GoogleCalendarConnection {
+  user_id: string;
+  refresh_token: string;
+  access_token: string | null;
+  access_token_expires_at: string | null;
+  calendar_id: string;
   created_at: string;
   updated_at: string;
 }

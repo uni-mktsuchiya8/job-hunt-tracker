@@ -10,7 +10,6 @@ import {
   type Company,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
-import { toDateTimeLocalValue } from "@/lib/format";
 
 export function CompanyForm({
   company,
@@ -337,34 +336,27 @@ export function CompanyForm({
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-slate-700">
-            選考ステータス
-          </label>
-          <select
-            name="status"
-            defaultValue={company?.status ?? "カジュアル面談"}
-            className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-          >
-            {APPLICATION_STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-slate-700">
-            ステータスの実施日時
-          </label>
-          <input
-            name="status_changed_at"
-            type="datetime-local"
-            defaultValue={toDateTimeLocalValue(company?.status_changed_at ?? null)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-          />
-        </div>
+        {!company && (
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              選考ステータス
+            </label>
+            <select
+              name="status"
+              defaultValue="カジュアル面談"
+              className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+            >
+              {APPLICATION_STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-slate-400">
+              以降のステータス変更は、詳細ページの「ステータス履歴」から追加します。
+            </p>
+          </div>
+        )}
       </div>
 
       <button

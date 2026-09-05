@@ -24,3 +24,14 @@ export async function updateHomeStation(
   revalidatePath("/companies", "layout");
   return { message: "保存しました", error: null };
 }
+
+export async function disconnectGoogleCalendar() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("google_calendar_connections").delete().eq("user_id", user.id);
+  revalidatePath("/settings");
+}

@@ -3,6 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import {
+  syncCreateEvent,
+  syncDeleteEvent,
+  syncUpdateOrCreateEvent,
+} from "@/lib/googleCalendarSync";
 import type { ApplicationStatus, StageResult } from "@/lib/database.types";
 
 function str(formData: FormData, key: string): string | null {
@@ -52,7 +57,6 @@ export async function createCompany(formData: FormData) {
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
       status: (str(formData, "status") as ApplicationStatus) ?? "カジュアル面談",
-      status_changed_at: datetime(formData, "status_changed_at"),
     })
     .select("id")
     .single();
@@ -85,8 +89,6 @@ export async function updateCompany(companyId: string, formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
-      status: (str(formData, "status") as ApplicationStatus) ?? "カジュアル面談",
-      status_changed_at: datetime(formData, "status_changed_at"),
     })
     .eq("id", companyId);
 
@@ -109,6 +111,84 @@ export async function deleteCompany(companyId: string) {
   redirect("/");
 }
 
+// --- Status history (選考ステータスの進捗) -------------------------------
+// Each entry is a point-in-time status change; companies.status always
+// mirrors the most recently added entry so badges/lists stay simple.
+
+export async function createStatusHistoryEntry(
+  companyId: string,
+  formData: FormData,
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const status = str(formData, "status") as ApplicationStatus | null;
+  if (!status) throw new Error("ステータスは必須です");
+  const changedAt = datetime(formData, "changed_at") ?? new Date().toISOString();
+
+  const { data: company } = await supabase
+    .from("companies")
+    .select("name")
+    .eq("id", companyId)
+    .single();
+
+  const googleEventId = await syncCreateEvent(supabase, user.id, {
+    summary: `${company?.name ?? "選考"} - ${status}`,
+    startISO: changedAt,
+  });
+
+  const { error: insertError } = await supabase.from("status_history").insert({
+    company_id: companyId,
+    user_id: user.id,
+    status,
+    changed_at: changedAt,
+    google_event_id: googleEventId,
+  });
+  if (insertError) throw new Error(insertError.message);
+
+  const { error: updateError } = await supabase
+    .from("companies")
+    .update({ status })
+    .eq("id", companyId);
+  if (updateError) throw new Error(updateError.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+}
+
+export async function deleteStatusHistoryEntry(
+  companyId: string,
+  historyId: string,
+) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: entry } = await supabase
+    .from("status_history")
+    .select("google_event_id")
+    .eq("id", historyId)
+    .single();
+
+  await syncDeleteEvent(supabase, user.id, entry?.google_event_id ?? null);
+
+  const { error } = await supabase
+    .from("status_history")
+    .delete()
+    .eq("id", historyId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+}
+
+// --- Interview stages ------------------------------------------------------
+
 export async function createStage(companyId: string, formData: FormData) {
   const supabase = await createClient();
   const {
@@ -119,18 +199,34 @@ export async function createStage(companyId: string, formData: FormData) {
   const stageName = str(formData, "stage_name");
   if (!stageName) throw new Error("選考ステージ名は必須です");
 
-  const scheduledAtRaw = str(formData, "scheduled_at");
+  const scheduledAt = datetime(formData, "scheduled_at");
+  const interviewer = str(formData, "interviewer");
+
+  let googleEventId: string | null = null;
+  if (scheduledAt) {
+    const { data: company } = await supabase
+      .from("companies")
+      .select("name")
+      .eq("id", companyId)
+      .single();
+    googleEventId = await syncCreateEvent(supabase, user.id, {
+      summary: `${company?.name ?? "選考"} - ${stageName}`,
+      description: interviewer ? `面接官: ${interviewer}` : undefined,
+      startISO: scheduledAt,
+    });
+  }
 
   const { error } = await supabase.from("interview_stages").insert({
     company_id: companyId,
     user_id: user.id,
     stage_name: stageName,
-    scheduled_at: scheduledAtRaw ? new Date(scheduledAtRaw).toISOString() : null,
+    scheduled_at: scheduledAt,
     method: str(formData, "method"),
-    interviewer: str(formData, "interviewer"),
+    interviewer,
     conversation_notes: str(formData, "conversation_notes"),
     impression: str(formData, "impression"),
     result: (str(formData, "result") as StageResult) ?? "未定",
+    google_event_id: googleEventId,
   });
 
   if (error) throw new Error(error.message);
@@ -144,23 +240,51 @@ export async function updateStage(
   formData: FormData,
 ) {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
   const stageName = str(formData, "stage_name");
   if (!stageName) throw new Error("選考ステージ名は必須です");
 
-  const scheduledAtRaw = str(formData, "scheduled_at");
+  const scheduledAt = datetime(formData, "scheduled_at");
+  const interviewer = str(formData, "interviewer");
+
+  const { data: existing } = await supabase
+    .from("interview_stages")
+    .select("google_event_id")
+    .eq("id", stageId)
+    .single();
+
+  let googleEventId: string | null = existing?.google_event_id ?? null;
+  if (scheduledAt) {
+    const { data: company } = await supabase
+      .from("companies")
+      .select("name")
+      .eq("id", companyId)
+      .single();
+    googleEventId = await syncUpdateOrCreateEvent(supabase, user.id, googleEventId, {
+      summary: `${company?.name ?? "選考"} - ${stageName}`,
+      description: interviewer ? `面接官: ${interviewer}` : undefined,
+      startISO: scheduledAt,
+    });
+  } else if (googleEventId) {
+    await syncDeleteEvent(supabase, user.id, googleEventId);
+    googleEventId = null;
+  }
 
   const { error } = await supabase
     .from("interview_stages")
     .update({
       stage_name: stageName,
-      scheduled_at: scheduledAtRaw
-        ? new Date(scheduledAtRaw).toISOString()
-        : null,
+      scheduled_at: scheduledAt,
       method: str(formData, "method"),
-      interviewer: str(formData, "interviewer"),
+      interviewer,
       conversation_notes: str(formData, "conversation_notes"),
       impression: str(formData, "impression"),
       result: (str(formData, "result") as StageResult) ?? "未定",
+      google_event_id: googleEventId,
     })
     .eq("id", stageId);
 
@@ -171,6 +295,19 @@ export async function updateStage(
 
 export async function deleteStage(companyId: string, stageId: string) {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data: existing } = await supabase
+    .from("interview_stages")
+    .select("google_event_id")
+    .eq("id", stageId)
+    .single();
+
+  await syncDeleteEvent(supabase, user.id, existing?.google_event_id ?? null);
+
   const { error } = await supabase
     .from("interview_stages")
     .delete()
