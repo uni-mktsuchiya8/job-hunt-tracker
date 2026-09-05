@@ -10,10 +10,20 @@ export interface NearestStation {
   distance: string | null;
 }
 
+// GSI's address search returns zero results when the query is prefixed
+// with a postal code (e.g. "〒102-0083東京都..." or "102-0083 東京都...")
+// — a very common way addresses get pasted from job postings — so strip
+// that prefix before querying. A trailing building name/floor is fine and
+// doesn't need cleaning; GSI just matches the address portion.
+function stripPostalCode(address: string): string {
+  return address.replace(/^\s*〒?\s*\d{3}-?\d{4}\s*/, "").trim();
+}
+
 export async function geocodeAddress(
   address: string,
 ): Promise<{ lat: number; lng: number } | null> {
-  const url = `https://msearch.gsi.go.jp/address-search/AddressSearch?q=${encodeURIComponent(address)}`;
+  const query = stripPostalCode(address) || address;
+  const url = `https://msearch.gsi.go.jp/address-search/AddressSearch?q=${encodeURIComponent(query)}`;
   const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
   if (!res.ok) return null;
   const data = (await res.json()) as Array<{
