@@ -262,6 +262,8 @@ export function DashboardView({
             <svg
               viewBox="0 0 20 20"
               fill="none"
+              width={16}
+              height={16}
               className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-slate-400"
             >
               <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" strokeWidth="1.5" />
