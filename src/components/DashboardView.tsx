@@ -205,41 +205,34 @@ export function DashboardView({
         </Link>
       </div>
 
+      {/* Compact pill tabs, not HERP's stacked label/count columns — with
+          this many statuses, stacking made adjacent tabs run into each
+          other, and the big count numbers visually duplicated what the
+          選考ステータス column already shows per row. A small "(N)" here
+          reads as a count, not a second status display. */}
       {view === "list" && (
-        <div className="mb-4 flex items-stretch gap-5 overflow-x-auto border-b border-slate-200 pb-3">
+        <div className="mb-4 flex flex-wrap gap-2">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`flex shrink-0 flex-col items-center justify-center rounded-full px-5 py-2 ${
+            className={`rounded-full border px-3 py-1 text-xs font-medium ${
               statusFilter === "all"
-                ? "bg-slate-900 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "border-slate-900 bg-slate-900 text-white"
+                : "border-slate-300 text-slate-600 hover:bg-slate-100"
             }`}
           >
-            <span className="text-xs font-medium">すべて</span>
-            <span className="text-lg font-bold leading-tight">{companies.length}</span>
+            すべて ({companies.length})
           </button>
           {statusTabs.map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
-              className="flex shrink-0 flex-col items-center justify-center px-1 whitespace-nowrap"
+              className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
+                statusFilter === status
+                  ? "border-slate-900 bg-slate-900 text-white"
+                  : "border-slate-300 text-slate-600 hover:bg-slate-100"
+              }`}
             >
-              <span
-                className={`text-xs ${
-                  statusFilter === status
-                    ? "font-semibold text-slate-900"
-                    : "text-slate-500"
-                }`}
-              >
-                {status}
-              </span>
-              <span
-                className={`text-lg font-bold leading-tight ${
-                  statusFilter === status ? "text-slate-900" : "text-slate-400"
-                }`}
-              >
-                {statusCounts.get(status) ?? 0}
-              </span>
+              {status} ({statusCounts.get(status) ?? 0})
             </button>
           ))}
         </div>
