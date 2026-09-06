@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { StatusBadge } from "@/components/StatusBadge";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
+import { StatusSelect } from "@/components/StatusSelect";
 import { formatDateTime } from "@/lib/format";
 import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
@@ -69,17 +69,27 @@ function searchHaystack(company: CompanyWithStages): string {
     .toLowerCase();
 }
 
+function formatShortDate(iso: string): string {
+  const date = new Date(iso);
+  return new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric" }).format(
+    date,
+  );
+}
+
 export function DashboardView({
   companies,
   memoActions,
+  statusActions,
 }: {
   companies: CompanyWithStages[];
   memoActions: Record<string, (memo: string) => void>;
+  statusActions: Record<string, (status: string) => void>;
 }) {
   const [view, setView] = useState<"list" | "calendar">("list");
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("updated");
   const [statusFilter, setStatusFilter] = useState<string | "all">("all");
+  const [onlyNoUpcoming, setOnlyNoUpcoming] = useState(false);
 
   const events: CalendarEvent[] = companies.flatMap((company) =>
     (company.interview_stages ?? [])
@@ -95,10 +105,13 @@ export function DashboardView({
   );
 
   // Counts per current status, for the "すべて" + per-status tab bar
-  // (HERP Hire's selection-pipeline board, mirrored for the job seeker's
-  // own side: "which companies are at 一次面接 right now" etc.). Based on
-  // the full company set, not the search box, so tab counts stay stable
-  // while typing a search.
+  // (HERP Hire's selection-pipeline board for recruiters, mirrored here
+  // for the job seeker's own list: "which companies are at 一次面接 right
+  // now" etc.). Every standard status gets a tab even at 0, same as HERP
+  // showing all configured steps regardless of current headcount; only
+  // free-text/custom stage names are added on top of that, and only when
+  // actually in use. Counts are based on the full company set, not the
+  // search box, so tab counts stay stable while typing a search.
   const statusCounts = useMemo(() => {
     const counts = new Map<string, number>();
     for (const c of companies) {
@@ -109,11 +122,10 @@ export function DashboardView({
   }, [companies]);
 
   const statusTabs = useMemo(() => {
-    const known = STATUS_PROGRESSION.filter((s) => (statusCounts.get(s) ?? 0) > 0);
     const custom = [...statusCounts.keys()].filter(
       (s) => !STATUS_PROGRESSION.includes(s),
     );
-    return [...known, ...custom];
+    return [...STATUS_PROGRESSION, ...custom];
   }, [statusCounts]);
 
   const visibleCompanies = useMemo(() => {
@@ -125,6 +137,12 @@ export function DashboardView({
     if (statusFilter !== "all") {
       filtered = filtered.filter(
         (c) => computeCurrentStatus(c.interview_stages ?? []) === statusFilter,
+      );
+    }
+
+    if (onlyNoUpcoming) {
+      filtered = filtered.filter(
+        (c) => nextUpcomingStage(c.interview_stages ?? []) === null,
       );
     }
 
@@ -147,7 +165,7 @@ export function DashboardView({
       });
     }
     return sorted;
-  }, [companies, search, sortKey, statusFilter]);
+  }, [companies, search, sortKey, statusFilter, onlyNoUpcoming]);
 
   return (
     <div>
@@ -188,42 +206,47 @@ export function DashboardView({
       </div>
 
       {view === "list" && (
-        <div className="mb-4 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+        <div className="mb-4 flex items-stretch gap-5 overflow-x-auto border-b border-slate-200 pb-3">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
+            className={`flex shrink-0 flex-col items-center justify-center rounded-full px-5 py-2 ${
               statusFilter === "all"
-                ? "border-slate-900 bg-slate-900 text-white"
-                : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
-            すべて ({companies.length})
+            <span className="text-xs font-medium">すべて</span>
+            <span className="text-lg font-bold leading-tight">{companies.length}</span>
           </button>
           {statusTabs.map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
-              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
-                statusFilter === status
-                  ? "border-slate-900 bg-slate-900 text-white"
-                  : "border-slate-300 text-slate-600 hover:bg-slate-100"
-              }`}
+              className="flex shrink-0 flex-col items-center justify-center px-1 whitespace-nowrap"
             >
-              {status} ({statusCounts.get(status) ?? 0})
+              <span
+                className={`text-xs ${
+                  statusFilter === status
+                    ? "font-semibold text-slate-900"
+                    : "text-slate-500"
+                }`}
+              >
+                {status}
+              </span>
+              <span
+                className={`text-lg font-bold leading-tight ${
+                  statusFilter === status ? "text-slate-900" : "text-slate-400"
+                }`}
+              >
+                {statusCounts.get(status) ?? 0}
+              </span>
             </button>
           ))}
         </div>
       )}
 
       {view === "list" && (
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="会社名・登録情報でサーチ"
-            className="w-full max-w-xs rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
-          />
+        <div className="mb-4 flex flex-wrap items-center gap-3">
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
@@ -235,6 +258,32 @@ export function DashboardView({
               </option>
             ))}
           </select>
+          <div className="relative flex-1 min-w-[12rem]">
+            <svg
+              viewBox="0 0 20 20"
+              fill="none"
+              className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-slate-400"
+            >
+              <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M13 13l4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="会社名・登録情報でサーチ"
+              className="w-full rounded-md border border-slate-300 py-1.5 pr-3 pl-8 text-sm text-slate-900 outline-none focus:border-slate-500"
+            />
+          </div>
+          <label className="flex shrink-0 items-center gap-1.5 text-xs text-slate-600">
+            <input
+              type="checkbox"
+              checked={onlyNoUpcoming}
+              onChange={(e) => setOnlyNoUpcoming(e.target.checked)}
+              className="rounded border-slate-300"
+            />
+            次の選考予定がない会社のみ表示する
+          </label>
         </div>
       )}
 
@@ -252,60 +301,83 @@ export function DashboardView({
               条件に一致する会社がありません。
             </div>
           )}
-          <ul className="space-y-3">
-            {visibleCompanies.map((company) => {
-              const next = nextUpcomingStage(company.interview_stages ?? []);
-              return (
-                <li
-                  key={company.id}
-                  className="rounded-lg border border-slate-200 bg-white p-4 transition hover:border-slate-300 hover:shadow-sm"
-                >
-                  <Link href={`/companies/${company.id}`} className="block">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          {company.priority_rank && (
-                            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-[11px] font-semibold text-amber-700">
-                              {company.priority_rank}
-                            </span>
-                          )}
-                          <h3 className="font-medium text-slate-900">
-                            {company.name}
-                          </h3>
-                          <StatusBadge
-                            status={computeCurrentStatus(company.interview_stages ?? [])}
+          {visibleCompanies.length > 0 && (
+            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+              <table className="w-full min-w-[52rem] text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 text-left text-xs text-slate-400">
+                    <th className="px-4 py-2 font-medium">会社</th>
+                    <th className="px-4 py-2 font-medium">応募経路</th>
+                    <th className="px-4 py-2 font-medium">選考ステータス</th>
+                    <th className="px-4 py-2 font-medium">選考予定</th>
+                    <th className="px-4 py-2 font-medium">メモ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleCompanies.map((company) => {
+                    const next = nextUpcomingStage(company.interview_stages ?? []);
+                    const status = computeCurrentStatus(company.interview_stages ?? []);
+                    return (
+                      <tr
+                        key={company.id}
+                        className="border-b border-slate-100 align-top last:border-0"
+                      >
+                        <td className="px-4 py-3">
+                          <p className="text-xs text-slate-400">
+                            {formatShortDate(company.created_at)} 登録
+                          </p>
+                          <div className="flex items-center gap-1.5">
+                            {company.priority_rank && (
+                              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 text-[11px] font-semibold text-amber-700">
+                                {company.priority_rank}
+                              </span>
+                            )}
+                            <Link
+                              href={`/companies/${company.id}`}
+                              className="font-medium text-slate-900 hover:underline"
+                            >
+                              {company.name}
+                            </Link>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-slate-600">
+                          {company.application_route || "-"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusSelect
+                            value={status}
+                            onChange={(newStatus) =>
+                              statusActions[company.id]?.(newStatus)
+                            }
                           />
-                        </div>
-                        {company.application_route && (
-                          <p className="mt-1 text-xs text-slate-500">
-                            応募経路: {company.application_route}
-                          </p>
-                        )}
-                      </div>
-                      {next && (
-                        <div className="shrink-0 text-right text-xs">
-                          <p className="text-slate-400">次の選考</p>
-                          <p className="font-medium text-slate-700">
-                            {next.stage_name}
-                          </p>
-                          <p className="text-slate-500">
-                            {formatDateTime(next.scheduled_at)}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-
-                  <div className="mt-3 border-t border-slate-100 pt-2">
-                    <CompanyMemoBox
-                      memo={company.memo}
-                      onSave={(memo) => memoActions[company.id]?.(memo)}
-                    />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+                        </td>
+                        <td className="px-4 py-3 text-xs">
+                          {next ? (
+                            <>
+                              <p className="font-medium text-slate-700">
+                                {next.stage_name}
+                              </p>
+                              <p className="text-slate-500">
+                                {formatDateTime(next.scheduled_at)}
+                              </p>
+                            </>
+                          ) : (
+                            <span className="text-slate-400">なし</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <CompanyMemoBox
+                            memo={company.memo}
+                            onSave={(memo) => memoActions[company.id]?.(memo)}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </>
       )}
     </div>

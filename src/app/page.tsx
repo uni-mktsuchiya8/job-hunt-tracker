@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
-import { updateCompanyMemo } from "@/app/companies/actions";
+import { quickAddStatusStage, updateCompanyMemo } from "@/app/companies/actions";
 import { DashboardView } from "@/components/DashboardView";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
@@ -27,11 +27,14 @@ export default async function DashboardPage() {
   const memoActions = Object.fromEntries(
     (companies ?? []).map((c) => [c.id, updateCompanyMemo.bind(null, c.id)]),
   );
+  const statusActions = Object.fromEntries(
+    (companies ?? []).map((c) => [c.id, quickAddStatusStage.bind(null, c.id)]),
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <h1 className="text-lg font-semibold text-slate-900">
             転職活動トラッカー
           </h1>
@@ -52,14 +55,18 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-8">
+      <main className="mx-auto max-w-6xl px-4 py-8">
         {error && (
           <p className="rounded-md bg-red-50 p-4 text-sm text-red-700">
             読み込みエラー: {error.message}
           </p>
         )}
         {!error && (
-          <DashboardView companies={companies ?? []} memoActions={memoActions} />
+          <DashboardView
+            companies={companies ?? []}
+            memoActions={memoActions}
+            statusActions={statusActions}
+          />
         )}
       </main>
     </div>

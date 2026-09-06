@@ -3,7 +3,7 @@ import type { StageResult } from "@/lib/database.types";
 // Keyed loosely (not a strict enum) since 選考ステージ名 is free text with
 // datalist suggestions, not a fixed set — unmapped values just fall back
 // to the default gray below.
-const STATUS_STYLES: Record<string, string> = {
+export const STATUS_STYLES: Record<string, string> = {
   検討中: "bg-slate-100 text-slate-700",
   カジュアル面談: "bg-slate-100 text-slate-700",
   書類選考: "bg-blue-100 text-blue-700",

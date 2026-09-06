@@ -190,6 +190,29 @@ export async function deleteCompany(companyId: string) {
 // 選考ステージがそのまま「現在のステータス」の情報源(computeCurrentStatus)
 // も兼ねるので、別立てのステータス履歴は持たない。
 
+// Quick pipeline update straight from the dashboard list (StatusSelect) —
+// adds a new undated stage entry, the lightweight equivalent of opening
+// the company and clicking "+ ステータスを追加". No date means no Google
+// Calendar sync, same as adding a stage without a date anywhere else.
+export async function quickAddStatusStage(companyId: string, stageName: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase.from("interview_stages").insert({
+    company_id: companyId,
+    user_id: user.id,
+    stage_name: stageName,
+  });
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+}
+
 export async function createStage(companyId: string, formData: FormData) {
   const supabase = await createClient();
   const {
