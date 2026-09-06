@@ -6,9 +6,10 @@ import type { CompanyMemo } from "@/lib/database.types";
 
 const COLLAPSED_COUNT = 2;
 
-// Company memos accumulate: every save adds a new dated entry instead of
-// overwriting the previous one, so this renders a small running log
-// (newest first) plus an add box, directly inline on the dashboard list.
+// タイムライン (company detail page only): every save adds a new dated
+// entry instead of overwriting the previous one, so this renders a small
+// running log (newest first) plus an add box. Separate from the
+// overwrite-style CompanyMemoBox ("その場のメモ").
 export function CompanyMemoLog({
   memos,
   onAdd,
@@ -35,7 +36,7 @@ export function CompanyMemoLog({
   };
 
   return (
-    <div className="mt-3 border-t border-slate-100 pt-2">
+    <div>
       <div className="flex items-start gap-2">
         <textarea
           value={draft}

@@ -71,12 +71,13 @@ export interface Company {
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;
+  memo: string | null; // その場のメモ(上書き保存)。蓄積したい記録は company_memos(タイムライン)へ
   created_at: string;
   updated_at: string;
 }
 
-// 一覧画面から書き込める会社ごとの自由記入メモ。1件保存するたびに新しい行が
-// 追加される(上書きではなく蓄積)。
+// 個別ページの「タイムライン」。companies.memo(その場のメモ、上書き)とは別枠
+// で、1件保存するたびに新しい行が追加される(蓄積)。
 export interface CompanyMemo {
   id: string;
   company_id: string;

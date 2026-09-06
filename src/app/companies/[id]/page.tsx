@@ -5,14 +5,17 @@ import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusBadge } from "@/components/StatusBadge";
 import { computeCurrentStatus } from "@/lib/currentStatus";
 import {
+  addCompanyMemo,
   createStage,
   deleteCompany,
+  deleteCompanyMemo,
   deleteStage,
   updateCompany,
+  updateCompanyMemo,
   updateStage,
   updateStageResult,
 } from "@/app/companies/actions";
-import type { InterviewStage } from "@/lib/database.types";
+import type { CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 export default async function CompanyDetailPage({
   params,
@@ -44,6 +47,12 @@ export default async function CompanyDetailPage({
     .eq("company_id", id)
     .returns<InterviewStage[]>();
 
+  const { data: memos } = await supabase
+    .from("company_memos")
+    .select("*")
+    .eq("company_id", id)
+    .returns<CompanyMemo[]>();
+
   const stageActions = Object.fromEntries(
     (stages ?? []).map((stage) => [
       stage.id,
@@ -71,11 +80,15 @@ export default async function CompanyDetailPage({
         <CompanyDetail
           company={company}
           stages={stages ?? []}
+          memos={memos ?? []}
           homeStation={homeStation}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           createStageAction={createStage.bind(null, id)}
           stageActions={stageActions}
+          updateMemoAction={updateCompanyMemo.bind(null, id)}
+          addTimelineEntryAction={addCompanyMemo.bind(null, id)}
+          deleteTimelineEntryAction={deleteCompanyMemo.bind(null, id)}
         />
       </main>
     </div>

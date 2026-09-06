@@ -6,9 +6,12 @@ import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
 import { CommuteInfo } from "@/components/CommuteInfo";
 import { StatusBadge } from "@/components/StatusBadge";
+import { CompanyMemoBox } from "@/components/CompanyMemoBox";
+import { CompanyMemoLog } from "@/components/CompanyMemoLog";
 import {
   formatRemoteDays,
   type Company,
+  type CompanyMemo,
   type InterviewStage,
   type StageResult,
 } from "@/lib/database.types";
@@ -17,14 +20,19 @@ import { computeCurrentStatus } from "@/lib/currentStatus";
 export function CompanyDetail({
   company,
   stages,
+  memos,
   homeStation,
   updateCompanyAction,
   deleteCompanyAction,
   createStageAction,
   stageActions,
+  updateMemoAction,
+  addTimelineEntryAction,
+  deleteTimelineEntryAction,
 }: {
   company: Company;
   stages: InterviewStage[];
+  memos: CompanyMemo[];
   homeStation: string | null;
   updateCompanyAction: (formData: FormData) => void;
   deleteCompanyAction: () => void;
@@ -37,6 +45,9 @@ export function CompanyDetail({
       setResult: (result: StageResult) => void;
     }
   >;
+  updateMemoAction: (memo: string) => void;
+  addTimelineEntryAction: (content: string) => void;
+  deleteTimelineEntryAction: (memoId: string) => void;
 }) {
   const [editingCompany, setEditingCompany] = useState(false);
   const [addingStage, setAddingStage] = useState(false);
@@ -188,6 +199,13 @@ export function CompanyDetail({
             </div>
           </dl>
         )}
+
+        <div className="mt-4 border-t border-slate-100 pt-3">
+          <p className="mb-1 text-xs text-slate-400">
+            メモ(その場の自由記入。一覧画面にも表示されます)
+          </p>
+          <CompanyMemoBox memo={company.memo} onSave={updateMemoAction} rows={2} />
+        </div>
       </section>
 
       <section>
@@ -248,6 +266,22 @@ export function CompanyDetail({
             );
           })}
         </ul>
+      </section>
+
+      <section>
+        <h2 className="mb-1 text-sm font-semibold text-slate-500">
+          タイムライン
+        </h2>
+        <p className="mb-4 text-xs text-slate-400">
+          保存するたびに1件ずつ蓄積される経過記録です(上のメモとは別に残ります)。
+        </p>
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <CompanyMemoLog
+            memos={memos}
+            onAdd={addTimelineEntryAction}
+            onDelete={deleteTimelineEntryAction}
+          />
+        </div>
       </section>
     </div>
   );

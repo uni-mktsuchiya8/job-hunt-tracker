@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
-import { addCompanyMemo, deleteCompanyMemo } from "@/app/companies/actions";
+import { updateCompanyMemo } from "@/app/companies/actions";
 import { DashboardView } from "@/components/DashboardView";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
+// company_memos (タイムライン) is fetched too even though the dashboard
+// doesn't display it, so the search box can also match timeline content.
 type CompanyWithStages = Company & {
   interview_stages: InterviewStage[];
   company_memos: CompanyMemo[];
@@ -22,11 +24,8 @@ export default async function DashboardPage() {
     .order("updated_at", { ascending: false })
     .returns<CompanyWithStages[]>();
 
-  const addMemoActions = Object.fromEntries(
-    (companies ?? []).map((c) => [c.id, addCompanyMemo.bind(null, c.id)]),
-  );
-  const deleteMemoActions = Object.fromEntries(
-    (companies ?? []).map((c) => [c.id, deleteCompanyMemo.bind(null, c.id)]),
+  const memoActions = Object.fromEntries(
+    (companies ?? []).map((c) => [c.id, updateCompanyMemo.bind(null, c.id)]),
   );
 
   return (
@@ -60,11 +59,7 @@ export default async function DashboardPage() {
           </p>
         )}
         {!error && (
-          <DashboardView
-            companies={companies ?? []}
-            addMemoActions={addMemoActions}
-            deleteMemoActions={deleteMemoActions}
-          />
+          <DashboardView companies={companies ?? []} memoActions={memoActions} />
         )}
       </main>
     </div>

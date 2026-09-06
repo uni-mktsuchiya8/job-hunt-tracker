@@ -109,9 +109,32 @@ export async function updateCompany(companyId: string, formData: FormData) {
   revalidatePath(`/companies/${companyId}`);
 }
 
-// Company memos accumulate rather than overwrite — each save from the
-// dashboard list adds a new row instead of replacing the previous note,
-// so the list becomes a running log per company.
+// The "その場のメモ" quick field — a single value that gets overwritten on
+// each save (not a log). Shown on both the dashboard list and the company
+// detail page via the same quick-save box, independent of the full edit
+// form. For an accumulating record, see addCompanyMemo/company_memos below.
+export async function updateCompanyMemo(companyId: string, memo: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const trimmed = memo.trim();
+  const { error } = await supabase
+    .from("companies")
+    .update({ memo: trimmed === "" ? null : trimmed })
+    .eq("id", companyId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+}
+
+// タイムライン: company memos accumulate rather than overwrite — each save
+// adds a new row instead of replacing the previous entry, so this becomes
+// a running log per company. Shown only on the company detail page.
 export async function addCompanyMemo(companyId: string, content: string) {
   const supabase = await createClient();
   const {
@@ -130,7 +153,7 @@ export async function addCompanyMemo(companyId: string, content: string) {
 
   if (error) throw new Error(error.message);
 
-  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
 }
 
 export async function deleteCompanyMemo(companyId: string, memoId: string) {
@@ -147,7 +170,6 @@ export async function deleteCompanyMemo(companyId: string, memoId: string) {
 
   if (error) throw new Error(error.message);
 
-  revalidatePath("/");
   revalidatePath(`/companies/${companyId}`);
 }
 

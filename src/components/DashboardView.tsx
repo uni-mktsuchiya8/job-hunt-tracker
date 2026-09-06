@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
-import { CompanyMemoLog } from "@/components/CompanyMemoLog";
+import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { formatDateTime } from "@/lib/format";
 import { computeCurrentStatus, statusRank } from "@/lib/currentStatus";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
@@ -61,6 +61,7 @@ function searchHaystack(company: CompanyWithStages): string {
     company.application_route,
     company.decision_notes,
     company.priority_reason,
+    company.memo,
     ...(company.company_memos ?? []).map((m) => m.content),
   ]
     .filter(Boolean)
@@ -70,12 +71,10 @@ function searchHaystack(company: CompanyWithStages): string {
 
 export function DashboardView({
   companies,
-  addMemoActions,
-  deleteMemoActions,
+  memoActions,
 }: {
   companies: CompanyWithStages[];
-  addMemoActions: Record<string, (content: string) => void>;
-  deleteMemoActions: Record<string, (memoId: string) => void>;
+  memoActions: Record<string, (memo: string) => void>;
 }) {
   const [view, setView] = useState<"list" | "calendar">("list");
   const [search, setSearch] = useState("");
@@ -240,11 +239,12 @@ export function DashboardView({
                     </div>
                   </Link>
 
-                  <CompanyMemoLog
-                    memos={company.company_memos ?? []}
-                    onAdd={(content) => addMemoActions[company.id]?.(content)}
-                    onDelete={(memoId) => deleteMemoActions[company.id]?.(memoId)}
-                  />
+                  <div className="mt-3 border-t border-slate-100 pt-2">
+                    <CompanyMemoBox
+                      memo={company.memo}
+                      onSave={(memo) => memoActions[company.id]?.(memo)}
+                    />
+                  </div>
                 </li>
               );
             })}

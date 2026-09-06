@@ -20,6 +20,7 @@ create table if not exists companies (
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
   application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
+  memo text,                -- その場のメモ(上書き保存・蓄積しない。蓄積したい場合は company_memos へ)
   status text not null default 'カジュアル面談', -- legacy column, unused by the app (現在のステータスは選考ステージから算出)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -43,8 +44,8 @@ create table if not exists interview_stages (
   updated_at timestamptz not null default now()
 );
 
--- 一覧画面から書き込める会社ごとの自由記入メモ。保存するたびに1件追加され、
--- 上書きではなく蓄積されていく(会社に対する経過メモの記録)。
+-- 個別ページの「タイムライン」。上の companies.memo(その場のメモ、上書き)とは
+-- 別枠で、保存するたびに1件追加され蓄積されていく経過記録。
 create table if not exists company_memos (
   id uuid primary key default gen_random_uuid(),
   company_id uuid not null references companies (id) on delete cascade,
@@ -86,6 +87,7 @@ create table if not exists google_calendar_connections (
 -- alter table interview_stages add column if not exists google_event_id text;
 -- alter table interview_stages add column if not exists duration_minutes int not null default 60;
 -- alter table interview_stages add column if not exists memo text;
+-- alter table companies add column if not exists memo text;
 -- 既存プロジェクトでは、上の create table 文はテーブルが無いときしか実行され
 -- ないため、company_memos テーブルを追加する場合は以下を実行してください:
 -- create table if not exists company_memos (
