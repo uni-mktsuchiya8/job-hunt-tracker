@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { formatDateTime } from "@/lib/format";
-import { computeCurrentStatus, statusRank } from "@/lib/currentStatus";
+import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 type CompanyWithStages = Company & {
@@ -79,6 +79,7 @@ export function DashboardView({
   const [view, setView] = useState<"list" | "calendar">("list");
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("updated");
+  const [statusFilter, setStatusFilter] = useState<string | "all">("all");
 
   const events: CalendarEvent[] = companies.flatMap((company) =>
     (company.interview_stages ?? [])
@@ -93,11 +94,39 @@ export function DashboardView({
       })),
   );
 
+  // Counts per current status, for the "すべて" + per-status tab bar
+  // (HERP Hire's selection-pipeline board, mirrored for the job seeker's
+  // own side: "which companies are at 一次面接 right now" etc.). Based on
+  // the full company set, not the search box, so tab counts stay stable
+  // while typing a search.
+  const statusCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const c of companies) {
+      const status = computeCurrentStatus(c.interview_stages ?? []);
+      counts.set(status, (counts.get(status) ?? 0) + 1);
+    }
+    return counts;
+  }, [companies]);
+
+  const statusTabs = useMemo(() => {
+    const known = STATUS_PROGRESSION.filter((s) => (statusCounts.get(s) ?? 0) > 0);
+    const custom = [...statusCounts.keys()].filter(
+      (s) => !STATUS_PROGRESSION.includes(s),
+    );
+    return [...known, ...custom];
+  }, [statusCounts]);
+
   const visibleCompanies = useMemo(() => {
     const query = search.trim().toLowerCase();
-    const filtered = query
+    let filtered = query
       ? companies.filter((c) => searchHaystack(c).includes(query))
       : companies;
+
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(
+        (c) => computeCurrentStatus(c.interview_stages ?? []) === statusFilter,
+      );
+    }
 
     if (sortKey === "updated") return filtered;
 
@@ -118,7 +147,7 @@ export function DashboardView({
       });
     }
     return sorted;
-  }, [companies, search, sortKey]);
+  }, [companies, search, sortKey, statusFilter]);
 
   return (
     <div>
@@ -157,6 +186,34 @@ export function DashboardView({
           + 会社を追加
         </Link>
       </div>
+
+      {view === "list" && (
+        <div className="mb-4 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          <button
+            onClick={() => setStatusFilter("all")}
+            className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
+              statusFilter === "all"
+                ? "border-slate-900 bg-slate-900 text-white"
+                : "border-slate-300 text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            すべて ({companies.length})
+          </button>
+          {statusTabs.map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
+                statusFilter === status
+                  ? "border-slate-900 bg-slate-900 text-white"
+                  : "border-slate-300 text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              {status} ({statusCounts.get(status) ?? 0})
+            </button>
+          ))}
+        </div>
+      )}
 
       {view === "list" && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
