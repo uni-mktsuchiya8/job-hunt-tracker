@@ -263,7 +263,7 @@ export function DashboardView({
               <path d="M13 13l4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <input
-              type="search"
+              type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="会社名・登録情報でサーチ"
