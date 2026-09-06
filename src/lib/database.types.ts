@@ -71,9 +71,18 @@ export interface Company {
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;
-  memo: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// 一覧画面から書き込める会社ごとの自由記入メモ。1件保存するたびに新しい行が
+// 追加される(上書きではなく蓄積)。
+export interface CompanyMemo {
+  id: string;
+  company_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
 }
 
 export interface InterviewStage {
@@ -119,6 +128,11 @@ export interface Database {
           stage_name: string;
         };
         Update: Partial<InterviewStage>;
+      };
+      company_memos: {
+        Row: CompanyMemo;
+        Insert: Partial<CompanyMemo> & { company_id: string; content: string };
+        Update: Partial<CompanyMemo>;
       };
     };
   };

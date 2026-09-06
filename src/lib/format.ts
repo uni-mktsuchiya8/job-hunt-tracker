@@ -10,6 +10,18 @@ export function formatDateTime(iso: string | null): string {
   }).format(date);
 }
 
+// Compact form for lists where formatDateTime()'s full "2026年9月6日" is
+// too wide (e.g. company memo timestamps).
+export function formatShortDateTime(iso: string): string {
+  const date = new Date(iso);
+  return new Intl.DateTimeFormat("ja-JP", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export function toDateTimeLocalValue(iso: string | null): string {
   if (!iso) return "";
   const date = new Date(iso);

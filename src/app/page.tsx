@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
-import { updateCompanyMemo } from "@/app/companies/actions";
+import { addCompanyMemo, deleteCompanyMemo } from "@/app/companies/actions";
 import { DashboardView } from "@/components/DashboardView";
-import type { Company, InterviewStage } from "@/lib/database.types";
+import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
-type CompanyWithStages = Company & { interview_stages: InterviewStage[] };
+type CompanyWithStages = Company & {
+  interview_stages: InterviewStage[];
+  company_memos: CompanyMemo[];
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -15,12 +18,15 @@ export default async function DashboardPage() {
 
   const { data: companies, error } = await supabase
     .from("companies")
-    .select("*, interview_stages(*)")
+    .select("*, interview_stages(*), company_memos(*)")
     .order("updated_at", { ascending: false })
     .returns<CompanyWithStages[]>();
 
-  const memoActions = Object.fromEntries(
-    (companies ?? []).map((c) => [c.id, updateCompanyMemo.bind(null, c.id)]),
+  const addMemoActions = Object.fromEntries(
+    (companies ?? []).map((c) => [c.id, addCompanyMemo.bind(null, c.id)]),
+  );
+  const deleteMemoActions = Object.fromEntries(
+    (companies ?? []).map((c) => [c.id, deleteCompanyMemo.bind(null, c.id)]),
   );
 
   return (
@@ -54,7 +60,11 @@ export default async function DashboardPage() {
           </p>
         )}
         {!error && (
-          <DashboardView companies={companies ?? []} memoActions={memoActions} />
+          <DashboardView
+            companies={companies ?? []}
+            addMemoActions={addMemoActions}
+            deleteMemoActions={deleteMemoActions}
+          />
         )}
       </main>
     </div>

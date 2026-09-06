@@ -20,7 +20,6 @@ create table if not exists companies (
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
   application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
-  memo text,                -- 一覧画面から直接書き込める自由記入メモ(決め手・懸念点とは別枠)
   status text not null default 'カジュアル面談', -- legacy column, unused by the app (現在のステータスは選考ステージから算出)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -42,6 +41,16 @@ create table if not exists interview_stages (
   google_event_id text,         -- 連携済みGoogleカレンダーの予定ID(自動同期用)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+-- 一覧画面から書き込める会社ごとの自由記入メモ。保存するたびに1件追加され、
+-- 上書きではなく蓄積されていく(会社に対する経過メモの記録)。
+create table if not exists company_memos (
+  id uuid primary key default gen_random_uuid(),
+  company_id uuid not null references companies (id) on delete cascade,
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  content text not null,
+  created_at timestamptz not null default now()
 );
 
 -- Googleカレンダー連携(OAuthのリフレッシュトークンを保存)。ユーザーごとに1行。
@@ -77,7 +86,21 @@ create table if not exists google_calendar_connections (
 -- alter table interview_stages add column if not exists google_event_id text;
 -- alter table interview_stages add column if not exists duration_minutes int not null default 60;
 -- alter table interview_stages add column if not exists memo text;
--- alter table companies add column if not exists memo text;
+-- 既存プロジェクトでは、上の create table 文はテーブルが無いときしか実行され
+-- ないため、company_memos テーブルを追加する場合は以下を実行してください:
+-- create table if not exists company_memos (
+--   id uuid primary key default gen_random_uuid(),
+--   company_id uuid not null references companies (id) on delete cascade,
+--   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+--   content text not null,
+--   created_at timestamptz not null default now()
+-- );
+-- alter table company_memos enable row level security;
+-- create policy "Users manage their own company memos"
+--   on company_memos for all
+--   using (auth.uid() = user_id)
+--   with check (auth.uid() = user_id);
+-- create index if not exists company_memos_company_id_idx on company_memos (company_id);
 -- Note: 選考ステータス(company.status)は使われなくなりました。「現在のステータス」は
 -- 選考ステージ一覧から自動計算されます(日程が一番新しいステージ名、無ければ最後に
 -- 追加したステージ名)。「選考日程・面接記録」と「ステータス履歴」を1つのセクションに
@@ -88,9 +111,11 @@ create table if not exists google_calendar_connections (
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);
 create index if not exists interview_stages_user_id_idx on interview_stages (user_id);
+create index if not exists company_memos_company_id_idx on company_memos (company_id);
 
 alter table companies enable row level security;
 alter table interview_stages enable row level security;
+alter table company_memos enable row level security;
 alter table google_calendar_connections enable row level security;
 
 create policy "Users manage their own companies"
@@ -100,6 +125,11 @@ create policy "Users manage their own companies"
 
 create policy "Users manage their own interview stages"
   on interview_stages for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users manage their own company memos"
+  on company_memos for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 

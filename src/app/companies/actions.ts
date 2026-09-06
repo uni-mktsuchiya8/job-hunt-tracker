@@ -67,7 +67,6 @@ export async function createCompany(formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
-      memo: str(formData, "memo"),
       status: "カジュアル面談", // legacy NOT NULL column — current status is derived from stages now
     })
     .select("id")
@@ -101,7 +100,6 @@ export async function updateCompany(companyId: string, formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: str(formData, "application_route"),
-      memo: str(formData, "memo"),
     })
     .eq("id", companyId);
 
@@ -111,24 +109,46 @@ export async function updateCompany(companyId: string, formData: FormData) {
   revalidatePath(`/companies/${companyId}`);
 }
 
-// Quick memo edit directly from the dashboard list — lets you jot a note
-// without opening the full edit form.
-export async function updateCompanyMemo(companyId: string, memo: string) {
+// Company memos accumulate rather than overwrite — each save from the
+// dashboard list adds a new row instead of replacing the previous note,
+// so the list becomes a running log per company.
+export async function addCompanyMemo(companyId: string, content: string) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const trimmed = memo.trim();
-  const { error } = await supabase
-    .from("companies")
-    .update({ memo: trimmed === "" ? null : trimmed })
-    .eq("id", companyId);
+  const trimmed = content.trim();
+  if (!trimmed) return;
+
+  const { error } = await supabase.from("company_memos").insert({
+    company_id: companyId,
+    user_id: user.id,
+    content: trimmed,
+  });
 
   if (error) throw new Error(error.message);
 
   revalidatePath("/");
+}
+
+export async function deleteCompanyMemo(companyId: string, memoId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("company_memos")
+    .delete()
+    .eq("id", memoId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
 }
 
 export async function deleteCompany(companyId: string) {

@@ -314,18 +314,6 @@ export function CompanyForm({
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
           />
         </div>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-slate-700">
-            メモ
-          </label>
-          <textarea
-            name="memo"
-            rows={2}
-            defaultValue={company?.memo ?? ""}
-            placeholder="自由記入(一覧画面からも編集できます)"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
-          />
-        </div>
       </fieldset>
 
       <div>

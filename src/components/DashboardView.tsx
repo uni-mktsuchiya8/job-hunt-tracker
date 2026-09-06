@@ -4,11 +4,15 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
+import { CompanyMemoLog } from "@/components/CompanyMemoLog";
 import { formatDateTime } from "@/lib/format";
 import { computeCurrentStatus, statusRank } from "@/lib/currentStatus";
-import type { Company, InterviewStage } from "@/lib/database.types";
+import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
-type CompanyWithStages = Company & { interview_stages: InterviewStage[] };
+type CompanyWithStages = Company & {
+  interview_stages: InterviewStage[];
+  company_memos: CompanyMemo[];
+};
 
 type SortKey = "updated" | "status" | "date";
 
@@ -57,7 +61,7 @@ function searchHaystack(company: CompanyWithStages): string {
     company.application_route,
     company.decision_notes,
     company.priority_reason,
-    company.memo,
+    ...(company.company_memos ?? []).map((m) => m.content),
   ]
     .filter(Boolean)
     .join(" ")
@@ -66,10 +70,12 @@ function searchHaystack(company: CompanyWithStages): string {
 
 export function DashboardView({
   companies,
-  memoActions,
+  addMemoActions,
+  deleteMemoActions,
 }: {
   companies: CompanyWithStages[];
-  memoActions: Record<string, (memo: string) => void>;
+  addMemoActions: Record<string, (content: string) => void>;
+  deleteMemoActions: Record<string, (memoId: string) => void>;
 }) {
   const [view, setView] = useState<"list" | "calendar">("list");
   const [search, setSearch] = useState("");
@@ -234,20 +240,11 @@ export function DashboardView({
                     </div>
                   </Link>
 
-                  <div className="mt-3 border-t border-slate-100 pt-2">
-                    <textarea
-                      key={`${company.id}:${company.memo ?? ""}`}
-                      defaultValue={company.memo ?? ""}
-                      onBlur={(e) => {
-                        if (e.target.value !== (company.memo ?? "")) {
-                          memoActions[company.id]?.(e.target.value);
-                        }
-                      }}
-                      rows={1}
-                      placeholder="メモ(自由記入)"
-                      className="w-full resize-y rounded-md border border-transparent px-2 py-1 text-xs text-slate-600 outline-none hover:border-slate-200 focus:border-slate-400 focus:bg-slate-50"
-                    />
-                  </div>
+                  <CompanyMemoLog
+                    memos={company.company_memos ?? []}
+                    onAdd={(content) => addMemoActions[company.id]?.(content)}
+                    onDelete={(memoId) => deleteMemoActions[company.id]?.(memoId)}
+                  />
                 </li>
               );
             })}
