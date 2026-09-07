@@ -32,22 +32,22 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-teal-50">
+      <header className="border-b border-zinc-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <h1 className="text-lg font-semibold text-slate-900">
+          <h1 className="text-lg font-semibold text-zinc-900">
             転職活動トラッカー
           </h1>
-          <div className="flex items-center gap-3 text-sm text-slate-500">
+          <div className="flex items-center gap-3 text-sm text-zinc-500">
             <span>{user?.email}</span>
             <Link
               href="/settings"
-              className="rounded-md border border-slate-300 px-3 py-1.5 hover:bg-slate-100"
+              className="rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-100"
             >
               設定
             </Link>
             <form action={signOut}>
-              <button className="rounded-md border border-slate-300 px-3 py-1.5 hover:bg-slate-100">
+              <button className="rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-100">
                 ログアウト
               </button>
             </form>

@@ -18,8 +18,8 @@ export function CommuteInfo({
 
   if (!homeStation) {
     return (
-      <p className="text-xs text-slate-400">
-        <Link href="/settings" className="text-emerald-700 hover:underline">
+      <p className="text-xs text-zinc-400">
+        <Link href="/settings" className="text-teal-700 hover:underline">
           自宅最寄り駅を設定
         </Link>
         すると、ここから経路を確認できます。
@@ -53,7 +53,7 @@ export function CommuteInfo({
 
   if (notConfigured) {
     return (
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-zinc-400">
         経路検索を使うには 駅すぱあと API の登録が必要です(README参照)。
       </p>
     );
@@ -65,7 +65,7 @@ export function CommuteInfo({
         type="button"
         onClick={handleCheckRoute}
         disabled={loading}
-        className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+        className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 disabled:opacity-60"
       >
         {loading
           ? "検索中..."

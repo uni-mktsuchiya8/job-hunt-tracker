@@ -104,8 +104,8 @@ export function JobPostingExtractor({
   const busy = urlLoading || ocrLoading;
 
   return (
-    <div className="rounded-md border border-dashed border-slate-300 p-3">
-      <p className="text-xs font-medium text-slate-500">
+    <div className="rounded-md border border-dashed border-zinc-300 p-3">
+      <p className="text-xs font-medium text-zinc-500">
         求人票から自動入力(キーワード抽出・要確認)
       </p>
 
@@ -115,20 +115,20 @@ export function JobPostingExtractor({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="求人票のURL"
-          className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-emerald-600"
+          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-teal-600"
         />
         <button
           type="button"
           onClick={handleUrlExtract}
           disabled={busy}
-          className="shrink-0 rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+          className="shrink-0 rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 disabled:opacity-60"
         >
           {urlLoading ? "取得中..." : "URLから取得"}
         </button>
       </div>
 
       <div className="mt-2 flex items-center gap-2">
-        <label className="shrink-0 cursor-pointer rounded-md border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100">
+        <label className="shrink-0 cursor-pointer rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100">
           {ocrLoading ? `読み取り中... ${ocrProgress}%` : "求人票のキャプチャ画像を選択"}
           <input
             type="file"
@@ -138,7 +138,7 @@ export function JobPostingExtractor({
             className="hidden"
           />
         </label>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-zinc-400">
           画像はブラウザ内で読み取るだけで保存・送信はされません
         </span>
       </div>

@@ -18,8 +18,8 @@ import {
 function InfoLine({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <p className="truncate">
-      <span className="text-slate-400">{label}: </span>
-      <span className="text-slate-700">{children}</span>
+      <span className="text-zinc-400">{label}: </span>
+      <span className="text-zinc-700">{children}</span>
     </p>
   );
 }
@@ -34,8 +34,8 @@ function InfoBlock({ label, value }: { label: string; value: string | null }) {
   }
   return (
     <div>
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="mt-0.5 whitespace-pre-wrap text-slate-700">{value}</p>
+      <p className="text-xs text-zinc-400">{label}</p>
+      <p className="mt-0.5 whitespace-pre-wrap text-zinc-700">{value}</p>
     </div>
   );
 }
@@ -66,14 +66,14 @@ export function CompanyDetail({
       {/* 選考ステータス(プルダウン)と最新の選考予定はページ上部、社名の
           隣に表示(companies/[id]/page.tsx側)。古い選考予定は /schedule
           ページに移した。 */}
-      <section className="rounded-lg border border-slate-200 bg-white p-6">
+      <section className="rounded-lg border border-zinc-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-500">会社情報</h2>
+          <h2 className="text-sm font-semibold text-zinc-500">会社情報</h2>
           <div className="flex gap-2">
             {!editingCompany && (
               <button
                 onClick={() => setEditingCompany(true)}
-                className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
+                className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100"
               >
                 編集
               </button>
@@ -111,7 +111,7 @@ export function CompanyDetail({
                     href={company.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-emerald-700 hover:underline"
+                    className="text-teal-700 hover:underline"
                   >
                     {company.website}
                   </a>
@@ -150,8 +150,8 @@ export function CompanyDetail({
           </div>
         )}
 
-        <div className="mt-4 border-t border-slate-100 pt-3">
-          <p className="mb-1 text-xs text-slate-400">
+        <div className="mt-4 border-t border-zinc-100 pt-3">
+          <p className="mb-1 text-xs text-zinc-400">
             メモ(その場の自由記入。一覧画面にも表示されます)
           </p>
           <CompanyMemoBox memo={company.memo} onSave={updateMemoAction} rows={2} />
@@ -159,13 +159,13 @@ export function CompanyDetail({
       </section>
 
       <section>
-        <h2 className="mb-1 text-sm font-semibold text-slate-500">
+        <h2 className="mb-1 text-sm font-semibold text-zinc-500">
           タイムライン
         </h2>
-        <p className="mb-4 text-xs text-slate-400">
+        <p className="mb-4 text-xs text-zinc-400">
           保存するたびに1件ずつ蓄積される経過記録です(上のメモとは別に残ります)。
         </p>
-        <div className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-zinc-200 bg-white p-4">
           <CompanyMemoLog
             memos={memos}
             onAdd={addTimelineEntryAction}

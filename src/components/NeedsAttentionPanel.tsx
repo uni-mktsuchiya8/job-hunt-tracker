@@ -25,7 +25,7 @@ export function NeedsAttentionPanel({ items }: { items: AttentionItem[] }) {
           <li key={item.companyId} className="text-sm">
             <Link
               href={`/companies/${item.companyId}`}
-              className="font-medium text-slate-900 hover:underline"
+              className="font-medium text-zinc-900 hover:underline"
             >
               {item.companyName}
             </Link>

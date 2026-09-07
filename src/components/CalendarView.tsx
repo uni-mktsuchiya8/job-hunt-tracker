@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ResultBadge } from "@/components/StatusBadge";
-import { brandGreenStyle } from "@/lib/brandColor";
+import { brandButtonStyle } from "@/lib/brandColor";
 import type { StageResult } from "@/lib/database.types";
 
 export type CalendarEvent = {
@@ -59,30 +59,30 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
     d.getDate() === today.getDate();
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
+    <div className="rounded-lg border border-zinc-200 bg-white p-4">
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
-          className="rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-600 hover:bg-slate-100"
+          className="rounded-md border border-zinc-300 px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100"
         >
           ←
         </button>
-        <h3 className="text-sm font-semibold text-slate-900">
+        <h3 className="text-sm font-semibold text-zinc-900">
           {year}年 {month + 1}月
         </h3>
         <button
           onClick={() => setCursor(new Date(year, month + 1, 1))}
-          className="rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-600 hover:bg-slate-100"
+          className="rounded-md border border-zinc-300 px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100"
         >
           →
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-md border border-slate-200 bg-slate-200 text-xs">
+      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-md border border-zinc-200 bg-zinc-200 text-xs">
         {WEEKDAYS.map((w) => (
           <div
             key={w}
-            className="bg-slate-50 px-2 py-1.5 text-center font-medium text-slate-500"
+            className="bg-zinc-50 px-2 py-1.5 text-center font-medium text-zinc-500"
           >
             {w}
           </div>
@@ -92,16 +92,16 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
           return (
             <div
               key={i}
-              className={`min-h-[6rem] bg-white p-1 align-top ${date ? "" : "bg-slate-50"}`}
+              className={`min-h-[6rem] bg-white p-1 align-top ${date ? "" : "bg-zinc-50"}`}
             >
               {date && (
                 <>
                   <span
-                    style={isToday(date) ? brandGreenStyle : undefined}
+                    style={isToday(date) ? brandButtonStyle : undefined}
                     className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] ${
                       isToday(date)
-                        ? "bg-emerald-700 font-semibold text-white"
-                        : "text-slate-500"
+                        ? "bg-teal-700 font-semibold text-white"
+                        : "text-zinc-500"
                     }`}
                   >
                     {date.getDate()}
@@ -111,7 +111,7 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
                       <li key={e.stageId}>
                         <Link
                           href={`/companies/${e.companyId}`}
-                          className="block truncate rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-700 hover:bg-slate-200"
+                          className="block truncate rounded bg-zinc-100 px-1.5 py-0.5 text-[11px] text-zinc-700 hover:bg-zinc-200"
                           title={`${e.companyName} - ${e.stageName}`}
                         >
                           {e.companyName} ・ {e.stageName}
@@ -127,13 +127,13 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
       </div>
 
       {events.length === 0 && (
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm text-zinc-500">
           日程が登録された選考はまだありません。
         </p>
       )}
 
       <div className="mt-4">
-        <h4 className="mb-2 text-xs font-medium text-slate-500">今月の予定一覧</h4>
+        <h4 className="mb-2 text-xs font-medium text-zinc-500">今月の予定一覧</h4>
         <ul className="space-y-1.5">
           {events
             .filter((e) => {
@@ -144,9 +144,9 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
               <li key={e.stageId}>
                 <Link
                   href={`/companies/${e.companyId}`}
-                  className="flex items-center justify-between gap-2 rounded-md border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50"
+                  className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 px-3 py-1.5 text-sm hover:bg-zinc-50"
                 >
-                  <span className="text-slate-700">
+                  <span className="text-zinc-700">
                     {new Date(e.scheduledAt).toLocaleString("ja-JP", {
                       month: "numeric",
                       day: "numeric",
@@ -154,7 +154,7 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
                       minute: "2-digit",
                     })}
                     {" "}
-                    <span className="font-medium text-slate-900">
+                    <span className="font-medium text-zinc-900">
                       {e.companyName}
                     </span>{" "}
                     {e.stageName}

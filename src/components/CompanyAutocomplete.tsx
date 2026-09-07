@@ -157,14 +157,14 @@ export function CompanyAutocomplete({
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+        className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
       />
 
       {showDropdown && (
-        <div className="absolute z-10 mt-1 w-full rounded-md border border-slate-200 bg-white shadow-lg">
+        <div className="absolute z-10 mt-1 w-full rounded-md border border-zinc-200 bg-white shadow-lg">
           {ownMatches.length > 0 && (
             <div>
-              <p className="px-3 pt-2 text-[11px] font-medium text-slate-400">
+              <p className="px-3 pt-2 text-[11px] font-medium text-zinc-400">
                 登録済みの会社
               </p>
               <ul>
@@ -177,11 +177,11 @@ export function CompanyAutocomplete({
                         setOpen(false);
                         onSelect({ name: c.name, website: c.website ?? "" });
                       }}
-                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50"
+                      className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-zinc-50"
                     >
-                      <span className="text-slate-900">{c.name}</span>
+                      <span className="text-zinc-900">{c.name}</span>
                       {c.website && (
-                        <span className="truncate text-xs text-slate-400">
+                        <span className="truncate text-xs text-zinc-400">
                           {c.website}
                         </span>
                       )}
@@ -194,14 +194,14 @@ export function CompanyAutocomplete({
 
           {ntaConfigured && (
             <div>
-              <p className="px-3 pt-2 text-[11px] font-medium text-slate-400">
+              <p className="px-3 pt-2 text-[11px] font-medium text-zinc-400">
                 国税庁 法人番号(公式・前株/後株を区別せず検索・URLなし)
               </p>
               {ntaLoading && (
-                <p className="px-3 py-2 text-xs text-slate-400">検索中...</p>
+                <p className="px-3 py-2 text-xs text-zinc-400">検索中...</p>
               )}
               {!ntaLoading && ntaSuggestions.length === 0 && (
-                <p className="px-3 py-2 text-xs text-slate-400">
+                <p className="px-3 py-2 text-xs text-zinc-400">
                   候補が見つかりません。
                 </p>
               )}
@@ -215,10 +215,10 @@ export function CompanyAutocomplete({
                         setOpen(false);
                         onSelect({ name: c.name, website: "" });
                       }}
-                      className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-slate-50"
+                      className="flex w-full flex-col px-3 py-2 text-left text-sm hover:bg-zinc-50"
                     >
-                      <span className="text-slate-900">{c.name}</span>
-                      <span className="truncate text-xs text-slate-400">
+                      <span className="text-zinc-900">{c.name}</span>
+                      <span className="truncate text-xs text-zinc-400">
                         {c.prefecture}
                         {c.city}
                         {c.streetNumber}
@@ -231,14 +231,14 @@ export function CompanyAutocomplete({
           )}
 
           <div>
-            <p className="px-3 pt-2 text-[11px] font-medium text-slate-400">
+            <p className="px-3 pt-2 text-[11px] font-medium text-zinc-400">
               Web検索候補(参考・URL自動入力用)
             </p>
             {webLoading && (
-              <p className="px-3 py-2 text-xs text-slate-400">検索中...</p>
+              <p className="px-3 py-2 text-xs text-zinc-400">検索中...</p>
             )}
             {!webLoading && webSuggestions.length === 0 && (
-              <p className="px-3 py-2 text-xs text-slate-400">
+              <p className="px-3 py-2 text-xs text-zinc-400">
                 候補が見つかりません。そのまま手入力できます。
               </p>
             )}
@@ -255,10 +255,10 @@ export function CompanyAutocomplete({
                         website: `https://${s.domain}`,
                       });
                     }}
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-slate-50"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-zinc-50"
                   >
-                    <span className="text-slate-900">{s.name}</span>
-                    <span className="truncate text-xs text-slate-400">
+                    <span className="text-zinc-900">{s.name}</span>
+                    <span className="truncate text-xs text-zinc-400">
                       {s.domain}
                     </span>
                   </button>

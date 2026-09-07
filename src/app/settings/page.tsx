@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { HomeStationForm } from "@/components/HomeStationForm";
 import { disconnectGoogleCalendar } from "@/app/settings/actions";
-import { brandGreenStyle } from "@/lib/brandColor";
+import { brandButtonStyle } from "@/lib/brandColor";
 import { BackToListLink } from "@/components/BackToListLink";
 
 const GOOGLE_MESSAGES: Record<string, { text: string; tone: "ok" | "error" }> = {
@@ -40,21 +40,21 @@ export default async function SettingsPage({
   const googleMessage = google ? GOOGLE_MESSAGES[google] : null;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-teal-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
         <BackToListLink />
-        <h1 className="mt-2 mb-6 text-xl font-semibold text-slate-900">設定</h1>
+        <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">設定</h1>
 
         <div className="space-y-6">
-          <div className="rounded-lg border border-slate-200 bg-white p-6">
+          <div className="rounded-lg border border-zinc-200 bg-white p-6">
             <HomeStationForm homeStation={homeStation} />
           </div>
 
-          <div className="rounded-lg border border-slate-200 bg-white p-6">
-            <h2 className="text-sm font-medium text-slate-700">
+          <div className="rounded-lg border border-zinc-200 bg-white p-6">
+            <h2 className="text-sm font-medium text-zinc-700">
               Googleカレンダー連携
             </h2>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-zinc-400">
               選考予定の日程を、自動でGoogleカレンダーに反映します。
             </p>
 
@@ -71,7 +71,7 @@ export default async function SettingsPage({
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-emerald-600">✓ 連携済み</span>
                   <form action={disconnectGoogleCalendar}>
-                    <button className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100">
+                    <button className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100">
                       連携を解除
                     </button>
                   </form>
@@ -79,8 +79,8 @@ export default async function SettingsPage({
               ) : (
                 <a
                   href="/api/auth/google/start"
-                  style={brandGreenStyle}
-                  className="inline-block rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
+                  style={brandButtonStyle}
+                  className="inline-block rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-600"
                 >
                   Googleカレンダーと連携する
                 </a>

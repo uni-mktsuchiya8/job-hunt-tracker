@@ -25,7 +25,7 @@ export function AddToGoogleCalendarLink({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-xs text-emerald-700 hover:underline"
+      className="text-xs text-teal-700 hover:underline"
     >
       Googleカレンダーに追加
     </a>

@@ -8,7 +8,7 @@ import { StatusSelect } from "@/components/StatusSelect";
 import { NeedsAttentionPanel, type AttentionItem } from "@/components/NeedsAttentionPanel";
 import { formatDateTime } from "@/lib/format";
 import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
-import { brandGreenStyle } from "@/lib/brandColor";
+import { brandButtonStyle } from "@/lib/brandColor";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 type CompanyWithStages = Company & {
@@ -226,28 +226,28 @@ export function DashboardView({
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="text-sm font-medium text-slate-500">
+          <h2 className="text-sm font-medium text-zinc-500">
             {companies.length} 社を記録中
           </h2>
-          <div className="flex rounded-md border border-slate-300 text-xs">
+          <div className="flex rounded-md border border-zinc-300 text-xs">
             <button
               onClick={() => setView("list")}
-              style={view === "list" ? brandGreenStyle : undefined}
+              style={view === "list" ? brandButtonStyle : undefined}
               className={`rounded-l-md px-3 py-1.5 ${
                 view === "list"
-                  ? "bg-emerald-700 text-white"
-                  : "text-slate-600 hover:bg-slate-100"
+                  ? "bg-teal-700 text-white"
+                  : "text-zinc-600 hover:bg-zinc-100"
               }`}
             >
               リスト
             </button>
             <button
               onClick={() => setView("calendar")}
-              style={view === "calendar" ? brandGreenStyle : undefined}
-              className={`rounded-r-md border-l border-slate-300 px-3 py-1.5 ${
+              style={view === "calendar" ? brandButtonStyle : undefined}
+              className={`rounded-r-md border-l border-zinc-300 px-3 py-1.5 ${
                 view === "calendar"
-                  ? "bg-emerald-700 text-white"
-                  : "text-slate-600 hover:bg-slate-100"
+                  ? "bg-teal-700 text-white"
+                  : "text-zinc-600 hover:bg-zinc-100"
               }`}
             >
               カレンダー
@@ -256,8 +256,8 @@ export function DashboardView({
         </div>
         <Link
           href="/companies/new"
-          style={brandGreenStyle}
-          className="flex items-center gap-1.5 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-600"
+          style={brandButtonStyle}
+          className="flex items-center gap-1.5 rounded-md bg-teal-700 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600"
         >
           <span className="text-base leading-none">＋</span> 会社を追加
         </Link>
@@ -272,11 +272,11 @@ export function DashboardView({
         <div className="mb-4 flex flex-wrap gap-2">
           <button
             onClick={() => setStatusFilter("all")}
-            style={statusFilter === "all" ? brandGreenStyle : undefined}
+            style={statusFilter === "all" ? brandButtonStyle : undefined}
             className={`rounded-full border px-3 py-1 text-xs font-medium ${
               statusFilter === "all"
-                ? "border-emerald-700 bg-emerald-700 text-white"
-                : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                ? "border-teal-700 bg-teal-700 text-white"
+                : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
             }`}
           >
             すべて ({companies.length})
@@ -285,11 +285,11 @@ export function DashboardView({
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
-              style={statusFilter === status ? brandGreenStyle : undefined}
+              style={statusFilter === status ? brandButtonStyle : undefined}
               className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
                 statusFilter === status
-                  ? "border-emerald-700 bg-emerald-700 text-white"
-                  : "border-slate-300 text-slate-600 hover:bg-slate-100"
+                  ? "border-teal-700 bg-teal-700 text-white"
+                  : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
               }`}
             >
               {status} ({statusCounts.get(status) ?? 0})
@@ -303,7 +303,7 @@ export function DashboardView({
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-teal-600"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -317,7 +317,7 @@ export function DashboardView({
               fill="none"
               width={16}
               height={16}
-              className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-zinc-400"
             >
               <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" strokeWidth="1.5" />
               <path d="M13 13l4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -327,15 +327,15 @@ export function DashboardView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="会社名・登録情報でサーチ"
-              className="w-full rounded-md border border-slate-300 py-1.5 pr-3 pl-8 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="w-full rounded-md border border-zinc-300 py-1.5 pr-3 pl-8 text-sm text-zinc-900 outline-none focus:border-teal-600"
             />
           </div>
-          <label className="flex shrink-0 items-center gap-1.5 text-xs text-slate-600">
+          <label className="flex shrink-0 items-center gap-1.5 text-xs text-zinc-600">
             <input
               type="checkbox"
               checked={onlyNoUpcoming}
               onChange={(e) => setOnlyNoUpcoming(e.target.checked)}
-              className="rounded border-slate-300 accent-emerald-700"
+              className="rounded border-zinc-300 accent-teal-700"
             />
             次の選考予定がない会社のみ表示する
           </label>
@@ -347,20 +347,20 @@ export function DashboardView({
       ) : (
         <>
           {companies.length === 0 && (
-            <div className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">
+            <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">
               まだ記録がありません。「+ 会社を追加」から始めましょう。
             </div>
           )}
           {companies.length > 0 && visibleCompanies.length === 0 && (
-            <div className="rounded-lg border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">
+            <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">
               条件に一致する会社がありません。
             </div>
           )}
           {visibleCompanies.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+            <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
               <table className="w-full min-w-[52rem] text-sm">
                 <thead>
-                  <tr className="border-b border-slate-200 text-left text-xs text-slate-400">
+                  <tr className="border-b border-zinc-200 text-left text-xs text-zinc-400">
                     <th className="px-4 py-2 font-medium">会社</th>
                     <th className="px-4 py-2 font-medium">応募経路</th>
                     <th className="px-4 py-2 font-medium">選考ステータス</th>
@@ -375,10 +375,10 @@ export function DashboardView({
                     return (
                       <tr
                         key={company.id}
-                        className="border-b border-slate-100 align-top last:border-0"
+                        className="border-b border-zinc-100 align-top last:border-0"
                       >
                         <td className="px-4 py-3">
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-zinc-400">
                             {formatShortDate(company.created_at)} 登録
                           </p>
                           <div className="flex items-center gap-1.5">
@@ -389,13 +389,13 @@ export function DashboardView({
                             )}
                             <Link
                               href={`/companies/${company.id}`}
-                              className="font-medium text-slate-900 hover:underline"
+                              className="font-medium text-zinc-900 hover:underline"
                             >
                               {company.name}
                             </Link>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-slate-600">
+                        <td className="px-4 py-3 text-zinc-600">
                           {company.application_route || "-"}
                         </td>
                         <td className="px-4 py-3">
@@ -409,15 +409,15 @@ export function DashboardView({
                         <td className="px-4 py-3 text-xs">
                           {next ? (
                             <>
-                              <p className="font-medium text-slate-700">
+                              <p className="font-medium text-zinc-700">
                                 {next.stage_name}
                               </p>
-                              <p className="text-slate-500">
+                              <p className="text-zinc-500">
                                 {formatDateTime(next.scheduled_at)}
                               </p>
                             </>
                           ) : (
-                            <span className="text-slate-400">なし</span>
+                            <span className="text-zinc-400">なし</span>
                           )}
                         </td>
                         <td className="px-4 py-3">

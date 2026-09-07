@@ -46,14 +46,14 @@ export default async function CompanyScheduleHistoryPage({
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-teal-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
         <BackToListLink />
         <div className="mt-2 mb-6">
-          <h1 className="text-xl font-semibold text-slate-900">
+          <h1 className="text-xl font-semibold text-zinc-900">
             {company.name}
           </h1>
-          <p className="text-sm text-slate-500">すべての選考予定</p>
+          <p className="text-sm text-zinc-500">すべての選考予定</p>
         </div>
 
         <StageSection

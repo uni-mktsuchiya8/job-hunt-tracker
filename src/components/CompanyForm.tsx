@@ -10,7 +10,7 @@ import {
   type Company,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
-import { brandGreenStyle } from "@/lib/brandColor";
+import { brandButtonStyle } from "@/lib/brandColor";
 import { HOURS, MINUTES } from "@/lib/timeOptions";
 
 export function CompanyForm({
@@ -104,7 +104,7 @@ export function CompanyForm({
   return (
     <form action={action} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-slate-700">
+        <label className="block text-sm font-medium text-zinc-700">
           会社名 *
         </label>
         <CompanyAutocomplete
@@ -113,13 +113,13 @@ export function CompanyForm({
           excludeId={company?.id}
           onSelect={(s) => setWebsite(s.website)}
         />
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-xs text-zinc-400">
           「株式会社」の前株・後株は区別せず検索します。見つからない場合はそのまま手入力できます。
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700">
+        <label className="block text-sm font-medium text-zinc-700">
           会社情報
         </label>
         <textarea
@@ -128,12 +128,12 @@ export function CompanyForm({
           value={info}
           onChange={(e) => setInfo(e.target.value)}
           placeholder="業界、事業内容、規模、社風など"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+          className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700">
+        <label className="block text-sm font-medium text-zinc-700">
           企業サイト URL
         </label>
         <div className="mt-1 flex gap-2">
@@ -143,13 +143,13 @@ export function CompanyForm({
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
             placeholder="https://..."
-            className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
           />
           <button
             type="button"
             onClick={handleExtractFromUrl}
             disabled={extracting}
-            className="shrink-0 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+            className="shrink-0 rounded-md border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 disabled:opacity-60"
           >
             {extracting ? "取得中..." : "ページから会社名を取得"}
           </button>
@@ -159,8 +159,8 @@ export function CompanyForm({
         )}
       </div>
 
-      <fieldset className="space-y-4 rounded-md border border-slate-200 p-3">
-        <legend className="px-1 text-xs font-medium text-slate-500">
+      <fieldset className="space-y-4 rounded-md border border-zinc-200 p-3">
+        <legend className="px-1 text-xs font-medium text-zinc-500">
           募集条件
         </legend>
 
@@ -168,7 +168,7 @@ export function CompanyForm({
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               年収
             </label>
             <input
@@ -176,11 +176,11 @@ export function CompanyForm({
               value={salary}
               onChange={(e) => setSalary(e.target.value)}
               placeholder="例: 500万〜700万円"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               勤務地
             </label>
             <div className="mt-1 flex gap-2">
@@ -189,13 +189,13 @@ export function CompanyForm({
                 value={workLocation}
                 onChange={(e) => setWorkLocation(e.target.value)}
                 placeholder="例: 東京都渋谷区"
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
               />
               <button
                 type="button"
                 onClick={handleFindStation}
                 disabled={stationLoading}
-                className="shrink-0 rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-60"
+                className="shrink-0 rounded-md border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100 disabled:opacity-60"
               >
                 {stationLoading ? "検索中..." : "最寄駅を取得"}
               </button>
@@ -206,7 +206,7 @@ export function CompanyForm({
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-sm font-medium text-zinc-700">
             最寄駅
           </label>
           <input
@@ -214,18 +214,18 @@ export function CompanyForm({
             value={nearestStation}
             onChange={(e) => setNearestStation(e.target.value)}
             placeholder="例: 渋谷"
-            className="mt-1 w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-sm font-medium text-zinc-700">
             リモート可能日数(週あたり)
           </label>
           <select
             name="remote_type"
             value={remoteType}
             onChange={(e) => setRemoteType(e.target.value)}
-            className="mt-1 w-full max-w-[14rem] rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            className="mt-1 w-full max-w-[14rem] rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
           >
             <option value="">未選択</option>
             {REMOTE_DAYS_OPTIONS.map((r) => (
@@ -237,30 +237,30 @@ export function CompanyForm({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               福利厚生
             </label>
             <input
               name="benefits"
               defaultValue={company?.benefits ?? ""}
               placeholder="例: 家賃補助、住宅手当、退職金制度"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               残業時間の目安
             </label>
             <input
               name="overtime_hours"
               defaultValue={company?.overtime_hours ?? ""}
               placeholder="例: 月20時間程度"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
             />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-sm font-medium text-zinc-700">
             求人要件(その他詳細)
           </label>
           <textarea
@@ -269,18 +269,18 @@ export function CompanyForm({
             value={jobRequirements}
             onChange={(e) => setJobRequirements(e.target.value)}
             placeholder="必須スキル、募集要項の貼り付けなど"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
           />
         </div>
       </fieldset>
 
-      <fieldset className="rounded-md border border-slate-200 p-3">
-        <legend className="px-1 text-xs font-medium text-slate-500">
+      <fieldset className="rounded-md border border-zinc-200 p-3">
+        <legend className="px-1 text-xs font-medium text-zinc-500">
           志望度・検討メモ
         </legend>
         <div className="grid grid-cols-[8rem_1fr] gap-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               志望順位
             </label>
             <input
@@ -289,11 +289,11 @@ export function CompanyForm({
               min={1}
               defaultValue={company?.priority_rank ?? ""}
               placeholder="例: 1"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               志望理由
             </label>
             <textarea
@@ -301,12 +301,12 @@ export function CompanyForm({
               rows={2}
               defaultValue={company?.priority_reason ?? ""}
               placeholder="なぜこの順位なのか"
-              className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
             />
           </div>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-sm font-medium text-zinc-700">
             決め手・懸念点
           </label>
           <textarea
@@ -314,19 +314,19 @@ export function CompanyForm({
             rows={3}
             defaultValue={company?.decision_notes ?? ""}
             placeholder="入社を判断する上で気になっている点、後で比較したいポイントなど"
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
           />
         </div>
       </fieldset>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700">
+        <label className="block text-sm font-medium text-zinc-700">
           応募経路
         </label>
         <select
           name="application_route"
           defaultValue={company?.application_route ?? ""}
-          className="mt-1 w-full max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+          className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
         >
           <option value="">選択してください</option>
           {APPLICATION_ROUTES.map((r) => (
@@ -335,27 +335,27 @@ export function CompanyForm({
             </option>
           ))}
         </select>
-        <p className="mt-1 text-xs text-slate-400">
+        <p className="mt-1 text-xs text-zinc-400">
           選考の進み具合は下の「選考予定」で管理します。
         </p>
       </div>
 
       {!company && (
-        <fieldset className="space-y-3 rounded-md border border-slate-200 p-3">
-          <legend className="px-1 text-xs font-medium text-slate-500">
+        <fieldset className="space-y-3 rounded-md border border-zinc-200 p-3">
+          <legend className="px-1 text-xs font-medium text-zinc-500">
             選考ステータス・選考予定(任意)
           </legend>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-zinc-400">
             すでに選考が始まっている場合は、ここで最初の選考予定を一緒に登録できます。あとから追加・変更も可能です。
           </p>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               選考ステータス
             </label>
             <select
               name="initial_stage_name"
               defaultValue=""
-              className="mt-1 w-full max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
             >
               <option value="">登録しない(あとで追加)</option>
               {STAGE_NAME_SUGGESTIONS.map((s) => (
@@ -366,19 +366,19 @@ export function CompanyForm({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-zinc-700">
               選考予定日時
             </label>
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <input
                 name="initial_scheduled_date"
                 type="date"
-                className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+                className="rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
               />
               <select
                 name="initial_scheduled_hour"
                 defaultValue="10"
-                className="rounded-md border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+                className="rounded-md border border-zinc-300 bg-white px-2 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
               >
                 {HOURS.map((h) => (
                   <option key={h} value={h}>
@@ -389,7 +389,7 @@ export function CompanyForm({
               <select
                 name="initial_scheduled_minute"
                 defaultValue="00"
-                className="rounded-md border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+                className="rounded-md border border-zinc-300 bg-white px-2 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
               >
                 {MINUTES.map((m) => (
                   <option key={m} value={m}>
@@ -398,7 +398,7 @@ export function CompanyForm({
                 ))}
               </select>
             </div>
-            <p className="mt-1 text-[11px] text-slate-400">
+            <p className="mt-1 text-[11px] text-zinc-400">
               選考ステータスを選んだ場合のみ使われます。日程は空欄でも構いません。
             </p>
           </div>
@@ -407,8 +407,8 @@ export function CompanyForm({
 
       <button
         type="submit"
-        style={brandGreenStyle}
-        className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
+        style={brandButtonStyle}
+        className="rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-600"
       >
         {submitLabel}
       </button>

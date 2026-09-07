@@ -24,7 +24,7 @@ export function StatusSelect({
         if (e.target.value !== value) onChange(e.target.value);
       }}
       className={`rounded-md border-0 px-2 py-1 text-xs font-medium outline-none ${
-        STATUS_STYLES[value] ?? "bg-slate-100 text-slate-700"
+        STATUS_STYLES[value] ?? "bg-zinc-100 text-zinc-700"
       }`}
     >
       {/* 検討中(まだ選考予定が無い状態)とカスタム入力は選択肢に無いが、

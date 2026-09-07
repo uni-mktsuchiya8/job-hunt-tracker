@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { formatShortDateTime } from "@/lib/format";
-import { brandGreenStyle } from "@/lib/brandColor";
+import { brandButtonStyle } from "@/lib/brandColor";
 import type { CompanyMemo } from "@/lib/database.types";
 
 const COLLAPSED_COUNT = 2;
@@ -50,14 +50,14 @@ export function CompanyMemoLog({
           }}
           rows={1}
           placeholder="メモを追加(Cmd/Ctrl+Enterでも保存)"
-          className="w-full resize-y rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-700 outline-none focus:border-slate-400 focus:bg-slate-50"
+          className="w-full resize-y rounded-md border border-zinc-200 px-2 py-1 text-xs text-zinc-700 outline-none focus:border-zinc-400 focus:bg-zinc-50"
         />
         <button
           type="button"
           onClick={submit}
           disabled={!draft.trim()}
-          style={draft.trim() ? brandGreenStyle : undefined}
-          className="shrink-0 rounded-md bg-emerald-700 px-2.5 py-1 text-xs font-medium text-white hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-slate-300"
+          style={draft.trim() ? brandButtonStyle : undefined}
+          className="shrink-0 rounded-md bg-teal-700 px-2.5 py-1 text-xs font-medium text-white hover:bg-teal-600 disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           保存
         </button>
@@ -68,20 +68,20 @@ export function CompanyMemoLog({
           {visible.map((memo) => (
             <li
               key={memo.id}
-              className="group flex items-start justify-between gap-2 rounded-md bg-slate-50 px-2 py-1 text-xs"
+              className="group flex items-start justify-between gap-2 rounded-md bg-zinc-50 px-2 py-1 text-xs"
             >
               <div className="min-w-0">
-                <span className="mr-1.5 text-slate-400">
+                <span className="mr-1.5 text-zinc-400">
                   {formatShortDateTime(memo.created_at)}
                 </span>
-                <span className="whitespace-pre-wrap text-slate-700">
+                <span className="whitespace-pre-wrap text-zinc-700">
                   {memo.content}
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => onDelete(memo.id)}
-                className="shrink-0 text-slate-300 opacity-0 hover:text-red-600 group-hover:opacity-100"
+                className="shrink-0 text-zinc-300 opacity-0 hover:text-red-600 group-hover:opacity-100"
                 aria-label="メモを削除"
               >
                 ×
@@ -95,7 +95,7 @@ export function CompanyMemoLog({
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="mt-1 text-xs text-slate-400 hover:text-slate-600"
+          className="mt-1 text-xs text-zinc-400 hover:text-zinc-600"
         >
           ▸ 過去のメモ{hiddenCount}件を表示
         </button>
@@ -104,7 +104,7 @@ export function CompanyMemoLog({
         <button
           type="button"
           onClick={() => setExpanded(false)}
-          className="mt-1 text-xs text-slate-400 hover:text-slate-600"
+          className="mt-1 text-xs text-zinc-400 hover:text-zinc-600"
         >
           ▾ 閉じる
         </button>

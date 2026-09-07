@@ -7,7 +7,7 @@ import Link from "next/link";
 // page, not all the way to "/").
 export function BackToListLink() {
   return (
-    <Link href="/" className="text-sm text-slate-500 hover:text-slate-800">
+    <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-800">
       ← 一覧に戻る
     </Link>
   );
