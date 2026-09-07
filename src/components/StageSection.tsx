@@ -17,6 +17,7 @@ export function StageSection({
   stages,
   stageActions,
   createStageAction,
+  initialEditStageId,
 }: {
   companyId: string;
   companyName: string;
@@ -30,6 +31,9 @@ export function StageSection({
     }
   >;
   createStageAction: (formData: FormData) => void;
+  // 会社ページの「選考予定」欄の編集リンクから ?edit=<stageId> で飛んできた
+  // 場合、そのカードだけ最初から編集モードで開く。
+  initialEditStageId?: string;
 }) {
   const [addingStage, setAddingStage] = useState(false);
 
@@ -84,6 +88,7 @@ export function StageSection({
               companyName={companyName}
               onUpdate={actions.update}
               onResultChange={actions.setResult}
+              startEditing={stage.id === initialEditStageId}
               onDelete={() => {
                 if (confirm(`「${stage.stage_name}」を削除しますか?`)) {
                   actions.delete();

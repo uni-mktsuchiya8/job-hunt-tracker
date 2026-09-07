@@ -3,24 +3,23 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusSelect } from "@/components/StatusSelect";
+import { ResultSelect } from "@/components/ResultSelect";
 import { BackToListLink } from "@/components/BackToListLink";
 import { computeCurrentStatus, sortStagesNewestFirst } from "@/lib/currentStatus";
 import { elapsedDays, formatDateTime } from "@/lib/format";
 import {
   addCompanyMemo,
-  addCompanyTagByName,
   deleteCompany,
   deleteCompanyMemo,
   quickAddStatusStage,
-  removeCompanyTag,
   updateCompany,
   updateCompanyMemo,
+  updateStageResult,
 } from "@/app/companies/actions";
 import type {
   ApplicationRoute,
   CompanyMemo,
   InterviewStage,
-  Tag,
 } from "@/lib/database.types";
 
 export default async function CompanyDetailPage({
@@ -65,20 +64,6 @@ export default async function CompanyDetailPage({
     .order("name")
     .returns<ApplicationRoute[]>();
 
-  const { data: companyTagRows } = await supabase
-    .from("company_tags")
-    .select("tags(*)")
-    .eq("company_id", id)
-    .returns<{ tags: Tag }[]>();
-  const tags = (companyTagRows ?? []).map((row) => row.tags).filter(Boolean);
-
-  const { data: allTags } = await supabase
-    .from("tags")
-    .select("name")
-    .order("name")
-    .returns<{ name: string }[]>();
-  const allTagNames = (allTags ?? []).map((t) => t.name);
-
   const latestStage = sortStagesNewestFirst(stages ?? [])[0] ?? null;
 
   return (
@@ -114,20 +99,38 @@ export default async function CompanyDetailPage({
                   onChange={quickAddStatusStage.bind(null, id)}
                 />
               </div>
-              {/* 選考予定(選考ステップ)を選考ステータスの隣に、同じ箱型で表示 */}
+              {/* 選考予定(選考ステップ)を選考ステータスの隣に、同じ箱型で表示。
+                  最新1件については、この場で結果を選び直せるほか、日程など
+                  を編集したい場合は /schedule の該当カードへ直接飛べる。 */}
               <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
                 <p className="text-[11px] text-zinc-400">選考予定</p>
-                <p className="text-sm text-zinc-700">
-                  {latestStage
-                    ? `${latestStage.stage_name} ・ ${formatDateTime(latestStage.scheduled_at)}`
-                    : "選考予定なし"}
-                </p>
-                <Link
-                  href={`/companies/${id}/schedule`}
-                  className="text-xs text-green-700 hover:underline"
-                >
-                  すべて見る →
-                </Link>
+                {latestStage ? (
+                  <>
+                    <p className="text-sm text-zinc-700">
+                      {latestStage.stage_name} ・ {formatDateTime(latestStage.scheduled_at)}
+                    </p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <ResultSelect
+                        value={latestStage.result}
+                        onChange={updateStageResult.bind(null, id, latestStage.id)}
+                      />
+                      <Link
+                        href={`/companies/${id}/schedule?edit=${latestStage.id}#stage-${latestStage.id}`}
+                        className="text-xs text-green-700 hover:underline"
+                      >
+                        編集
+                      </Link>
+                    </div>
+                    <Link
+                      href={`/companies/${id}/schedule`}
+                      className="text-xs text-green-700 hover:underline"
+                    >
+                      すべて見る →
+                    </Link>
+                  </>
+                ) : (
+                  <p className="text-sm text-zinc-700">選考予定なし</p>
+                )}
               </div>
               <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
                 <p className="text-[11px] text-zinc-400">登録から</p>
@@ -144,15 +147,11 @@ export default async function CompanyDetailPage({
           memos={memos ?? []}
           homeStation={homeStation}
           applicationRoutes={applicationRoutes ?? []}
-          tags={tags}
-          allTagNames={allTagNames}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           updateMemoAction={updateCompanyMemo.bind(null, id)}
           addTimelineEntryAction={addCompanyMemo.bind(null, id)}
           deleteTimelineEntryAction={deleteCompanyMemo.bind(null, id)}
-          addTagAction={addCompanyTagByName.bind(null, id)}
-          removeTagAction={removeCompanyTag.bind(null, id)}
         />
       </main>
     </div>

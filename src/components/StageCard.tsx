@@ -13,18 +13,22 @@ export function StageCard({
   onUpdate,
   onResultChange,
   onDelete,
+  startEditing = false,
 }: {
   stage: InterviewStage;
   companyName: string;
   onUpdate: (formData: FormData) => void;
   onResultChange: (result: StageResult) => void;
   onDelete: () => void;
+  // 会社ページの「選考予定」欄の編集リンクから来た場合、最初から編集フォーム
+  // を開いておく(このカードだけ)。
+  startEditing?: boolean;
 }) {
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(startEditing);
 
   if (editing) {
     return (
-      <li className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
+      <li id={`stage-${stage.id}`} className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
         <StageForm
           stage={stage}
           submitLabel="保存"
@@ -39,7 +43,7 @@ export function StageCard({
   }
 
   return (
-    <li className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
+    <li id={`stage-${stage.id}`} className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h4 className="font-medium text-zinc-900">{stage.stage_name}</h4>

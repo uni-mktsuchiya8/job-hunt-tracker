@@ -11,7 +11,6 @@ export const STATUS_STYLES: Record<string, string> = {
   二次面接: "bg-purple-100 text-purple-700",
   三次面接: "bg-violet-100 text-violet-700",
   最終面接: "bg-fuchsia-100 text-fuchsia-700",
-  オファー面談: "bg-cyan-100 text-cyan-700",
   内定: "bg-emerald-100 text-emerald-700",
   不合格: "bg-red-100 text-red-700",
   辞退: "bg-zinc-100 text-zinc-500",

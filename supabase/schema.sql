@@ -31,7 +31,7 @@ create table if not exists interview_stages (
   id uuid primary key default gen_random_uuid(),
   company_id uuid not null references companies (id) on delete cascade,
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  stage_name text not null,     -- 書類選考 / 一次面接 / 二次面接 / 最終面接 / オファー面談 など
+  stage_name text not null,     -- 書類選考 / 一次面接 / 二次面接 / 最終面接 / 内定 など
   scheduled_at timestamptz,     -- 選考日程
   duration_minutes int not null default 60, -- 所要時間(分。Googleカレンダー同期に使用)
   method text,                  -- 実施方法 (対面 / オンライン / 電話 / その他)
@@ -63,22 +63,6 @@ create table if not exists application_routes (
   name text not null,
   created_at timestamptz not null default now(),
   unique (user_id, name)
-);
-
--- 会社に自由に付けられる汎用タグ(応募経路とは独立。例: 「本命」「急募」)。
-create table if not exists tags (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  name text not null,
-  created_at timestamptz not null default now(),
-  unique (user_id, name)
-);
-
-create table if not exists company_tags (
-  company_id uuid not null references companies (id) on delete cascade,
-  tag_id uuid not null references tags (id) on delete cascade,
-  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  primary key (company_id, tag_id)
 );
 
 -- Googleカレンダー連携(OAuthのリフレッシュトークンを保存)。ユーザーごとに1行。
@@ -137,7 +121,7 @@ create table if not exists google_calendar_connections (
 -- 参照しませんが残しておいて問題ありません(消したい場合は下記を実行):
 -- drop table if exists status_history;
 -- alter table companies add column if not exists registered_at date not null default (now() at time zone 'utc')::date;
--- 既存プロジェクトで application_routes / tags / company_tags を追加する場合:
+-- 既存プロジェクトで application_routes を追加する場合:
 -- create table if not exists application_routes (
 --   id uuid primary key default gen_random_uuid(),
 --   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
@@ -145,36 +129,11 @@ create table if not exists google_calendar_connections (
 --   created_at timestamptz not null default now(),
 --   unique (user_id, name)
 -- );
--- create table if not exists tags (
---   id uuid primary key default gen_random_uuid(),
---   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
---   name text not null,
---   created_at timestamptz not null default now(),
---   unique (user_id, name)
--- );
--- create table if not exists company_tags (
---   company_id uuid not null references companies (id) on delete cascade,
---   tag_id uuid not null references tags (id) on delete cascade,
---   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
---   primary key (company_id, tag_id)
--- );
 -- alter table application_routes enable row level security;
--- alter table tags enable row level security;
--- alter table company_tags enable row level security;
 -- create policy "Users manage their own application routes"
 --   on application_routes for all
 --   using (auth.uid() = user_id)
 --   with check (auth.uid() = user_id);
--- create policy "Users manage their own tags"
---   on tags for all
---   using (auth.uid() = user_id)
---   with check (auth.uid() = user_id);
--- create policy "Users manage their own company tags"
---   on company_tags for all
---   using (auth.uid() = user_id)
---   with check (auth.uid() = user_id);
--- create index if not exists company_tags_company_id_idx on company_tags (company_id);
--- create index if not exists company_tags_tag_id_idx on company_tags (tag_id);
 -- 既存の会社に応募経路の初期候補をシード(すでに使ったことがある値をそのまま登録
 -- 済みにするだけなので、無くても動作します):
 -- insert into application_routes (user_id, name)
@@ -191,15 +150,11 @@ create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);
 create index if not exists interview_stages_user_id_idx on interview_stages (user_id);
 create index if not exists company_memos_company_id_idx on company_memos (company_id);
-create index if not exists company_tags_company_id_idx on company_tags (company_id);
-create index if not exists company_tags_tag_id_idx on company_tags (tag_id);
 
 alter table companies enable row level security;
 alter table interview_stages enable row level security;
 alter table company_memos enable row level security;
 alter table application_routes enable row level security;
-alter table tags enable row level security;
-alter table company_tags enable row level security;
 alter table google_calendar_connections enable row level security;
 
 create policy "Users manage their own companies"
@@ -219,16 +174,6 @@ create policy "Users manage their own company memos"
 
 create policy "Users manage their own application routes"
   on application_routes for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create policy "Users manage their own tags"
-  on tags for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create policy "Users manage their own company tags"
-  on company_tags for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 

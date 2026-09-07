@@ -64,29 +64,3 @@ export async function deleteApplicationRoute(id: string) {
   if (error) throw new Error(error.message);
   revalidatePath("/settings");
 }
-
-// タグのマスターリスト。会社への付け外しは companies/actions.ts 側
-// (addCompanyTagByName / removeCompanyTag)。
-export async function addTag(name: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
-
-  const trimmed = name.trim();
-  if (!trimmed) return;
-
-  const { error } = await supabase.from("tags").insert({ user_id: user.id, name: trimmed });
-  if (error && error.code !== "23505") throw new Error(error.message);
-
-  revalidatePath("/settings");
-}
-
-export async function deleteTag(id: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.from("tags").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  revalidatePath("/settings");
-  revalidatePath("/");
-}

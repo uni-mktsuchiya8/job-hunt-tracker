@@ -1,9 +1,12 @@
 import { NO_STAGE_STATUS, STAGE_NAME_SUGGESTIONS } from "@/lib/database.types";
 
 // Rough selection-progress order, for the dashboard's "選考ステータス順"
-// sort. Free-text status values that aren't in this list (e.g. custom
-// stage names) sort after everything else rather than erroring.
-export const STATUS_PROGRESSION = [NO_STAGE_STATUS, ...STAGE_NAME_SUGGESTIONS];
+// sort, and the set of tabs shown in the dashboard's status tab bar.
+// 検討中(NO_STAGE_STATUS, まだ選考予定がない状態)はタブとしては出さない
+// — 選考ステップの一つではなく「何もない」状態なので、あえて含めない。
+// Free-text status values that aren't in this list (e.g. custom stage
+// names) sort after everything else rather than erroring.
+export const STATUS_PROGRESSION = [...STAGE_NAME_SUGGESTIONS];
 
 export function statusRank(status: string): number {
   const index = STATUS_PROGRESSION.indexOf(status);

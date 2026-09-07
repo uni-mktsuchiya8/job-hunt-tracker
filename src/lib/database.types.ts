@@ -34,7 +34,6 @@ export const STAGE_NAME_SUGGESTIONS = [
   "二次面接",
   "三次面接",
   "最終面接",
-  "オファー面談",
   "内定",
   "不合格",
   "辞退",
@@ -87,20 +86,6 @@ export interface ApplicationRoute {
   user_id: string;
   name: string;
   created_at: string;
-}
-
-// 会社に自由に付けられる汎用タグ。応募経路とは独立(例: 「本命」「急募」)。
-export interface Tag {
-  id: string;
-  user_id: string;
-  name: string;
-  created_at: string;
-}
-
-export interface CompanyTag {
-  company_id: string;
-  tag_id: string;
-  user_id: string;
 }
 
 // 個別ページの「タイムライン」。companies.memo(その場のメモ、上書き)とは別枠
@@ -166,16 +151,6 @@ export interface Database {
         Row: ApplicationRoute;
         Insert: Partial<ApplicationRoute> & { name: string };
         Update: Partial<ApplicationRoute>;
-      };
-      tags: {
-        Row: Tag;
-        Insert: Partial<Tag> & { name: string };
-        Update: Partial<Tag>;
-      };
-      company_tags: {
-        Row: CompanyTag;
-        Insert: CompanyTag;
-        Update: Partial<CompanyTag>;
       };
     };
   };

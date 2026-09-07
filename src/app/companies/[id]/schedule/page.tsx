@@ -14,10 +14,13 @@ import type { InterviewStage } from "@/lib/database.types";
 // single latest entry to stay compact, older ones live here.
 export default async function CompanyScheduleHistoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ edit?: string }>;
 }) {
   const { id } = await params;
+  const { edit: initialEditStageId } = await searchParams;
   const supabase = await createClient();
 
   const { data: company } = await supabase
@@ -62,6 +65,7 @@ export default async function CompanyScheduleHistoryPage({
           stages={stages ?? []}
           stageActions={stageActions}
           createStageAction={createStage.bind(null, id)}
+          initialEditStageId={initialEditStageId}
         />
       </main>
     </div>

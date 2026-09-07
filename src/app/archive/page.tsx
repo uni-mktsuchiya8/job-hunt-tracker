@@ -9,7 +9,6 @@ import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types"
 type CompanyWithStages = Company & {
   interview_stages: InterviewStage[];
   company_memos: CompanyMemo[];
-  company_tags: { tags: { name: string } }[];
 };
 
 // 不合格・辞退になった会社はここに移動する — 一覧は現在進行中の選考だけに
@@ -20,7 +19,7 @@ export default async function ArchivePage() {
 
   const { data: companies, error } = await supabase
     .from("companies")
-    .select("*, interview_stages(*), company_memos(*), company_tags(tags(name))")
+    .select("*, interview_stages(*), company_memos(*)")
     .order("updated_at", { ascending: false })
     .returns<CompanyWithStages[]>();
 

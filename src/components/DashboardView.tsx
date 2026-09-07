@@ -9,13 +9,13 @@ import { STATUS_STYLES } from "@/components/StatusBadge";
 import { NeedsAttentionPanel, type AttentionItem } from "@/components/NeedsAttentionPanel";
 import { formatDateTime, elapsedDays } from "@/lib/format";
 import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
+import { ARCHIVED_STATUSES } from "@/lib/archive";
 import { brandButtonStyle } from "@/lib/brandColor";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 type CompanyWithStages = Company & {
   interview_stages: InterviewStage[];
   company_memos: CompanyMemo[];
-  company_tags: { tags: { name: string } }[];
 };
 
 type SortKey = "updated" | "status" | "date";
@@ -67,7 +67,6 @@ function searchHaystack(company: CompanyWithStages): string {
     company.priority_reason,
     company.memo,
     ...(company.company_memos ?? []).map((m) => m.content),
-    ...(company.company_tags ?? []).map((t) => t.tags?.name),
   ]
     .filter(Boolean)
     .join(" ")
@@ -177,11 +176,15 @@ export function DashboardView({
     return counts;
   }, [companies]);
 
+  // 不合格・辞退は /archive ページに移動済みなので、ここのタブには出さない
+  // (このコンポーネントは /archive ページでも再利用されるが、そちらは全社が
+  // 不合格・辞退なので、そもそもタブでの絞り込みが要らない)。
   const statusTabs = useMemo(() => {
+    const progression = STATUS_PROGRESSION.filter((s) => !ARCHIVED_STATUSES.includes(s));
     const custom = [...statusCounts.keys()].filter(
-      (s) => !STATUS_PROGRESSION.includes(s),
+      (s) => !STATUS_PROGRESSION.includes(s) && !ARCHIVED_STATUSES.includes(s),
     );
-    return [...STATUS_PROGRESSION, ...custom];
+    return [...progression, ...custom];
   }, [statusCounts]);
 
   const visibleCompanies = useMemo(() => {
@@ -399,18 +402,6 @@ export function DashboardView({
                               {company.name}
                             </Link>
                           </div>
-                          {(company.company_tags?.length ?? 0) > 0 && (
-                            <div className="mt-1 flex flex-wrap gap-1">
-                              {company.company_tags.map((ct) => (
-                                <span
-                                  key={ct.tags.name}
-                                  className="rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700"
-                                >
-                                  {ct.tags.name}
-                                </span>
-                              ))}
-                            </div>
-                          )}
                         </td>
                         <td className="px-4 py-3 text-zinc-600">
                           {company.application_route || "-"}

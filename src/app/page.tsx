@@ -10,11 +10,9 @@ import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types"
 
 // company_memos (タイムライン) is fetched too even though the dashboard
 // doesn't display it, so the search box can also match timeline content.
-// company_tags(tags(name)) likewise, to show each company's tag chips.
 type CompanyWithStages = Company & {
   interview_stages: InterviewStage[];
   company_memos: CompanyMemo[];
-  company_tags: { tags: { name: string } }[];
 };
 
 export default async function DashboardPage() {
@@ -25,7 +23,7 @@ export default async function DashboardPage() {
 
   const { data: companies, error } = await supabase
     .from("companies")
-    .select("*, interview_stages(*), company_memos(*), company_tags(tags(name))")
+    .select("*, interview_stages(*), company_memos(*)")
     .order("updated_at", { ascending: false })
     .returns<CompanyWithStages[]>();
 
