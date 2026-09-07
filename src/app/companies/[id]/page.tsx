@@ -68,13 +68,16 @@ export default async function CompanyDetailPage({
 
   return (
     <div className="min-h-screen bg-green-50">
-      <main className="mx-auto max-w-2xl px-4 py-8">
+      <main className="mx-auto max-w-3xl px-4 py-8">
         <BackToListLink />
-        {/* プロフィールカード風ヘッダー: 左に色帯+丸アイコン、右にステータス
-            /予定/経過日数の箱を並べる(候補者プロフィールカードのレイアウトを参考)。 */}
+        {/* プロフィールカード風ヘッダー: 左に色帯、名前の下にステータス/予定/
+            経過日数の箱を並べる(候補者プロフィールカードのレイアウトを参考)。
+            箱は名前と横並びの右詰めではなく、名前の下にフル幅で置くことで
+            余白を無駄にせず、選考予定の箱(flex-1)が一番広くなるようにして
+            いる。スマホでは flex-col で縦積みに切り替わる。 */}
         <div className="mt-2 mb-6 flex overflow-hidden rounded-2xl border border-zinc-100 bg-white shadow-md">
           <div className="w-1.5 shrink-0 bg-green-600" aria-hidden />
-          <div className="flex flex-1 flex-wrap items-center justify-between gap-4 p-4">
+          <div className="flex-1 p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-lg font-bold text-green-700">
                 {company.name.slice(0, 1)}
@@ -91,25 +94,25 @@ export default async function CompanyDetailPage({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-stretch gap-3">
-              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-stretch">
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2 sm:w-44 sm:shrink-0">
                 <p className="text-[11px] text-zinc-400">選考ステータス</p>
                 <StatusSelect
                   value={computeCurrentStatus(stages ?? [])}
                   onChange={quickAddStatusStage.bind(null, id)}
                 />
               </div>
-              {/* 選考予定(選考ステップ)を選考ステータスの隣に、同じ箱型で表示。
-                  最新1件については、この場で結果を選び直せるほか、日程など
-                  を編集したい場合は /schedule の該当カードへ直接飛べる。 */}
-              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
+              {/* 選考予定(選考ステップ)。残りの横幅をすべて使う(flex-1)ので、
+                  最新1件の日程・結果プルダウン・編集リンクを1行に並べても
+                  窮屈にならない。 */}
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-4 py-2 sm:flex-1">
                 <p className="text-[11px] text-zinc-400">選考予定</p>
                 {latestStage ? (
-                  <>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
                     <p className="text-sm text-zinc-700">
                       {latestStage.stage_name} ・ {formatDateTime(latestStage.scheduled_at)}
                     </p>
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <ResultSelect
                         value={latestStage.result}
                         onChange={updateStageResult.bind(null, id, latestStage.id)}
@@ -120,19 +123,19 @@ export default async function CompanyDetailPage({
                       >
                         編集
                       </Link>
+                      <Link
+                        href={`/companies/${id}/schedule`}
+                        className="text-xs text-green-700 hover:underline"
+                      >
+                        すべて見る →
+                      </Link>
                     </div>
-                    <Link
-                      href={`/companies/${id}/schedule`}
-                      className="text-xs text-green-700 hover:underline"
-                    >
-                      すべて見る →
-                    </Link>
-                  </>
+                  </div>
                 ) : (
                   <p className="text-sm text-zinc-700">選考予定なし</p>
                 )}
               </div>
-              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2 sm:w-32 sm:shrink-0">
                 <p className="text-[11px] text-zinc-400">登録から</p>
                 <p className="text-sm font-semibold text-zinc-700">
                   {elapsedDays(company.registered_at)}日経過
