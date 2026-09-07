@@ -5,10 +5,13 @@ import { CompanyForm } from "@/components/CompanyForm";
 import { CommuteInfo } from "@/components/CommuteInfo";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { CompanyMemoLog } from "@/components/CompanyMemoLog";
+import { CompanyTagsEditor } from "@/components/CompanyTagsEditor";
 import {
   formatRemoteDays,
+  type ApplicationRoute,
   type Company,
   type CompanyMemo,
+  type Tag,
 } from "@/lib/database.types";
 
 // One-line "ラベル: 値" row for short fields — most of these are empty on
@@ -44,20 +47,30 @@ export function CompanyDetail({
   company,
   memos,
   homeStation,
+  applicationRoutes,
+  tags,
+  allTagNames,
   updateCompanyAction,
   deleteCompanyAction,
   updateMemoAction,
   addTimelineEntryAction,
   deleteTimelineEntryAction,
+  addTagAction,
+  removeTagAction,
 }: {
   company: Company;
   memos: CompanyMemo[];
   homeStation: string | null;
+  applicationRoutes: ApplicationRoute[];
+  tags: Tag[];
+  allTagNames: string[];
   updateCompanyAction: (formData: FormData) => void;
   deleteCompanyAction: () => void;
   updateMemoAction: (memo: string) => void;
   addTimelineEntryAction: (content: string) => void;
   deleteTimelineEntryAction: (memoId: string) => void;
+  addTagAction: (name: string) => void;
+  removeTagAction: (tagId: string) => void;
 }) {
   const [editingCompany, setEditingCompany] = useState(false);
 
@@ -94,6 +107,7 @@ export function CompanyDetail({
         {editingCompany ? (
           <CompanyForm
             company={company}
+            applicationRoutes={applicationRoutes}
             submitLabel="保存"
             action={(formData) => {
               updateCompanyAction(formData);
@@ -102,6 +116,16 @@ export function CompanyDetail({
           />
         ) : (
           <div className="space-y-3 text-sm">
+            <div>
+              <p className="mb-1 text-xs text-zinc-400">タグ</p>
+              <CompanyTagsEditor
+                tags={tags}
+                allTagNames={allTagNames}
+                onAdd={addTagAction}
+                onRemove={removeTagAction}
+              />
+            </div>
+
             <InfoBlock label="会社情報" value={company.info} />
 
             <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 sm:grid-cols-3">

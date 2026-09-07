@@ -4,13 +4,17 @@ import { signOut } from "@/app/login/actions";
 import { quickAddStatusStage, updateCompanyMemo } from "@/app/companies/actions";
 import { DashboardView } from "@/components/DashboardView";
 import { brandButtonStyle } from "@/lib/brandColor";
+import { computeCurrentStatus } from "@/lib/currentStatus";
+import { ARCHIVED_STATUSES } from "@/lib/archive";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 // company_memos (タイムライン) is fetched too even though the dashboard
 // doesn't display it, so the search box can also match timeline content.
+// company_tags(tags(name)) likewise, to show each company's tag chips.
 type CompanyWithStages = Company & {
   interview_stages: InterviewStage[];
   company_memos: CompanyMemo[];
+  company_tags: { tags: { name: string } }[];
 };
 
 export default async function DashboardPage() {
@@ -21,15 +25,21 @@ export default async function DashboardPage() {
 
   const { data: companies, error } = await supabase
     .from("companies")
-    .select("*, interview_stages(*), company_memos(*)")
+    .select("*, interview_stages(*), company_memos(*), company_tags(tags(name))")
     .order("updated_at", { ascending: false })
     .returns<CompanyWithStages[]>();
 
+  // 不合格・辞退は /archive ページに移動 — 一覧には出さない。
+  const activeCompanies = (companies ?? []).filter(
+    (c) => !ARCHIVED_STATUSES.includes(computeCurrentStatus(c.interview_stages ?? [])),
+  );
+  const archivedCount = (companies?.length ?? 0) - activeCompanies.length;
+
   const memoActions = Object.fromEntries(
-    (companies ?? []).map((c) => [c.id, updateCompanyMemo.bind(null, c.id)]),
+    activeCompanies.map((c) => [c.id, updateCompanyMemo.bind(null, c.id)]),
   );
   const statusActions = Object.fromEntries(
-    (companies ?? []).map((c) => [c.id, quickAddStatusStage.bind(null, c.id)]),
+    activeCompanies.map((c) => [c.id, quickAddStatusStage.bind(null, c.id)]),
   );
 
   return (
@@ -50,6 +60,12 @@ export default async function DashboardPage() {
           </div>
           <div className="flex items-center gap-3 text-sm text-zinc-500">
             <span>{user?.email}</span>
+            <Link
+              href="/archive"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100"
+            >
+              終了した選考 ({archivedCount})
+            </Link>
             <Link
               href="/settings"
               className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100"
@@ -73,7 +89,7 @@ export default async function DashboardPage() {
         )}
         {!error && (
           <DashboardView
-            companies={companies ?? []}
+            companies={activeCompanies}
             memoActions={memoActions}
             statusActions={statusActions}
           />

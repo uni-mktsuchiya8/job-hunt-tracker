@@ -19,8 +19,9 @@ create table if not exists companies (
   decision_notes text,      -- 決め手・懸念点(意思決定メモ)
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
-  application_route text,   -- 応募経路 (直接応募 / エージェント / リファラル / スカウト / その他)
+  application_route text,   -- 応募経路。application_routes テーブルの name を文字列でそのまま保存(外部キーではない)
   memo text,                -- その場のメモ(上書き保存・蓄積しない。蓄積したい場合は company_memos へ)
+  registered_at date not null default (now() at time zone 'utc')::date, -- 登録日(経過日数の起点。手動で編集可能)
   status text not null default 'カジュアル面談', -- legacy column, unused by the app (現在のステータスは選考ステージから算出)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -52,6 +53,32 @@ create table if not exists company_memos (
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
   content text not null,
   created_at timestamptz not null default now()
+);
+
+-- 応募経路の自分専用リスト(固定の選択肢ではなく設定ページで追加・削除する)。
+-- companies.application_route はここの name を文字列でそのまま保存する。
+create table if not exists application_routes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  name text not null,
+  created_at timestamptz not null default now(),
+  unique (user_id, name)
+);
+
+-- 会社に自由に付けられる汎用タグ(応募経路とは独立。例: 「本命」「急募」)。
+create table if not exists tags (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  name text not null,
+  created_at timestamptz not null default now(),
+  unique (user_id, name)
+);
+
+create table if not exists company_tags (
+  company_id uuid not null references companies (id) on delete cascade,
+  tag_id uuid not null references tags (id) on delete cascade,
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  primary key (company_id, tag_id)
 );
 
 -- Googleカレンダー連携(OAuthのリフレッシュトークンを保存)。ユーザーごとに1行。
@@ -109,15 +136,70 @@ create table if not exists google_calendar_connections (
 -- 統合したためです。以前 status_history テーブルを作成済みの場合、アプリはもう
 -- 参照しませんが残しておいて問題ありません(消したい場合は下記を実行):
 -- drop table if exists status_history;
+-- alter table companies add column if not exists registered_at date not null default (now() at time zone 'utc')::date;
+-- 既存プロジェクトで application_routes / tags / company_tags を追加する場合:
+-- create table if not exists application_routes (
+--   id uuid primary key default gen_random_uuid(),
+--   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+--   name text not null,
+--   created_at timestamptz not null default now(),
+--   unique (user_id, name)
+-- );
+-- create table if not exists tags (
+--   id uuid primary key default gen_random_uuid(),
+--   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+--   name text not null,
+--   created_at timestamptz not null default now(),
+--   unique (user_id, name)
+-- );
+-- create table if not exists company_tags (
+--   company_id uuid not null references companies (id) on delete cascade,
+--   tag_id uuid not null references tags (id) on delete cascade,
+--   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+--   primary key (company_id, tag_id)
+-- );
+-- alter table application_routes enable row level security;
+-- alter table tags enable row level security;
+-- alter table company_tags enable row level security;
+-- create policy "Users manage their own application routes"
+--   on application_routes for all
+--   using (auth.uid() = user_id)
+--   with check (auth.uid() = user_id);
+-- create policy "Users manage their own tags"
+--   on tags for all
+--   using (auth.uid() = user_id)
+--   with check (auth.uid() = user_id);
+-- create policy "Users manage their own company tags"
+--   on company_tags for all
+--   using (auth.uid() = user_id)
+--   with check (auth.uid() = user_id);
+-- create index if not exists company_tags_company_id_idx on company_tags (company_id);
+-- create index if not exists company_tags_tag_id_idx on company_tags (tag_id);
+-- 既存の会社に応募経路の初期候補をシード(すでに使ったことがある値をそのまま登録
+-- 済みにするだけなので、無くても動作します):
+-- insert into application_routes (user_id, name)
+-- select distinct user_id, application_route from companies
+-- where application_route is not null
+-- on conflict (user_id, name) do nothing;
+-- 使ったことがまだ無い場合の定番の初期候補が欲しければ、自分の user_id で以下を実行:
+-- insert into application_routes (user_id, name)
+-- select auth.uid(), r.name
+-- from (values ('直接応募'), ('転職エージェント'), ('リファラル'), ('スカウト'), ('転職サイト経由'), ('その他')) as r(name)
+-- on conflict (user_id, name) do nothing;
 
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);
 create index if not exists interview_stages_user_id_idx on interview_stages (user_id);
 create index if not exists company_memos_company_id_idx on company_memos (company_id);
+create index if not exists company_tags_company_id_idx on company_tags (company_id);
+create index if not exists company_tags_tag_id_idx on company_tags (tag_id);
 
 alter table companies enable row level security;
 alter table interview_stages enable row level security;
 alter table company_memos enable row level security;
+alter table application_routes enable row level security;
+alter table tags enable row level security;
+alter table company_tags enable row level security;
 alter table google_calendar_connections enable row level security;
 
 create policy "Users manage their own companies"
@@ -132,6 +214,21 @@ create policy "Users manage their own interview stages"
 
 create policy "Users manage their own company memos"
   on company_memos for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users manage their own application routes"
+  on application_routes for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users manage their own tags"
+  on tags for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "Users manage their own company tags"
+  on company_tags for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 

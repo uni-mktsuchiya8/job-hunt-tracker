@@ -22,6 +22,16 @@ export function formatShortDateTime(iso: string): string {
   }).format(date);
 }
 
+// 登録日(companies.registered_at, "YYYY-MM-DD")からの経過日数。日付だけの
+// 比較にするため両方とも現地日のmidnightに揃えてから引き算する。
+export function elapsedDays(registeredAt: string): number {
+  const registered = new Date(`${registeredAt}T00:00:00`);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffMs = today.getTime() - registered.getTime();
+  return Math.round(diffMs / (24 * 60 * 60 * 1000));
+}
+
 export function toDateTimeLocalValue(iso: string | null): string {
   if (!iso) return "";
   const date = new Date(iso);

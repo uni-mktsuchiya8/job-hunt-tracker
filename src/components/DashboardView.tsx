@@ -5,8 +5,9 @@ import Link from "next/link";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { StatusSelect } from "@/components/StatusSelect";
+import { STATUS_STYLES } from "@/components/StatusBadge";
 import { NeedsAttentionPanel, type AttentionItem } from "@/components/NeedsAttentionPanel";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, elapsedDays } from "@/lib/format";
 import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
 import { brandButtonStyle } from "@/lib/brandColor";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
@@ -14,6 +15,7 @@ import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types"
 type CompanyWithStages = Company & {
   interview_stages: InterviewStage[];
   company_memos: CompanyMemo[];
+  company_tags: { tags: { name: string } }[];
 };
 
 type SortKey = "updated" | "status" | "date";
@@ -65,6 +67,7 @@ function searchHaystack(company: CompanyWithStages): string {
     company.priority_reason,
     company.memo,
     ...(company.company_memos ?? []).map((m) => m.content),
+    ...(company.company_tags ?? []).map((t) => t.tags?.name),
   ]
     .filter(Boolean)
     .join(" ")
@@ -263,38 +266,40 @@ export function DashboardView({
         </Link>
       </div>
 
-      {/* Compact pill tabs, not HERP's stacked label/count columns — with
-          this many statuses, stacking made adjacent tabs run into each
-          other, and the big count numbers visually duplicated what the
-          選考ステータス column already shows per row. A small "(N)" here
-          reads as a count, not a second status display. */}
+      {/* パステルカラーの丸ピルタブ — 各ステータス自身の色(STATUS_STYLES)を
+          常時使い、選択中のものだけリングと拡大で強調する「可愛い」並べ方。
+          単色のグレー/緑ボーダーだったのを、ステータスごとに色分けした。 */}
       {view === "list" && (
         <div className="mb-4 flex flex-wrap gap-2">
           <button
             onClick={() => setStatusFilter("all")}
             style={statusFilter === "all" ? brandButtonStyle : undefined}
-            className={`rounded-full border px-3 py-1 text-xs font-medium ${
+            className={`rounded-full px-3 py-1 text-xs font-bold transition-all ${
               statusFilter === "all"
-                ? "border-green-600 bg-green-600 text-white"
-                : "border-zinc-300 text-zinc-600 transition-colors hover:bg-zinc-100"
+                ? "bg-green-600 text-white ring-2 ring-green-300 ring-offset-1"
+                : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
             }`}
           >
-            すべて ({companies.length})
+            ぜんぶ ({companies.length})
           </button>
-          {statusTabs.map((status) => (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              style={statusFilter === status ? brandButtonStyle : undefined}
-              className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
-                statusFilter === status
-                  ? "border-green-600 bg-green-600 text-white"
-                  : "border-zinc-300 text-zinc-600 transition-colors hover:bg-zinc-100"
-              }`}
-            >
-              {status} ({statusCounts.get(status) ?? 0})
-            </button>
-          ))}
+          {statusTabs.map((status) => {
+            const isActive = statusFilter === status;
+            return (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={`rounded-full px-3 py-1 text-xs font-bold whitespace-nowrap transition-all ${
+                  STATUS_STYLES[status] ?? "bg-zinc-100 text-zinc-500"
+                } ${
+                  isActive
+                    ? "scale-110 ring-2 ring-zinc-900/70 ring-offset-1"
+                    : "opacity-60 hover:opacity-100"
+                }`}
+              >
+                {status} ({statusCounts.get(status) ?? 0})
+              </button>
+            );
+          })}
         </div>
       )}
 
@@ -379,7 +384,7 @@ export function DashboardView({
                       >
                         <td className="px-4 py-3">
                           <p className="text-xs text-zinc-400">
-                            {formatShortDate(company.created_at)} 登録
+                            {formatShortDate(company.registered_at)} 登録・{elapsedDays(company.registered_at)}日経過
                           </p>
                           <div className="flex items-center gap-1.5">
                             {company.priority_rank && (
@@ -394,6 +399,18 @@ export function DashboardView({
                               {company.name}
                             </Link>
                           </div>
+                          {(company.company_tags?.length ?? 0) > 0 && (
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {company.company_tags.map((ct) => (
+                                <span
+                                  key={ct.tags.name}
+                                  className="rounded-full bg-green-50 px-1.5 py-0.5 text-[10px] font-medium text-green-700"
+                                >
+                                  {ct.tags.name}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </td>
                         <td className="px-4 py-3 text-zinc-600">
                           {company.application_route || "-"}

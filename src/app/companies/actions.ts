@@ -39,6 +39,30 @@ function datetimeFromParts(
   return new Date(`${date}T${hour}:${minute}:00`).toISOString();
 }
 
+// 応募経路: CompanyForm の <select> は既存の application_routes に加えて
+// 「+ 新しい応募経路を追加」を選べる。その場合 new_application_route の
+// テキストを実際の値として使い、次回から選べるようリストにも追加しておく。
+const NEW_APPLICATION_ROUTE_VALUE = "__new__";
+
+async function resolveApplicationRoute(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  formData: FormData,
+): Promise<string | null> {
+  const selected = str(formData, "application_route");
+  if (selected !== NEW_APPLICATION_ROUTE_VALUE) return selected;
+
+  const newRoute = str(formData, "new_application_route");
+  if (!newRoute) return null;
+
+  const { error } = await supabase
+    .from("application_routes")
+    .insert({ user_id: userId, name: newRoute });
+  if (error && error.code !== "23505") throw new Error(error.message);
+
+  return newRoute;
+}
+
 export async function createCompany(formData: FormData) {
   const supabase = await createClient();
   const {
@@ -48,6 +72,9 @@ export async function createCompany(formData: FormData) {
 
   const name = str(formData, "name");
   if (!name) throw new Error("会社名は必須です");
+
+  const applicationRoute = await resolveApplicationRoute(supabase, user.id, formData);
+  const registeredAt = str(formData, "registered_at");
 
   const { data, error } = await supabase
     .from("companies")
@@ -66,7 +93,8 @@ export async function createCompany(formData: FormData) {
       decision_notes: str(formData, "decision_notes"),
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
-      application_route: str(formData, "application_route"),
+      application_route: applicationRoute,
+      ...(registeredAt ? { registered_at: registeredAt } : {}),
       status: "カジュアル面談", // legacy NOT NULL column — current status is derived from stages now
     })
     .select("id")
@@ -111,8 +139,16 @@ export async function createCompany(formData: FormData) {
 
 export async function updateCompany(companyId: string, formData: FormData) {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
   const name = str(formData, "name");
   if (!name) throw new Error("会社名は必須です");
+
+  const applicationRoute = await resolveApplicationRoute(supabase, user.id, formData);
+  const registeredAt = str(formData, "registered_at");
 
   const { error } = await supabase
     .from("companies")
@@ -130,7 +166,8 @@ export async function updateCompany(companyId: string, formData: FormData) {
       decision_notes: str(formData, "decision_notes"),
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
-      application_route: str(formData, "application_route"),
+      application_route: applicationRoute,
+      ...(registeredAt ? { registered_at: registeredAt } : {}),
     })
     .eq("id", companyId);
 
@@ -409,6 +446,63 @@ export async function updateStageResult(
     .update({ result })
     .eq("id", stageId);
 
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+}
+
+// --- Company tags ------------------------------------------------------
+// 応募経路とは独立した汎用タグ。タグのマスターリスト自体は
+// settings/actions.ts (addTag/deleteTag) で管理し、ここでは特定の会社への
+// 付け外しだけを扱う。
+
+// 入力されたタグ名が既存になければ作ってから付ける — 会社に付けるその場で
+// 新しいタグも作れるようにするため、設定ページを開かなくてよい。
+export async function addCompanyTagByName(companyId: string, tagName: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const trimmed = tagName.trim();
+  if (!trimmed) return;
+
+  const { data: existing } = await supabase
+    .from("tags")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("name", trimmed)
+    .maybeSingle();
+
+  let tagId = existing?.id as string | undefined;
+  if (!tagId) {
+    const { data: created, error: createError } = await supabase
+      .from("tags")
+      .insert({ user_id: user.id, name: trimmed })
+      .select("id")
+      .single();
+    if (createError) throw new Error(createError.message);
+    tagId = created.id;
+  }
+
+  const { error } = await supabase
+    .from("company_tags")
+    .insert({ company_id: companyId, tag_id: tagId, user_id: user.id });
+  if (error && error.code !== "23505") throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+}
+
+export async function removeCompanyTag(companyId: string, tagId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("company_tags")
+    .delete()
+    .eq("company_id", companyId)
+    .eq("tag_id", tagId);
   if (error) throw new Error(error.message);
 
   revalidatePath("/");

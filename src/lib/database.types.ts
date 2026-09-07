@@ -12,14 +12,17 @@ export const STAGE_RESULTS: StageResult[] = [
   "保留",
 ];
 
-export const APPLICATION_ROUTES = [
+// 応募経路は固定の選択肢ではなく、ユーザーが application_routes テーブル
+// で自分の選択肢を追加・削除できる(設定ページから管理)。これは新規ユーザー
+// 向けの初期値の参考用で、コードからは使わない(SQL側でシードする)。
+export const DEFAULT_APPLICATION_ROUTES = [
   "直接応募",
   "転職エージェント",
   "リファラル",
   "スカウト",
   "転職サイト経由",
   "その他",
-] as const;
+];
 
 // Also doubles as the set of 選考ステータス values shown around the app
 // (dashboard badges, StatusSelect) — each name here is both a possible
@@ -72,8 +75,32 @@ export interface Company {
   priority_reason: string | null;
   application_route: string | null;
   memo: string | null; // その場のメモ(上書き保存)。蓄積したい記録は company_memos(タイムライン)へ
+  registered_at: string; // 登録日(経過日数の起点)。created_at と違い手動で編集できる
   created_at: string;
   updated_at: string;
+}
+
+// 応募経路の自分専用リスト(設定ページで追加・削除)。companies.application_route
+// にはここにある name をそのまま文字列で保存する(外部キーではない)。
+export interface ApplicationRoute {
+  id: string;
+  user_id: string;
+  name: string;
+  created_at: string;
+}
+
+// 会社に自由に付けられる汎用タグ。応募経路とは独立(例: 「本命」「急募」)。
+export interface Tag {
+  id: string;
+  user_id: string;
+  name: string;
+  created_at: string;
+}
+
+export interface CompanyTag {
+  company_id: string;
+  tag_id: string;
+  user_id: string;
 }
 
 // 個別ページの「タイムライン」。companies.memo(その場のメモ、上書き)とは別枠
@@ -134,6 +161,21 @@ export interface Database {
         Row: CompanyMemo;
         Insert: Partial<CompanyMemo> & { company_id: string; content: string };
         Update: Partial<CompanyMemo>;
+      };
+      application_routes: {
+        Row: ApplicationRoute;
+        Insert: Partial<ApplicationRoute> & { name: string };
+        Update: Partial<ApplicationRoute>;
+      };
+      tags: {
+        Row: Tag;
+        Insert: Partial<Tag> & { name: string };
+        Update: Partial<Tag>;
+      };
+      company_tags: {
+        Row: CompanyTag;
+        Insert: CompanyTag;
+        Update: Partial<CompanyTag>;
       };
     };
   };

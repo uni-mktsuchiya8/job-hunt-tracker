@@ -5,16 +5,23 @@ import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusSelect } from "@/components/StatusSelect";
 import { BackToListLink } from "@/components/BackToListLink";
 import { computeCurrentStatus, sortStagesNewestFirst } from "@/lib/currentStatus";
-import { formatDateTime } from "@/lib/format";
+import { elapsedDays, formatDateTime } from "@/lib/format";
 import {
   addCompanyMemo,
+  addCompanyTagByName,
   deleteCompany,
   deleteCompanyMemo,
   quickAddStatusStage,
+  removeCompanyTag,
   updateCompany,
   updateCompanyMemo,
 } from "@/app/companies/actions";
-import type { CompanyMemo, InterviewStage } from "@/lib/database.types";
+import type {
+  ApplicationRoute,
+  CompanyMemo,
+  InterviewStage,
+  Tag,
+} from "@/lib/database.types";
 
 export default async function CompanyDetailPage({
   params,
@@ -52,6 +59,26 @@ export default async function CompanyDetailPage({
     .eq("company_id", id)
     .returns<CompanyMemo[]>();
 
+  const { data: applicationRoutes } = await supabase
+    .from("application_routes")
+    .select("*")
+    .order("name")
+    .returns<ApplicationRoute[]>();
+
+  const { data: companyTagRows } = await supabase
+    .from("company_tags")
+    .select("tags(*)")
+    .eq("company_id", id)
+    .returns<{ tags: Tag }[]>();
+  const tags = (companyTagRows ?? []).map((row) => row.tags).filter(Boolean);
+
+  const { data: allTags } = await supabase
+    .from("tags")
+    .select("name")
+    .order("name")
+    .returns<{ name: string }[]>();
+  const allTagNames = (allTags ?? []).map((t) => t.name);
+
   const latestStage = sortStagesNewestFirst(stages ?? [])[0] ?? null;
 
   return (
@@ -59,7 +86,7 @@ export default async function CompanyDetailPage({
       <main className="mx-auto max-w-2xl px-4 py-8">
         <BackToListLink />
         {/* プロフィールカード風ヘッダー: 左に色帯+丸アイコン、右にステータス
-            /予定の箱を並べる(候補者プロフィールカードのレイアウトを参考)。 */}
+            /予定/経過日数の箱を並べる(候補者プロフィールカードのレイアウトを参考)。 */}
         <div className="mt-2 mb-6 flex overflow-hidden rounded-2xl border border-zinc-100 bg-white shadow-md">
           <div className="w-1.5 shrink-0 bg-green-600" aria-hidden />
           <div className="flex flex-1 flex-wrap items-center justify-between gap-4 p-4">
@@ -102,6 +129,12 @@ export default async function CompanyDetailPage({
                   すべて見る →
                 </Link>
               </div>
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
+                <p className="text-[11px] text-zinc-400">登録から</p>
+                <p className="text-sm font-semibold text-zinc-700">
+                  {elapsedDays(company.registered_at)}日経過
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -110,11 +143,16 @@ export default async function CompanyDetailPage({
           company={company}
           memos={memos ?? []}
           homeStation={homeStation}
+          applicationRoutes={applicationRoutes ?? []}
+          tags={tags}
+          allTagNames={allTagNames}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           updateMemoAction={updateCompanyMemo.bind(null, id)}
           addTimelineEntryAction={addCompanyMemo.bind(null, id)}
           deleteTimelineEntryAction={deleteCompanyMemo.bind(null, id)}
+          addTagAction={addCompanyTagByName.bind(null, id)}
+          removeTagAction={removeCompanyTag.bind(null, id)}
         />
       </main>
     </div>

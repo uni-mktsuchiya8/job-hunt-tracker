@@ -1,8 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { HomeStationForm } from "@/components/HomeStationForm";
-import { disconnectGoogleCalendar } from "@/app/settings/actions";
+import { ManagedListEditor } from "@/components/ManagedListEditor";
+import {
+  addApplicationRoute,
+  addTag,
+  deleteApplicationRoute,
+  deleteTag,
+  disconnectGoogleCalendar,
+} from "@/app/settings/actions";
 import { brandButtonStyle } from "@/lib/brandColor";
 import { BackToListLink } from "@/components/BackToListLink";
+import type { ApplicationRoute, Tag } from "@/lib/database.types";
 
 const GOOGLE_MESSAGES: Record<string, { text: string; tone: "ok" | "error" }> = {
   connected: { text: "Googleカレンダーと連携しました", tone: "ok" },
@@ -39,6 +47,18 @@ export default async function SettingsPage({
 
   const googleMessage = google ? GOOGLE_MESSAGES[google] : null;
 
+  const { data: applicationRoutes } = await supabase
+    .from("application_routes")
+    .select("*")
+    .order("name")
+    .returns<ApplicationRoute[]>();
+
+  const { data: tags } = await supabase
+    .from("tags")
+    .select("*")
+    .order("name")
+    .returns<Tag[]>();
+
   return (
     <div className="min-h-screen bg-green-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
@@ -48,6 +68,32 @@ export default async function SettingsPage({
         <div className="space-y-6">
           <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
             <HomeStationForm homeStation={homeStation} />
+          </div>
+
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
+            <h2 className="text-sm font-medium text-zinc-700">応募経路</h2>
+            <p className="mt-1 mb-3 text-xs text-zinc-400">
+              固定の選択肢ではなく、ここで自分の応募経路を追加・削除できます。会社の追加/編集フォームからも新規追加できます。
+            </p>
+            <ManagedListEditor
+              items={applicationRoutes ?? []}
+              onAdd={addApplicationRoute}
+              onDelete={deleteApplicationRoute}
+              placeholder="例: 直接応募、スカウト"
+            />
+          </div>
+
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
+            <h2 className="text-sm font-medium text-zinc-700">タグ</h2>
+            <p className="mt-1 mb-3 text-xs text-zinc-400">
+              会社に自由に付けられる汎用タグです(応募経路とは別枠)。各会社への付け外しは会社の詳細ページから行います。
+            </p>
+            <ManagedListEditor
+              items={tags ?? []}
+              onAdd={addTag}
+              onDelete={deleteTag}
+              placeholder="例: 本命、急募"
+            />
           </div>
 
           <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">

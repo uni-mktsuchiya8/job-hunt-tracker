@@ -4,25 +4,39 @@ import { useState } from "react";
 import { CompanyAutocomplete } from "@/components/CompanyAutocomplete";
 import { JobPostingExtractor } from "@/components/JobPostingExtractor";
 import {
-  APPLICATION_ROUTES,
   REMOTE_DAYS_OPTIONS,
   STAGE_NAME_SUGGESTIONS,
+  type ApplicationRoute,
   type Company,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
 import { brandButtonStyle } from "@/lib/brandColor";
 import { HOURS, MINUTES } from "@/lib/timeOptions";
 
+const NEW_APPLICATION_ROUTE_VALUE = "__new__";
+
+function todayDateString(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
 export function CompanyForm({
   company,
+  applicationRoutes,
   action,
   submitLabel,
 }: {
   company?: Company;
+  applicationRoutes: ApplicationRoute[];
   action: (formData: FormData) => void;
   submitLabel: string;
 }) {
   const [name, setName] = useState(company?.name ?? "");
+  const [applicationRoute, setApplicationRoute] = useState(
+    company?.application_route ?? "",
+  );
+  const [addingNewRoute, setAddingNewRoute] = useState(false);
   const [website, setWebsite] = useState(company?.website ?? "");
   const [info, setInfo] = useState(company?.info ?? "");
   const [extracting, setExtracting] = useState(false);
@@ -323,20 +337,70 @@ export function CompanyForm({
         <label className="block text-sm font-medium text-zinc-700">
           応募経路
         </label>
-        <select
-          name="application_route"
-          defaultValue={company?.application_route ?? ""}
-          className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
-        >
-          <option value="">選択してください</option>
-          {APPLICATION_ROUTES.map((r) => (
-            <option key={r} value={r}>
-              {r}
+        {!addingNewRoute ? (
+          <select
+            name="application_route"
+            value={applicationRoute}
+            onChange={(e) => {
+              if (e.target.value === NEW_APPLICATION_ROUTE_VALUE) {
+                setAddingNewRoute(true);
+              } else {
+                setApplicationRoute(e.target.value);
+              }
+            }}
+            className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+          >
+            <option value="">選択してください</option>
+            {applicationRoutes.map((r) => (
+              <option key={r.id} value={r.name}>
+                {r.name}
+              </option>
+            ))}
+            {applicationRoute &&
+              !applicationRoutes.some((r) => r.name === applicationRoute) && (
+                <option value={applicationRoute}>{applicationRoute}</option>
+              )}
+            <option value={NEW_APPLICATION_ROUTE_VALUE}>
+              ＋ 新しい応募経路を追加
             </option>
-          ))}
-        </select>
+          </select>
+        ) : (
+          <div className="mt-1 flex gap-2">
+            <input type="hidden" name="application_route" value={NEW_APPLICATION_ROUTE_VALUE} />
+            <input
+              name="new_application_route"
+              autoFocus
+              placeholder="例: OB訪問"
+              className="w-full max-w-xs rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+            />
+            <button
+              type="button"
+              onClick={() => setAddingNewRoute(false)}
+              className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100"
+            >
+              キャンセル
+            </button>
+          </div>
+        )}
         <p className="mt-1 text-xs text-zinc-400">
-          選考の進み具合は下の「選考予定」で管理します。
+          {applicationRoutes.length === 0 && !addingNewRoute
+            ? "まだ応募経路がありません。「＋ 新しい応募経路を追加」から登録できます(設定ページでも管理できます)。"
+            : "応募経路の追加・削除は設定ページでも管理できます。選考の進み具合は下の「選考予定」で管理します。"}
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-zinc-700">
+          登録日
+        </label>
+        <input
+          name="registered_at"
+          type="date"
+          defaultValue={company?.registered_at ?? todayDateString()}
+          className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+        />
+        <p className="mt-1 text-xs text-zinc-400">
+          一覧・詳細ページの経過日数はこの日付から計算されます。
         </p>
       </div>
 
