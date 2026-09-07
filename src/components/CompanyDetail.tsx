@@ -188,14 +188,14 @@ export function CompanyDetail({
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-500">
-            選考ステータス(現在: <StatusBadge status={currentStatus} />)
+            選考予定(選考ステータス: <StatusBadge status={currentStatus} />)
           </h2>
           {!addingStage && (
             <button
               onClick={() => setAddingStage(true)}
               className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700"
             >
-              + ステータスを追加
+              + 予定を追加
             </button>
           )}
         </div>
@@ -215,12 +215,12 @@ export function CompanyDetail({
 
         {sortedStages.length === 0 && !addingStage && (
           <p className="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-            まだ選考ステータスの記録がありません。「+ ステータスを追加」でカジュアル面談・書類選考・内定/不合格/辞退なども記録できます。
+            まだ選考予定の記録がありません。「+ 予定を追加」でカジュアル面談・書類選考・内定/不合格/辞退なども記録できます。
           </p>
         )}
         {sortedStages.length > 0 && (
           <p className="mb-2 text-xs text-slate-400">
-            日程が一番新しいステータスが「現在のステータス」として上に表示されます。
+            日程が一番新しい選考予定が「選考ステータス」として上に表示されます。
           </p>
         )}
 

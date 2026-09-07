@@ -192,7 +192,7 @@ export async function deleteCompany(companyId: string) {
 
 // Quick pipeline update straight from the dashboard list (StatusSelect) —
 // adds a new undated stage entry, the lightweight equivalent of opening
-// the company and clicking "+ ステータスを追加". No date means no Google
+// the company and clicking "+ 予定を追加". No date means no Google
 // Calendar sync, same as adding a stage without a date anywhere else.
 export async function quickAddStatusStage(companyId: string, stageName: string) {
   const supabase = await createClient();
@@ -221,7 +221,7 @@ export async function createStage(companyId: string, formData: FormData) {
   if (!user) redirect("/login");
 
   const stageName = str(formData, "stage_name");
-  if (!stageName) throw new Error("選考ステータスは必須です");
+  if (!stageName) throw new Error("予定名は必須です");
 
   const scheduledAt = datetimeFromParts(
     formData,
@@ -279,7 +279,7 @@ export async function updateStage(
   if (!user) redirect("/login");
 
   const stageName = str(formData, "stage_name");
-  if (!stageName) throw new Error("選考ステータスは必須です");
+  if (!stageName) throw new Error("予定名は必須です");
 
   const scheduledAt = datetimeFromParts(
     formData,

@@ -1,7 +1,7 @@
 export type StageResult = "未定" | "通過" | "不合格" | "辞退" | "保留";
 
-// The default status shown for a company with no 選考ステージ yet — not
-// stored anywhere, just what computeCurrentStatus() falls back to.
+// The default 選考ステータス shown for a company with no 選考予定 yet —
+// not stored anywhere, just what computeCurrentStatus() falls back to.
 export const NO_STAGE_STATUS = "検討中";
 
 export const STAGE_RESULTS: StageResult[] = [
@@ -21,9 +21,9 @@ export const APPLICATION_ROUTES = [
   "その他",
 ] as const;
 
-// Also doubles as the set of "current status" values shown around the
-// app (dashboard badges etc.) — 選考ステージ and 選考ステータス are the
-// same list now, merged into one section in the UI.
+// Also doubles as the set of 選考ステータス values shown around the app
+// (dashboard badges, StatusSelect) — each name here is both a possible
+// 選考予定 entry and a possible computed 選考ステータス value.
 export const STAGE_NAME_SUGGESTIONS = [
   "カジュアル面談",
   "書類選考",

@@ -42,7 +42,7 @@ export function StageForm({
     <form action={action} className="space-y-3">
       <div>
         <label className="block text-xs font-medium text-slate-700">
-          選考ステータス *
+          予定名 *
         </label>
         <input
           name="stage_name"

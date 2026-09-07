@@ -56,7 +56,7 @@ export default async function SettingsPage({
               Googleカレンダー連携
             </h2>
             <p className="mt-1 text-xs text-slate-400">
-              選考ステータスの日程を、自動でGoogleカレンダーに反映します。
+              選考予定の日程を、自動でGoogleカレンダーに反映します。
             </p>
 
             {googleMessage && (

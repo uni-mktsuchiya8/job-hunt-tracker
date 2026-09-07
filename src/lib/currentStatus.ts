@@ -10,9 +10,10 @@ export function statusRank(status: string): number {
   return index === -1 ? STATUS_PROGRESSION.length : index;
 }
 
-// The company's "current status" is derived from its 選考ステージ list
-// rather than stored separately — 選考ステージ and 選考ステータス were two
-// overlapping ways to track the same thing, so this merges them into one.
+// 選考ステータス (this company's current status) is derived from its
+// 選考予定 list (interview_stages rows) rather than stored separately —
+// 選考ステータス is a single dropdown-selectable value, while 選考予定 is
+// the underlying list of dated/undated entries it's computed from.
 // Preference: the stage with the latest scheduled_at (a dated stage tells
 // you more about where things stand than an undated one); if none have a
 // date, fall back to whichever stage was added most recently.
