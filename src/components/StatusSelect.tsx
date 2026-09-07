@@ -23,7 +23,7 @@ export function StatusSelect({
       onChange={(e) => {
         if (e.target.value !== value) onChange(e.target.value);
       }}
-      className={`rounded-md border-0 px-2 py-1 text-xs font-medium outline-none ${
+      className={`rounded-lg border-0 px-2 py-1 text-xs font-medium outline-none ${
         STATUS_STYLES[value] ?? "bg-zinc-100 text-zinc-700"
       }`}
     >

@@ -10,7 +10,7 @@ export default function NewCompanyPage() {
         <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">
           会社を追加
         </h1>
-        <div className="rounded-lg border border-zinc-200 bg-white p-6">
+        <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
           <CompanyForm action={createCompany} submitLabel="追加する" />
         </div>
       </main>

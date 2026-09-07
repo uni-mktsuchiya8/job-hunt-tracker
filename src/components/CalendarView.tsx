@@ -59,11 +59,11 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
     d.getDate() === today.getDate();
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-4">
+    <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}
-          className="rounded-md border border-zinc-300 px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100"
+          className="rounded-lg border border-zinc-300 px-2 py-1 text-sm text-zinc-600 transition-colors hover:bg-zinc-100"
         >
           ←
         </button>
@@ -72,13 +72,13 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
         </h3>
         <button
           onClick={() => setCursor(new Date(year, month + 1, 1))}
-          className="rounded-md border border-zinc-300 px-2 py-1 text-sm text-zinc-600 hover:bg-zinc-100"
+          className="rounded-lg border border-zinc-300 px-2 py-1 text-sm text-zinc-600 transition-colors hover:bg-zinc-100"
         >
           →
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-md border border-zinc-200 bg-zinc-200 text-xs">
+      <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-zinc-200 bg-zinc-200 text-xs">
         {WEEKDAYS.map((w) => (
           <div
             key={w}
@@ -144,7 +144,7 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
               <li key={e.stageId}>
                 <Link
                   href={`/companies/${e.companyId}`}
-                  className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 px-3 py-1.5 text-sm hover:bg-zinc-50"
+                  className="flex items-center justify-between gap-2 rounded-lg border border-zinc-200 px-3 py-1.5 text-sm hover:bg-zinc-50"
                 >
                   <span className="text-zinc-700">
                     {new Date(e.scheduledAt).toLocaleString("ja-JP", {

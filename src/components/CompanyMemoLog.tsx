@@ -50,14 +50,14 @@ export function CompanyMemoLog({
           }}
           rows={1}
           placeholder="メモを追加(Cmd/Ctrl+Enterでも保存)"
-          className="w-full resize-y rounded-md border border-zinc-200 px-2 py-1 text-xs text-zinc-700 outline-none focus:border-zinc-400 focus:bg-zinc-50"
+          className="w-full resize-y rounded-lg border border-zinc-200 px-2 py-1 text-xs text-zinc-700 outline-none focus:border-zinc-400 focus:bg-zinc-50"
         />
         <button
           type="button"
           onClick={submit}
           disabled={!draft.trim()}
           style={draft.trim() ? brandButtonStyle : undefined}
-          className="shrink-0 rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-zinc-300"
+          className="shrink-0 rounded-lg bg-green-600 px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-zinc-300"
         >
           保存
         </button>
@@ -68,7 +68,7 @@ export function CompanyMemoLog({
           {visible.map((memo) => (
             <li
               key={memo.id}
-              className="group flex items-start justify-between gap-2 rounded-md bg-zinc-50 px-2 py-1 text-xs"
+              className="group flex items-start justify-between gap-2 rounded-lg bg-zinc-50 px-2 py-1 text-xs"
             >
               <div className="min-w-0">
                 <span className="mr-1.5 text-zinc-400">

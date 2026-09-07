@@ -60,7 +60,7 @@ export default async function CompanyDetailPage({
         <BackToListLink />
         {/* プロフィールカード風ヘッダー: 左に色帯+丸アイコン、右にステータス
             /予定の箱を並べる(候補者プロフィールカードのレイアウトを参考)。 */}
-        <div className="mt-2 mb-6 flex overflow-hidden rounded-lg border border-zinc-200 bg-white">
+        <div className="mt-2 mb-6 flex overflow-hidden rounded-2xl border border-zinc-100 bg-white shadow-sm">
           <div className="w-1.5 shrink-0 bg-green-600" aria-hidden />
           <div className="flex flex-1 flex-wrap items-center justify-between gap-4 p-4">
             <div className="flex items-center gap-3">
@@ -80,7 +80,7 @@ export default async function CompanyDetailPage({
             </div>
 
             <div className="flex flex-wrap items-stretch gap-3">
-              <div className="rounded-md border border-zinc-200 bg-green-50 px-3 py-2">
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
                 <p className="text-[11px] text-zinc-400">選考ステータス</p>
                 <StatusSelect
                   value={computeCurrentStatus(stages ?? [])}
@@ -88,7 +88,7 @@ export default async function CompanyDetailPage({
                 />
               </div>
               {/* 選考予定(選考ステップ)を選考ステータスの隣に、同じ箱型で表示 */}
-              <div className="rounded-md border border-zinc-200 bg-green-50 px-3 py-2">
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2">
                 <p className="text-[11px] text-zinc-400">選考予定</p>
                 <p className="text-sm text-zinc-700">
                   {latestStage

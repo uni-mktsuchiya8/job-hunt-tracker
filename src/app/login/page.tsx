@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-green-50 px-4">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-zinc-100 bg-white p-8 shadow-sm">
         <h1 className="text-xl font-semibold text-zinc-900">
           転職活動トラッカー
         </h1>
@@ -43,7 +43,7 @@ export default function LoginPage() {
               name="email"
               required
               autoComplete="email"
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
           <div>
@@ -58,7 +58,7 @@ export default function LoginPage() {
               autoComplete={
                 mode === "signin" ? "current-password" : "new-password"
               }
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+              className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
 
@@ -73,7 +73,7 @@ export default function LoginPage() {
             type="submit"
             disabled={pending}
             style={brandButtonStyle}
-            className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-500 disabled:opacity-60"
+            className="w-full rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-green-500 disabled:opacity-60"
           >
             {pending
               ? "処理中..."

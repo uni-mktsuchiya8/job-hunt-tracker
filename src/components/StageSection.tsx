@@ -48,7 +48,7 @@ export function StageSection({
           <button
             onClick={() => setAddingStage(true)}
             style={brandButtonStyle}
-            className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-500"
+            className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-green-500"
           >
             + 予定を追加
           </button>
@@ -56,7 +56,7 @@ export function StageSection({
       </div>
 
       {addingStage && (
-        <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-4">
+        <div className="mb-4 rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
           <StageForm
             submitLabel="追加"
             onCancel={() => setAddingStage(false)}
@@ -69,7 +69,7 @@ export function StageSection({
       )}
 
       {sortedStages.length === 0 && !addingStage && (
-        <p className="rounded-lg border border-dashed border-zinc-300 bg-white p-6 text-center text-sm text-zinc-500">
+        <p className="rounded-2xl border border-dashed border-zinc-300 bg-white p-6 text-center text-sm text-zinc-500">
           まだ選考予定の記録がありません。「+ 予定を追加」でカジュアル面談・書類選考・内定/不合格/辞退なども記録できます。
         </p>
       )}

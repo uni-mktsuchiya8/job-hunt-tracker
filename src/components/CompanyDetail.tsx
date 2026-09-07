@@ -66,14 +66,14 @@ export function CompanyDetail({
       {/* 選考ステータス(プルダウン)と最新の選考予定はページ上部、社名の
           隣に表示(companies/[id]/page.tsx側)。古い選考予定は /schedule
           ページに移した。 */}
-      <section className="rounded-lg border border-zinc-200 bg-white p-6">
+      <section className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-500">会社情報</h2>
+          <h2 className="text-sm font-semibold tracking-wide text-zinc-500">会社情報</h2>
           <div className="flex gap-2">
             {!editingCompany && (
               <button
                 onClick={() => setEditingCompany(true)}
-                className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100"
+                className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:bg-zinc-100"
               >
                 編集
               </button>
@@ -84,7 +84,7 @@ export function CompanyDetail({
                   deleteCompanyAction();
                 }
               }}
-              className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50"
+              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50"
             >
               会社を削除
             </button>
@@ -159,13 +159,13 @@ export function CompanyDetail({
       </section>
 
       <section>
-        <h2 className="mb-1 text-sm font-semibold text-zinc-500">
+        <h2 className="mb-1 text-sm font-semibold tracking-wide text-zinc-500">
           タイムライン
         </h2>
         <p className="mb-4 text-xs text-zinc-400">
           保存するたびに1件ずつ蓄積される経過記録です(上のメモとは別に残ります)。
         </p>
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
+        <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
           <CompanyMemoLog
             memos={memos}
             onAdd={addTimelineEntryAction}

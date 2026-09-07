@@ -22,7 +22,7 @@ export function CompanyMemoBox({
       }}
       rows={rows}
       placeholder="メモ(その場の自由記入)"
-      className="w-full resize-y rounded-md border border-transparent px-2 py-1 text-xs text-zinc-600 outline-none hover:border-zinc-200 focus:border-zinc-400 focus:bg-zinc-50"
+      className="w-full resize-y rounded-lg border border-transparent px-2 py-1 text-xs text-zinc-600 outline-none hover:border-zinc-200 focus:border-zinc-400 focus:bg-zinc-50"
     />
   );
 }

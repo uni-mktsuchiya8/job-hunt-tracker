@@ -157,11 +157,11 @@ export function CompanyAutocomplete({
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+        className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
       />
 
       {showDropdown && (
-        <div className="absolute z-10 mt-1 w-full rounded-md border border-zinc-200 bg-white shadow-lg">
+        <div className="absolute z-10 mt-1 w-full rounded-lg border border-zinc-200 bg-white shadow-lg">
           {ownMatches.length > 0 && (
             <div>
               <p className="px-3 pt-2 text-[11px] font-medium text-zinc-400">

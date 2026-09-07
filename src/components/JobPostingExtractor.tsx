@@ -104,7 +104,7 @@ export function JobPostingExtractor({
   const busy = urlLoading || ocrLoading;
 
   return (
-    <div className="rounded-md border border-dashed border-zinc-300 p-3">
+    <div className="rounded-lg border border-dashed border-zinc-300 p-3">
       <p className="text-xs font-medium text-zinc-500">
         求人票から自動入力(キーワード抽出・要確認)
       </p>
@@ -115,20 +115,20 @@ export function JobPostingExtractor({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="求人票のURL"
-          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
+          className="w-full rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
         />
         <button
           type="button"
           onClick={handleUrlExtract}
           disabled={busy}
-          className="shrink-0 rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 disabled:opacity-60"
+          className="shrink-0 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100 disabled:opacity-60"
         >
           {urlLoading ? "取得中..." : "URLから取得"}
         </button>
       </div>
 
       <div className="mt-2 flex items-center gap-2">
-        <label className="shrink-0 cursor-pointer rounded-md border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-100">
+        <label className="shrink-0 cursor-pointer rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100">
           {ocrLoading ? `読み取り中... ${ocrProgress}%` : "求人票のキャプチャ画像を選択"}
           <input
             type="file"

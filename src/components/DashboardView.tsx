@@ -229,14 +229,14 @@ export function DashboardView({
           <h2 className="text-sm font-medium text-zinc-500">
             {companies.length} 社を記録中
           </h2>
-          <div className="flex rounded-md border border-zinc-300 text-xs">
+          <div className="flex rounded-lg border border-zinc-300 text-xs">
             <button
               onClick={() => setView("list")}
               style={view === "list" ? brandButtonStyle : undefined}
               className={`rounded-l-md px-3 py-1.5 ${
                 view === "list"
                   ? "bg-green-600 text-white"
-                  : "text-zinc-600 hover:bg-zinc-100"
+                  : "text-zinc-600 transition-colors hover:bg-zinc-100"
               }`}
             >
               リスト
@@ -247,7 +247,7 @@ export function DashboardView({
               className={`rounded-r-md border-l border-zinc-300 px-3 py-1.5 ${
                 view === "calendar"
                   ? "bg-green-600 text-white"
-                  : "text-zinc-600 hover:bg-zinc-100"
+                  : "text-zinc-600 transition-colors hover:bg-zinc-100"
               }`}
             >
               カレンダー
@@ -257,7 +257,7 @@ export function DashboardView({
         <Link
           href="/companies/new"
           style={brandButtonStyle}
-          className="flex items-center gap-1.5 rounded-md bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-green-500"
+          className="flex items-center gap-1.5 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-green-500"
         >
           <span className="text-base leading-none">＋</span> 会社を追加
         </Link>
@@ -276,7 +276,7 @@ export function DashboardView({
             className={`rounded-full border px-3 py-1 text-xs font-medium ${
               statusFilter === "all"
                 ? "border-green-600 bg-green-600 text-white"
-                : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
+                : "border-zinc-300 text-zinc-600 transition-colors hover:bg-zinc-100"
             }`}
           >
             すべて ({companies.length})
@@ -289,7 +289,7 @@ export function DashboardView({
               className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
                 statusFilter === status
                   ? "border-green-600 bg-green-600 text-white"
-                  : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
+                  : "border-zinc-300 text-zinc-600 transition-colors hover:bg-zinc-100"
               }`}
             >
               {status} ({statusCounts.get(status) ?? 0})
@@ -303,7 +303,7 @@ export function DashboardView({
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
+            className="rounded-lg border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -327,7 +327,7 @@ export function DashboardView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="会社名・登録情報でサーチ"
-              className="w-full rounded-md border border-zinc-300 py-1.5 pr-3 pl-8 text-sm text-zinc-900 outline-none focus:border-green-500"
+              className="w-full rounded-lg border border-zinc-300 py-1.5 pr-3 pl-8 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
           <label className="flex shrink-0 items-center gap-1.5 text-xs text-zinc-600">
@@ -347,17 +347,17 @@ export function DashboardView({
       ) : (
         <>
           {companies.length === 0 && (
-            <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">
+            <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">
               まだ記録がありません。「+ 会社を追加」から始めましょう。
             </div>
           )}
           {companies.length > 0 && visibleCompanies.length === 0 && (
-            <div className="rounded-lg border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">
+            <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">
               条件に一致する会社がありません。
             </div>
           )}
           {visibleCompanies.length > 0 && (
-            <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white">
+            <div className="overflow-x-auto rounded-2xl border border-zinc-100 bg-white shadow-sm">
               <table className="w-full min-w-[52rem] text-sm">
                 <thead>
                   <tr className="border-b border-zinc-200 text-left text-xs text-zinc-400">
@@ -375,7 +375,7 @@ export function DashboardView({
                     return (
                       <tr
                         key={company.id}
-                        className="border-b border-zinc-100 align-top last:border-0"
+                        className="border-b border-zinc-100 align-top transition-colors last:border-0 hover:bg-zinc-50"
                       >
                         <td className="px-4 py-3">
                           <p className="text-xs text-zinc-400">

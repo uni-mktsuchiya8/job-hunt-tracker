@@ -24,7 +24,7 @@ export function StageCard({
 
   if (editing) {
     return (
-      <li className="rounded-lg border border-zinc-200 bg-white p-4">
+      <li className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
         <StageForm
           stage={stage}
           submitLabel="保存"
@@ -39,7 +39,7 @@ export function StageCard({
   }
 
   return (
-    <li className="rounded-lg border border-zinc-200 bg-white p-4">
+    <li className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h4 className="font-medium text-zinc-900">{stage.stage_name}</h4>
@@ -117,13 +117,13 @@ export function StageCard({
         <div className="flex shrink-0 gap-2 text-xs">
           <button
             onClick={() => setEditing(true)}
-            className="rounded-md border border-zinc-300 px-2 py-1 text-zinc-600 hover:bg-zinc-100"
+            className="rounded-lg border border-zinc-300 px-2 py-1 text-zinc-600 transition-colors hover:bg-zinc-100"
           >
             編集
           </button>
           <button
             onClick={onDelete}
-            className="rounded-md border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50"
+            className="rounded-lg border border-red-200 px-2 py-1 text-red-600 hover:bg-red-50"
           >
             削除
           </button>

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
 import { quickAddStatusStage, updateCompanyMemo } from "@/app/companies/actions";
 import { DashboardView } from "@/components/DashboardView";
+import { brandButtonStyle } from "@/lib/brandColor";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 // company_memos (タイムライン) is fetched too even though the dashboard
@@ -33,21 +34,30 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-green-50">
-      <header className="border-b border-zinc-200 bg-white">
+      <header className="border-b border-zinc-100 bg-white shadow-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <h1 className="text-lg font-semibold text-zinc-900">
-            転職活動トラッカー
-          </h1>
+          <div className="flex items-center gap-2.5">
+            <span
+              style={brandButtonStyle}
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600 text-sm font-bold text-white"
+              aria-hidden
+            >
+              転
+            </span>
+            <h1 className="text-lg font-semibold tracking-tight text-zinc-900">
+              転職活動トラッカー
+            </h1>
+          </div>
           <div className="flex items-center gap-3 text-sm text-zinc-500">
             <span>{user?.email}</span>
             <Link
               href="/settings"
-              className="rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-100"
+              className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100"
             >
               設定
             </Link>
             <form action={signOut}>
-              <button className="rounded-md border border-zinc-300 px-3 py-1.5 hover:bg-zinc-100">
+              <button className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100">
                 ログアウト
               </button>
             </form>
@@ -57,7 +67,7 @@ export default async function DashboardPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         {error && (
-          <p className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+          <p className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
             読み込みエラー: {error.message}
           </p>
         )}

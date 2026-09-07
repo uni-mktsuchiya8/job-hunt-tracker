@@ -46,11 +46,11 @@ export default async function SettingsPage({
         <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">設定</h1>
 
         <div className="space-y-6">
-          <div className="rounded-lg border border-zinc-200 bg-white p-6">
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
             <HomeStationForm homeStation={homeStation} />
           </div>
 
-          <div className="rounded-lg border border-zinc-200 bg-white p-6">
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
             <h2 className="text-sm font-medium text-zinc-700">
               Googleカレンダー連携
             </h2>
@@ -71,7 +71,7 @@ export default async function SettingsPage({
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-emerald-600">✓ 連携済み</span>
                   <form action={disconnectGoogleCalendar}>
-                    <button className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 hover:bg-zinc-100">
+                    <button className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs text-zinc-600 transition-colors hover:bg-zinc-100">
                       連携を解除
                     </button>
                   </form>
@@ -80,7 +80,7 @@ export default async function SettingsPage({
                 <a
                   href="/api/auth/google/start"
                   style={brandButtonStyle}
-                  className="inline-block rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500"
+                  className="inline-block rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-500"
                 >
                   Googleカレンダーと連携する
                 </a>
