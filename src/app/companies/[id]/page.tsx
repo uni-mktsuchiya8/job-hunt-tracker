@@ -59,26 +59,34 @@ export default async function CompanyDetailPage({
         <Link href="/" className="text-sm text-slate-500 hover:text-slate-800">
           ← 一覧に戻る
         </Link>
-        <div className="mt-2 mb-6 flex flex-wrap items-center gap-3">
+        <div className="mt-2 mb-6 rounded-lg border border-slate-200 bg-white p-4">
           <h1 className="text-xl font-semibold text-slate-900">
             {company.name}
           </h1>
-          <StatusSelect
-            value={computeCurrentStatus(stages ?? [])}
-            onChange={quickAddStatusStage.bind(null, id)}
-          />
-          {/* 選考予定(選考ステップ)を選考ステータスの隣にコンパクト表示 */}
-          <span className="text-xs text-slate-500">
-            {latestStage
-              ? `${latestStage.stage_name} ・ ${formatDateTime(latestStage.scheduled_at)}`
-              : "選考予定なし"}
-          </span>
-          <Link
-            href={`/companies/${id}/schedule`}
-            className="text-xs text-emerald-700 hover:underline"
-          >
-            すべて見る →
-          </Link>
+          <div className="mt-3 flex flex-wrap items-stretch gap-3">
+            <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+              <p className="text-[11px] text-slate-400">選考ステータス</p>
+              <StatusSelect
+                value={computeCurrentStatus(stages ?? [])}
+                onChange={quickAddStatusStage.bind(null, id)}
+              />
+            </div>
+            {/* 選考予定(選考ステップ)を選考ステータスの隣に、同じ箱型で表示 */}
+            <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+              <p className="text-[11px] text-slate-400">選考予定</p>
+              <p className="text-sm text-slate-700">
+                {latestStage
+                  ? `${latestStage.stage_name} ・ ${formatDateTime(latestStage.scheduled_at)}`
+                  : "選考予定なし"}
+              </p>
+              <Link
+                href={`/companies/${id}/schedule`}
+                className="text-xs text-emerald-700 hover:underline"
+              >
+                すべて見る →
+              </Link>
+            </div>
+          </div>
         </div>
 
         <CompanyDetail
