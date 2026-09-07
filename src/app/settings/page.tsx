@@ -40,7 +40,7 @@ export default async function SettingsPage({
   const googleMessage = google ? GOOGLE_MESSAGES[google] : null;
 
   return (
-    <div className="min-h-screen bg-teal-50">
+    <div className="min-h-screen bg-green-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
         <BackToListLink />
         <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">設定</h1>
@@ -80,7 +80,7 @@ export default async function SettingsPage({
                 <a
                   href="/api/auth/google/start"
                   style={brandButtonStyle}
-                  className="inline-block rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-600"
+                  className="inline-block rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500"
                 >
                   Googleカレンダーと連携する
                 </a>

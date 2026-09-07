@@ -111,7 +111,7 @@ export function CompanyDetail({
                     href={company.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-teal-700 hover:underline"
+                    className="text-green-700 hover:underline"
                   >
                     {company.website}
                   </a>

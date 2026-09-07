@@ -235,7 +235,7 @@ export function DashboardView({
               style={view === "list" ? brandButtonStyle : undefined}
               className={`rounded-l-md px-3 py-1.5 ${
                 view === "list"
-                  ? "bg-teal-700 text-white"
+                  ? "bg-green-600 text-white"
                   : "text-zinc-600 hover:bg-zinc-100"
               }`}
             >
@@ -246,7 +246,7 @@ export function DashboardView({
               style={view === "calendar" ? brandButtonStyle : undefined}
               className={`rounded-r-md border-l border-zinc-300 px-3 py-1.5 ${
                 view === "calendar"
-                  ? "bg-teal-700 text-white"
+                  ? "bg-green-600 text-white"
                   : "text-zinc-600 hover:bg-zinc-100"
               }`}
             >
@@ -257,7 +257,7 @@ export function DashboardView({
         <Link
           href="/companies/new"
           style={brandButtonStyle}
-          className="flex items-center gap-1.5 rounded-md bg-teal-700 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-teal-600"
+          className="flex items-center gap-1.5 rounded-md bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-green-500"
         >
           <span className="text-base leading-none">＋</span> 会社を追加
         </Link>
@@ -275,7 +275,7 @@ export function DashboardView({
             style={statusFilter === "all" ? brandButtonStyle : undefined}
             className={`rounded-full border px-3 py-1 text-xs font-medium ${
               statusFilter === "all"
-                ? "border-teal-700 bg-teal-700 text-white"
+                ? "border-green-600 bg-green-600 text-white"
                 : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
             }`}
           >
@@ -288,7 +288,7 @@ export function DashboardView({
               style={statusFilter === status ? brandButtonStyle : undefined}
               className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
                 statusFilter === status
-                  ? "border-teal-700 bg-teal-700 text-white"
+                  ? "border-green-600 bg-green-600 text-white"
                   : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
               }`}
             >
@@ -303,7 +303,7 @@ export function DashboardView({
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-teal-600"
+            className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -327,7 +327,7 @@ export function DashboardView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="会社名・登録情報でサーチ"
-              className="w-full rounded-md border border-zinc-300 py-1.5 pr-3 pl-8 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="w-full rounded-md border border-zinc-300 py-1.5 pr-3 pl-8 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
           <label className="flex shrink-0 items-center gap-1.5 text-xs text-zinc-600">
@@ -335,7 +335,7 @@ export function DashboardView({
               type="checkbox"
               checked={onlyNoUpcoming}
               onChange={(e) => setOnlyNoUpcoming(e.target.checked)}
-              className="rounded border-zinc-300 accent-teal-700"
+              className="rounded border-zinc-300 accent-green-600"
             />
             次の選考予定がない会社のみ表示する
           </label>

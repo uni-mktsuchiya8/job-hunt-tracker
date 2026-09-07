@@ -4,7 +4,7 @@ import { BackToListLink } from "@/components/BackToListLink";
 
 export default function NewCompanyPage() {
   return (
-    <div className="min-h-screen bg-teal-50">
+    <div className="min-h-screen bg-green-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
         <BackToListLink />
         <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">

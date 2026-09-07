@@ -48,7 +48,7 @@ export function StageSection({
           <button
             onClick={() => setAddingStage(true)}
             style={brandButtonStyle}
-            className="rounded-md bg-teal-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-teal-600"
+            className="rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-500"
           >
             + 予定を追加
           </button>

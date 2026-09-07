@@ -128,7 +128,7 @@ export function CompanyForm({
           value={info}
           onChange={(e) => setInfo(e.target.value)}
           placeholder="業界、事業内容、規模、社風など"
-          className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+          className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
         />
       </div>
 
@@ -143,7 +143,7 @@ export function CompanyForm({
             value={website}
             onChange={(e) => setWebsite(e.target.value)}
             placeholder="https://..."
-            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+            className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
           />
           <button
             type="button"
@@ -176,7 +176,7 @@ export function CompanyForm({
               value={salary}
               onChange={(e) => setSalary(e.target.value)}
               placeholder="例: 500万〜700万円"
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
           <div>
@@ -189,7 +189,7 @@ export function CompanyForm({
                 value={workLocation}
                 onChange={(e) => setWorkLocation(e.target.value)}
                 placeholder="例: 東京都渋谷区"
-                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+                className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
               />
               <button
                 type="button"
@@ -214,7 +214,7 @@ export function CompanyForm({
             value={nearestStation}
             onChange={(e) => setNearestStation(e.target.value)}
             placeholder="例: 渋谷"
-            className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+            className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
           />
         </div>
         <div>
@@ -225,7 +225,7 @@ export function CompanyForm({
             name="remote_type"
             value={remoteType}
             onChange={(e) => setRemoteType(e.target.value)}
-            className="mt-1 w-full max-w-[14rem] rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+            className="mt-1 w-full max-w-[14rem] rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
           >
             <option value="">未選択</option>
             {REMOTE_DAYS_OPTIONS.map((r) => (
@@ -244,7 +244,7 @@ export function CompanyForm({
               name="benefits"
               defaultValue={company?.benefits ?? ""}
               placeholder="例: 家賃補助、住宅手当、退職金制度"
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
           <div>
@@ -255,7 +255,7 @@ export function CompanyForm({
               name="overtime_hours"
               defaultValue={company?.overtime_hours ?? ""}
               placeholder="例: 月20時間程度"
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
         </div>
@@ -269,7 +269,7 @@ export function CompanyForm({
             value={jobRequirements}
             onChange={(e) => setJobRequirements(e.target.value)}
             placeholder="必須スキル、募集要項の貼り付けなど"
-            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
           />
         </div>
       </fieldset>
@@ -289,7 +289,7 @@ export function CompanyForm({
               min={1}
               defaultValue={company?.priority_rank ?? ""}
               placeholder="例: 1"
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
           <div>
@@ -301,7 +301,7 @@ export function CompanyForm({
               rows={2}
               defaultValue={company?.priority_reason ?? ""}
               placeholder="なぜこの順位なのか"
-              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             />
           </div>
         </div>
@@ -314,7 +314,7 @@ export function CompanyForm({
             rows={3}
             defaultValue={company?.decision_notes ?? ""}
             placeholder="入社を判断する上で気になっている点、後で比較したいポイントなど"
-            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+            className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
           />
         </div>
       </fieldset>
@@ -326,7 +326,7 @@ export function CompanyForm({
         <select
           name="application_route"
           defaultValue={company?.application_route ?? ""}
-          className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+          className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
         >
           <option value="">選択してください</option>
           {APPLICATION_ROUTES.map((r) => (
@@ -355,7 +355,7 @@ export function CompanyForm({
             <select
               name="initial_stage_name"
               defaultValue=""
-              className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+              className="mt-1 w-full max-w-xs rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
             >
               <option value="">登録しない(あとで追加)</option>
               {STAGE_NAME_SUGGESTIONS.map((s) => (
@@ -373,12 +373,12 @@ export function CompanyForm({
               <input
                 name="initial_scheduled_date"
                 type="date"
-                className="rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+                className="rounded-md border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
               />
               <select
                 name="initial_scheduled_hour"
                 defaultValue="10"
-                className="rounded-md border border-zinc-300 bg-white px-2 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+                className="rounded-md border border-zinc-300 bg-white px-2 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
               >
                 {HOURS.map((h) => (
                   <option key={h} value={h}>
@@ -389,7 +389,7 @@ export function CompanyForm({
               <select
                 name="initial_scheduled_minute"
                 defaultValue="00"
-                className="rounded-md border border-zinc-300 bg-white px-2 py-2 text-sm text-zinc-900 outline-none focus:border-teal-600"
+                className="rounded-md border border-zinc-300 bg-white px-2 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
               >
                 {MINUTES.map((m) => (
                   <option key={m} value={m}>
@@ -408,7 +408,7 @@ export function CompanyForm({
       <button
         type="submit"
         style={brandButtonStyle}
-        className="rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-600"
+        className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-500"
       >
         {submitLabel}
       </button>

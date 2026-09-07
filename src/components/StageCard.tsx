@@ -58,7 +58,7 @@ export function StageCard({
                 style={r === stage.result ? brandButtonStyle : undefined}
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   r === stage.result
-                    ? "bg-teal-700 text-white"
+                    ? "bg-green-600 text-white"
                     : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
                 }`}
               >

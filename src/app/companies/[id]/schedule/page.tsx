@@ -46,7 +46,7 @@ export default async function CompanyScheduleHistoryPage({
   );
 
   return (
-    <div className="min-h-screen bg-teal-50">
+    <div className="min-h-screen bg-green-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
         <BackToListLink />
         <div className="mt-2 mb-6">

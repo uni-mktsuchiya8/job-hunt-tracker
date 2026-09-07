@@ -115,7 +115,7 @@ export function JobPostingExtractor({
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="求人票のURL"
-          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-teal-600"
+          className="w-full rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
         />
         <button
           type="button"
