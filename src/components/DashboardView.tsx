@@ -179,7 +179,7 @@ export function DashboardView({
               onClick={() => setView("list")}
               className={`rounded-l-md px-3 py-1.5 ${
                 view === "list"
-                  ? "bg-slate-900 text-white"
+                  ? "bg-green-700 text-white"
                   : "text-slate-600 hover:bg-slate-100"
               }`}
             >
@@ -189,7 +189,7 @@ export function DashboardView({
               onClick={() => setView("calendar")}
               className={`rounded-r-md border-l border-slate-300 px-3 py-1.5 ${
                 view === "calendar"
-                  ? "bg-slate-900 text-white"
+                  ? "bg-green-700 text-white"
                   : "text-slate-600 hover:bg-slate-100"
               }`}
             >
@@ -199,7 +199,7 @@ export function DashboardView({
         </div>
         <Link
           href="/companies/new"
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+          className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
         >
           + 会社を追加
         </Link>
@@ -216,7 +216,7 @@ export function DashboardView({
             onClick={() => setStatusFilter("all")}
             className={`rounded-full border px-3 py-1 text-xs font-medium ${
               statusFilter === "all"
-                ? "border-slate-900 bg-slate-900 text-white"
+                ? "border-green-700 bg-green-700 text-white"
                 : "border-slate-300 text-slate-600 hover:bg-slate-100"
             }`}
           >
@@ -228,7 +228,7 @@ export function DashboardView({
               onClick={() => setStatusFilter(status)}
               className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
                 statusFilter === status
-                  ? "border-slate-900 bg-slate-900 text-white"
+                  ? "border-green-700 bg-green-700 text-white"
                   : "border-slate-300 text-slate-600 hover:bg-slate-100"
               }`}
             >
@@ -243,7 +243,7 @@ export function DashboardView({
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -267,7 +267,7 @@ export function DashboardView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="会社名・登録情報でサーチ"
-              className="w-full rounded-md border border-slate-300 py-1.5 pr-3 pl-8 text-sm text-slate-900 outline-none focus:border-slate-500"
+              className="w-full rounded-md border border-slate-300 py-1.5 pr-3 pl-8 text-sm text-slate-900 outline-none focus:border-green-600"
             />
           </div>
           <label className="flex shrink-0 items-center gap-1.5 text-xs text-slate-600">
@@ -275,7 +275,7 @@ export function DashboardView({
               type="checkbox"
               checked={onlyNoUpcoming}
               onChange={(e) => setOnlyNoUpcoming(e.target.checked)}
-              className="rounded border-slate-300"
+              className="rounded border-slate-300 accent-green-700"
             />
             次の選考予定がない会社のみ表示する
           </label>

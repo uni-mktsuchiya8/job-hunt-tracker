@@ -56,7 +56,7 @@ export function StageCard({
                 onClick={() => onResultChange(r)}
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   r === stage.result
-                    ? "bg-slate-900 text-white"
+                    ? "bg-green-700 text-white"
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                 }`}
               >

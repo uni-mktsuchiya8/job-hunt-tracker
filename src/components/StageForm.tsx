@@ -49,7 +49,7 @@ export function StageForm({
           required
           list="stage-name-suggestions"
           defaultValue={stage?.stage_name}
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
         />
         <datalist id="stage-name-suggestions">
           {STAGE_NAME_SUGGESTIONS.map((s) => (
@@ -67,12 +67,12 @@ export function StageForm({
             name="scheduled_date"
             type="date"
             defaultValue={defaultDate}
-            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
           />
           <select
             name="scheduled_hour"
             defaultValue={defaultHour}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
           >
             {HOURS.map((h) => (
               <option key={h} value={h}>
@@ -83,7 +83,7 @@ export function StageForm({
           <select
             name="scheduled_minute"
             defaultValue={defaultMinute}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
           >
             {MINUTES.map((m) => (
               <option key={m} value={m}>
@@ -108,7 +108,7 @@ export function StageForm({
             min={0}
             step={5}
             defaultValue={stage?.duration_minutes ?? 60}
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
           />
         </div>
         <div>
@@ -118,7 +118,7 @@ export function StageForm({
           <select
             name="method"
             defaultValue={stage?.method ?? ""}
-            className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+            className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
           >
             <option value="">未定</option>
             {STAGE_METHODS.map((m) => (
@@ -138,7 +138,7 @@ export function StageForm({
           name="interviewer"
           defaultValue={stage?.interviewer ?? ""}
           placeholder="例: 人事部 田中様、CTO 佐藤様"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
         />
       </div>
 
@@ -151,7 +151,7 @@ export function StageForm({
           rows={3}
           defaultValue={stage?.conversation_notes ?? ""}
           placeholder="聞かれた質問、話した内容など"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
         />
       </div>
 
@@ -164,7 +164,7 @@ export function StageForm({
           rows={3}
           defaultValue={stage?.impression ?? ""}
           placeholder="雰囲気、感触、所感など"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
         />
       </div>
 
@@ -177,7 +177,7 @@ export function StageForm({
           rows={2}
           defaultValue={stage?.memo ?? ""}
           placeholder="自由記入(その他気になったこと、次回までにやることなど)"
-          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
         />
       </div>
 
@@ -188,7 +188,7 @@ export function StageForm({
         <select
           name="result"
           defaultValue={stage?.result ?? "未定"}
-          className="mt-1 w-full max-w-[10rem] rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full max-w-[10rem] rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
         >
           {STAGE_RESULTS.map((r) => (
             <option key={r} value={r}>
@@ -201,7 +201,7 @@ export function StageForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700"
+          className="rounded-md bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-600"
         >
           {submitLabel}
         </button>

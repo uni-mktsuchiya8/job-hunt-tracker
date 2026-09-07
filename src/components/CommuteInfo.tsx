@@ -19,7 +19,7 @@ export function CommuteInfo({
   if (!homeStation) {
     return (
       <p className="text-xs text-slate-400">
-        <Link href="/settings" className="text-blue-600 hover:underline">
+        <Link href="/settings" className="text-green-700 hover:underline">
           自宅最寄り駅を設定
         </Link>
         すると、ここから経路を確認できます。

@@ -2,14 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CompanyDetail } from "@/components/CompanyDetail";
-import { StatusBadge } from "@/components/StatusBadge";
-import { computeCurrentStatus } from "@/lib/currentStatus";
 import {
   addCompanyMemo,
   createStage,
   deleteCompany,
   deleteCompanyMemo,
   deleteStage,
+  quickAddStatusStage,
   updateCompany,
   updateCompanyMemo,
   updateStage,
@@ -70,11 +69,10 @@ export default async function CompanyDetailPage({
         <Link href="/" className="text-sm text-slate-500 hover:text-slate-800">
           ← 一覧に戻る
         </Link>
-        <div className="mt-2 mb-6 flex items-center gap-3">
+        <div className="mt-2 mb-6">
           <h1 className="text-xl font-semibold text-slate-900">
             {company.name}
           </h1>
-          <StatusBadge status={computeCurrentStatus(stages ?? [])} />
         </div>
 
         <CompanyDetail
@@ -86,6 +84,7 @@ export default async function CompanyDetailPage({
           deleteCompanyAction={deleteCompany.bind(null, id)}
           createStageAction={createStage.bind(null, id)}
           stageActions={stageActions}
+          quickStatusAction={quickAddStatusStage.bind(null, id)}
           updateMemoAction={updateCompanyMemo.bind(null, id)}
           addTimelineEntryAction={addCompanyMemo.bind(null, id)}
           deleteTimelineEntryAction={deleteCompanyMemo.bind(null, id)}

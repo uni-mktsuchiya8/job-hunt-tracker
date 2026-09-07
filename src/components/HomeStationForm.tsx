@@ -21,7 +21,7 @@ export function HomeStationForm({ homeStation }: { homeStation: string }) {
           name="home_station"
           defaultValue={homeStation}
           placeholder="例: 新宿"
-          className="mt-1 w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+          className="mt-1 w-full max-w-xs rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-green-600"
         />
         <p className="mt-1 text-xs text-slate-400">
           各社の詳細ページで、ここから会社の最寄り駅までの経路を確認できるようになります。
@@ -36,7 +36,7 @@ export function HomeStationForm({ homeStation }: { homeStation: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
+        className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600 disabled:opacity-60"
       >
         {pending ? "保存中..." : "保存"}
       </button>

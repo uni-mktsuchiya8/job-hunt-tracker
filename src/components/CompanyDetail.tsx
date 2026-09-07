@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { CompanyForm } from "@/components/CompanyForm";
-import { StageForm } from "@/components/StageForm";
-import { StageCard } from "@/components/StageCard";
+import { StageSection } from "@/components/StageSection";
 import { CommuteInfo } from "@/components/CommuteInfo";
-import { StatusBadge } from "@/components/StatusBadge";
+import { StatusSelect } from "@/components/StatusSelect";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { CompanyMemoLog } from "@/components/CompanyMemoLog";
 import {
@@ -55,6 +54,7 @@ export function CompanyDetail({
   deleteCompanyAction,
   createStageAction,
   stageActions,
+  quickStatusAction,
   updateMemoAction,
   addTimelineEntryAction,
   deleteTimelineEntryAction,
@@ -74,25 +74,34 @@ export function CompanyDetail({
       setResult: (result: StageResult) => void;
     }
   >;
+  quickStatusAction: (status: string) => void;
   updateMemoAction: (memo: string) => void;
   addTimelineEntryAction: (content: string) => void;
   deleteTimelineEntryAction: (memoId: string) => void;
 }) {
   const [editingCompany, setEditingCompany] = useState(false);
-  const [addingStage, setAddingStage] = useState(false);
-
-  // Newest first — undated entries sort by when they were added instead,
-  // so they still land in a sensible spot rather than always at one end.
-  const sortedStages = [...stages].sort((a, b) => {
-    const aTime = new Date(a.scheduled_at ?? a.created_at).getTime();
-    const bTime = new Date(b.scheduled_at ?? b.created_at).getTime();
-    return bTime - aTime;
-  });
 
   const currentStatus = computeCurrentStatus(stages);
 
   return (
     <div className="space-y-8">
+      {/* 選考ステータス(プルダウン)と最新の選考予定をページ上部にまとめて
+          コンパクトに配置。古い選考予定は /schedule ページ側に移した。 */}
+      <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="text-xs font-medium text-slate-500">選考ステータス</span>
+          <StatusSelect value={currentStatus} onChange={quickStatusAction} />
+        </div>
+        <StageSection
+          companyId={company.id}
+          companyName={company.name}
+          stages={stages}
+          stageActions={stageActions}
+          createStageAction={createStageAction}
+          mode="latest"
+        />
+      </section>
+
       <section className="rounded-lg border border-slate-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-500">会社情報</h2>
@@ -138,7 +147,7 @@ export function CompanyDetail({
                     href={company.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-green-700 hover:underline"
                   >
                     {company.website}
                   </a>
@@ -183,66 +192,6 @@ export function CompanyDetail({
           </p>
           <CompanyMemoBox memo={company.memo} onSave={updateMemoAction} rows={2} />
         </div>
-      </section>
-
-      <section>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-500">
-            選考予定(選考ステータス: <StatusBadge status={currentStatus} />)
-          </h2>
-          {!addingStage && (
-            <button
-              onClick={() => setAddingStage(true)}
-              className="rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700"
-            >
-              + 予定を追加
-            </button>
-          )}
-        </div>
-
-        {addingStage && (
-          <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-            <StageForm
-              submitLabel="追加"
-              onCancel={() => setAddingStage(false)}
-              action={(formData) => {
-                createStageAction(formData);
-                setAddingStage(false);
-              }}
-            />
-          </div>
-        )}
-
-        {sortedStages.length === 0 && !addingStage && (
-          <p className="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-            まだ選考予定の記録がありません。「+ 予定を追加」でカジュアル面談・書類選考・内定/不合格/辞退なども記録できます。
-          </p>
-        )}
-        {sortedStages.length > 0 && (
-          <p className="mb-2 text-xs text-slate-400">
-            日程が一番新しい選考予定が「選考ステータス」として上に表示されます。
-          </p>
-        )}
-
-        <ul className="space-y-3">
-          {sortedStages.map((stage) => {
-            const actions = stageActions[stage.id];
-            return (
-              <StageCard
-                key={stage.id}
-                stage={stage}
-                companyName={company.name}
-                onUpdate={actions.update}
-                onResultChange={actions.setResult}
-                onDelete={() => {
-                  if (confirm(`「${stage.stage_name}」を削除しますか?`)) {
-                    actions.delete();
-                  }
-                }}
-              />
-            );
-          })}
-        </ul>
       </section>
 
       <section>

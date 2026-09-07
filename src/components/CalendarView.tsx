@@ -98,7 +98,7 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
                   <span
                     className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] ${
                       isToday(date)
-                        ? "bg-slate-900 font-semibold text-white"
+                        ? "bg-green-700 font-semibold text-white"
                         : "text-slate-500"
                     }`}
                   >

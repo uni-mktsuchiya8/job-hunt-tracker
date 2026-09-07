@@ -55,7 +55,7 @@ export function CompanyMemoLog({
           type="button"
           onClick={submit}
           disabled={!draft.trim()}
-          className="shrink-0 rounded-md bg-slate-900 px-2.5 py-1 text-xs font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+          className="shrink-0 rounded-md bg-green-700 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-slate-300"
         >
           保存
         </button>
