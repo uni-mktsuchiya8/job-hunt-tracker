@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CalendarView, type CalendarEvent } from "@/components/CalendarView";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { StatusSelect } from "@/components/StatusSelect";
+import { NeedsAttentionPanel, type AttentionItem } from "@/components/NeedsAttentionPanel";
 import { formatDateTime } from "@/lib/format";
 import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
 import { brandGreenStyle } from "@/lib/brandColor";
@@ -70,6 +71,55 @@ function searchHaystack(company: CompanyWithStages): string {
     .toLowerCase();
 }
 
+const ATTENTION_SOON_MS = 3 * 24 * 60 * 60 * 1000; // 3日以内
+
+// This app has no email inbox, so there's no literal "返信が必要なメール
+// 一覧" to build — the schedule-driven equivalent is: an interview that
+// already happened but has no result recorded yet (needs a follow-up),
+// or one coming up within the next few days (needs prep). One reminder
+// per company, prioritizing the overdue case.
+function computeAttentionItems(companies: CompanyWithStages[]): AttentionItem[] {
+  const now = Date.now();
+  const items: AttentionItem[] = [];
+
+  for (const company of companies) {
+    const stages = company.interview_stages ?? [];
+
+    const overdue = stages
+      .filter(
+        (s) =>
+          s.scheduled_at &&
+          new Date(s.scheduled_at).getTime() < now &&
+          s.result === "未定",
+      )
+      .sort(
+        (a, b) => new Date(b.scheduled_at!).getTime() - new Date(a.scheduled_at!).getTime(),
+      )[0];
+
+    if (overdue) {
+      items.push({
+        companyId: company.id,
+        companyName: company.name,
+        reason: `${overdue.stage_name}の結果がまだ未記録です`,
+        urgent: true,
+      });
+      continue;
+    }
+
+    const next = nextUpcomingStage(stages);
+    if (next?.scheduled_at && new Date(next.scheduled_at).getTime() - now <= ATTENTION_SOON_MS) {
+      items.push({
+        companyId: company.id,
+        companyName: company.name,
+        reason: `${next.stage_name}が ${formatDateTime(next.scheduled_at)} に予定されています`,
+        urgent: false,
+      });
+    }
+  }
+
+  return items.sort((a, b) => Number(b.urgent) - Number(a.urgent));
+}
+
 function formatShortDate(iso: string): string {
   const date = new Date(iso);
   return new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric" }).format(
@@ -91,6 +141,8 @@ export function DashboardView({
   const [sortKey, setSortKey] = useState<SortKey>("updated");
   const [statusFilter, setStatusFilter] = useState<string | "all">("all");
   const [onlyNoUpcoming, setOnlyNoUpcoming] = useState(false);
+
+  const attentionItems = useMemo(() => computeAttentionItems(companies), [companies]);
 
   const events: CalendarEvent[] = companies.flatMap((company) =>
     (company.interview_stages ?? [])
@@ -170,6 +222,8 @@ export function DashboardView({
 
   return (
     <div>
+      <NeedsAttentionPanel items={attentionItems} />
+
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-sm font-medium text-slate-500">
