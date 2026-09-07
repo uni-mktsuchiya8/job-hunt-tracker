@@ -4,6 +4,7 @@ import { useState } from "react";
 import { StageForm } from "@/components/StageForm";
 import { AddToGoogleCalendarLink } from "@/components/AddToGoogleCalendarLink";
 import { formatDateTime } from "@/lib/format";
+import { brandGreenStyle } from "@/lib/brandColor";
 import { STAGE_RESULTS, type InterviewStage, type StageResult } from "@/lib/database.types";
 
 export function StageCard({
@@ -54,9 +55,10 @@ export function StageCard({
                 key={r}
                 type="button"
                 onClick={() => onResultChange(r)}
+                style={r === stage.result ? brandGreenStyle : undefined}
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   r === stage.result
-                    ? "bg-green-700 text-white"
+                    ? "bg-emerald-700 text-white"
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                 }`}
               >

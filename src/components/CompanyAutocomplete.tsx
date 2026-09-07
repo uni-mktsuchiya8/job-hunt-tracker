@@ -157,7 +157,7 @@ export function CompanyAutocomplete({
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-green-600"
+        className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
       />
 
       {showDropdown && (

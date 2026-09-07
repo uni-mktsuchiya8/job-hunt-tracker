@@ -5,6 +5,7 @@ import Link from "next/link";
 import { StageForm } from "@/components/StageForm";
 import { StageCard } from "@/components/StageCard";
 import { sortStagesNewestFirst } from "@/lib/currentStatus";
+import { brandGreenStyle } from "@/lib/brandColor";
 import type { InterviewStage, StageResult } from "@/lib/database.types";
 
 // Full 選考予定 history for a company, used on the dedicated schedule
@@ -46,7 +47,8 @@ export function StageSection({
         {!addingStage && (
           <button
             onClick={() => setAddingStage(true)}
-            className="rounded-md bg-green-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-600"
+            style={brandGreenStyle}
+            className="rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-600"
           >
             + 予定を追加
           </button>

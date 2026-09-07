@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ResultBadge } from "@/components/StatusBadge";
+import { brandGreenStyle } from "@/lib/brandColor";
 import type { StageResult } from "@/lib/database.types";
 
 export type CalendarEvent = {
@@ -96,9 +97,10 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
               {date && (
                 <>
                   <span
+                    style={isToday(date) ? brandGreenStyle : undefined}
                     className={`inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] ${
                       isToday(date)
-                        ? "bg-green-700 font-semibold text-white"
+                        ? "bg-emerald-700 font-semibold text-white"
                         : "text-slate-500"
                     }`}
                   >

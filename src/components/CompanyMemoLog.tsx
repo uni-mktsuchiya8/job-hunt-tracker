@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { formatShortDateTime } from "@/lib/format";
+import { brandGreenStyle } from "@/lib/brandColor";
 import type { CompanyMemo } from "@/lib/database.types";
 
 const COLLAPSED_COUNT = 2;
@@ -55,7 +56,8 @@ export function CompanyMemoLog({
           type="button"
           onClick={submit}
           disabled={!draft.trim()}
-          className="shrink-0 rounded-md bg-green-700 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-slate-300"
+          style={draft.trim() ? brandGreenStyle : undefined}
+          className="shrink-0 rounded-md bg-emerald-700 px-2.5 py-1 text-xs font-medium text-white hover:bg-emerald-600 disabled:cursor-not-allowed disabled:bg-slate-300"
         >
           保存
         </button>

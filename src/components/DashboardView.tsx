@@ -7,6 +7,7 @@ import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { StatusSelect } from "@/components/StatusSelect";
 import { formatDateTime } from "@/lib/format";
 import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
+import { brandGreenStyle } from "@/lib/brandColor";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
 
 type CompanyWithStages = Company & {
@@ -177,9 +178,10 @@ export function DashboardView({
           <div className="flex rounded-md border border-slate-300 text-xs">
             <button
               onClick={() => setView("list")}
+              style={view === "list" ? brandGreenStyle : undefined}
               className={`rounded-l-md px-3 py-1.5 ${
                 view === "list"
-                  ? "bg-green-700 text-white"
+                  ? "bg-emerald-700 text-white"
                   : "text-slate-600 hover:bg-slate-100"
               }`}
             >
@@ -187,9 +189,10 @@ export function DashboardView({
             </button>
             <button
               onClick={() => setView("calendar")}
+              style={view === "calendar" ? brandGreenStyle : undefined}
               className={`rounded-r-md border-l border-slate-300 px-3 py-1.5 ${
                 view === "calendar"
-                  ? "bg-green-700 text-white"
+                  ? "bg-emerald-700 text-white"
                   : "text-slate-600 hover:bg-slate-100"
               }`}
             >
@@ -199,9 +202,10 @@ export function DashboardView({
         </div>
         <Link
           href="/companies/new"
-          className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
+          style={brandGreenStyle}
+          className="flex items-center gap-1.5 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-600"
         >
-          + 会社を追加
+          <span className="text-base leading-none">＋</span> 会社を追加
         </Link>
       </div>
 
@@ -214,9 +218,10 @@ export function DashboardView({
         <div className="mb-4 flex flex-wrap gap-2">
           <button
             onClick={() => setStatusFilter("all")}
+            style={statusFilter === "all" ? brandGreenStyle : undefined}
             className={`rounded-full border px-3 py-1 text-xs font-medium ${
               statusFilter === "all"
-                ? "border-green-700 bg-green-700 text-white"
+                ? "border-emerald-700 bg-emerald-700 text-white"
                 : "border-slate-300 text-slate-600 hover:bg-slate-100"
             }`}
           >
@@ -226,9 +231,10 @@ export function DashboardView({
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
+              style={statusFilter === status ? brandGreenStyle : undefined}
               className={`rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap ${
                 statusFilter === status
-                  ? "border-green-700 bg-green-700 text-white"
+                  ? "border-emerald-700 bg-emerald-700 text-white"
                   : "border-slate-300 text-slate-600 hover:bg-slate-100"
               }`}
             >
@@ -243,7 +249,7 @@ export function DashboardView({
           <select
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-green-600"
+            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-emerald-600"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -267,7 +273,7 @@ export function DashboardView({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="会社名・登録情報でサーチ"
-              className="w-full rounded-md border border-slate-300 py-1.5 pr-3 pl-8 text-sm text-slate-900 outline-none focus:border-green-600"
+              className="w-full rounded-md border border-slate-300 py-1.5 pr-3 pl-8 text-sm text-slate-900 outline-none focus:border-emerald-600"
             />
           </div>
           <label className="flex shrink-0 items-center gap-1.5 text-xs text-slate-600">
@@ -275,7 +281,7 @@ export function DashboardView({
               type="checkbox"
               checked={onlyNoUpcoming}
               onChange={(e) => setOnlyNoUpcoming(e.target.checked)}
-              className="rounded border-slate-300 accent-green-700"
+              className="rounded border-slate-300 accent-emerald-700"
             />
             次の選考予定がない会社のみ表示する
           </label>

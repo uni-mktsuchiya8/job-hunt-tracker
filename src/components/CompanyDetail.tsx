@@ -120,7 +120,7 @@ export function CompanyDetail({
                       href={company.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-green-700 hover:underline"
+                      className="text-emerald-700 hover:underline"
                     >
                       {company.website}
                     </a>
@@ -179,7 +179,7 @@ export function CompanyDetail({
           )}
           <Link
             href={`/companies/${company.id}/schedule`}
-            className="mt-2 block text-xs text-green-700 hover:underline"
+            className="mt-2 block text-xs text-emerald-700 hover:underline"
           >
             すべて見る →
           </Link>

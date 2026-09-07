@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { HomeStationForm } from "@/components/HomeStationForm";
 import { disconnectGoogleCalendar } from "@/app/settings/actions";
+import { brandGreenStyle } from "@/lib/brandColor";
 
 const GOOGLE_MESSAGES: Record<string, { text: string; tone: "ok" | "error" }> = {
   connected: { text: "Googleカレンダーと連携しました", tone: "ok" },
@@ -80,7 +81,8 @@ export default async function SettingsPage({
               ) : (
                 <a
                   href="/api/auth/google/start"
-                  className="inline-block rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600"
+                  style={brandGreenStyle}
+                  className="inline-block rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600"
                 >
                   Googleカレンダーと連携する
                 </a>
