@@ -59,7 +59,7 @@ export function CalendarView({ events }: { events: CalendarEvent[] }) {
     d.getDate() === today.getDate();
 
   return (
-    <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
+    <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
       <div className="mb-4 flex items-center justify-between">
         <button
           onClick={() => setCursor(new Date(year, month - 1, 1))}

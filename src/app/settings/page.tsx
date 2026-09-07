@@ -46,11 +46,11 @@ export default async function SettingsPage({
         <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">設定</h1>
 
         <div className="space-y-6">
-          <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
             <HomeStationForm homeStation={homeStation} />
           </div>
 
-          <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
             <h2 className="text-sm font-medium text-zinc-700">
               Googleカレンダー連携
             </h2>

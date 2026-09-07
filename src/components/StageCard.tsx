@@ -24,7 +24,7 @@ export function StageCard({
 
   if (editing) {
     return (
-      <li className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
+      <li className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
         <StageForm
           stage={stage}
           submitLabel="保存"
@@ -39,7 +39,7 @@ export function StageCard({
   }
 
   return (
-    <li className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
+    <li className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h4 className="font-medium text-zinc-900">{stage.stage_name}</h4>

@@ -56,7 +56,7 @@ export function StageSection({
       </div>
 
       {addingStage && (
-        <div className="mb-4 rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
+        <div className="mb-4 rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
           <StageForm
             submitLabel="追加"
             onCancel={() => setAddingStage(false)}

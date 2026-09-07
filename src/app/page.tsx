@@ -34,7 +34,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-green-50">
-      <header className="border-b border-zinc-100 bg-white shadow-sm">
+      <header className="border-b border-zinc-100 bg-white shadow-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2.5">
             <span

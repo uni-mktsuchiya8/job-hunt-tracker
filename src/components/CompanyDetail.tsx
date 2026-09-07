@@ -66,7 +66,7 @@ export function CompanyDetail({
       {/* 選考ステータス(プルダウン)と最新の選考予定はページ上部、社名の
           隣に表示(companies/[id]/page.tsx側)。古い選考予定は /schedule
           ページに移した。 */}
-      <section className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-6">
+      <section className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold tracking-wide text-zinc-500">会社情報</h2>
           <div className="flex gap-2">
@@ -165,7 +165,7 @@ export function CompanyDetail({
         <p className="mb-4 text-xs text-zinc-400">
           保存するたびに1件ずつ蓄積される経過記録です(上のメモとは別に残ります)。
         </p>
-        <div className="rounded-2xl border border-zinc-100 bg-white shadow-sm p-4">
+        <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4">
           <CompanyMemoLog
             memos={memos}
             onAdd={addTimelineEntryAction}

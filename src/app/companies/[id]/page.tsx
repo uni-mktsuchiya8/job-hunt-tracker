@@ -60,7 +60,7 @@ export default async function CompanyDetailPage({
         <BackToListLink />
         {/* プロフィールカード風ヘッダー: 左に色帯+丸アイコン、右にステータス
             /予定の箱を並べる(候補者プロフィールカードのレイアウトを参考)。 */}
-        <div className="mt-2 mb-6 flex overflow-hidden rounded-2xl border border-zinc-100 bg-white shadow-sm">
+        <div className="mt-2 mb-6 flex overflow-hidden rounded-2xl border border-zinc-100 bg-white shadow-md">
           <div className="w-1.5 shrink-0 bg-green-600" aria-hidden />
           <div className="flex flex-1 flex-wrap items-center justify-between gap-4 p-4">
             <div className="flex items-center gap-3">

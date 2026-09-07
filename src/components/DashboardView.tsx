@@ -257,7 +257,7 @@ export function DashboardView({
         <Link
           href="/companies/new"
           style={brandButtonStyle}
-          className="flex items-center gap-1.5 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-green-500"
+          className="flex items-center gap-1.5 rounded-lg bg-green-600 px-5 py-2.5 text-sm font-bold text-white shadow-md transition-shadow hover:shadow-lg hover:bg-green-500"
         >
           <span className="text-base leading-none">＋</span> 会社を追加
         </Link>
@@ -357,7 +357,7 @@ export function DashboardView({
             </div>
           )}
           {visibleCompanies.length > 0 && (
-            <div className="overflow-x-auto rounded-2xl border border-zinc-100 bg-white shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-zinc-100 bg-white shadow-md">
               <table className="w-full min-w-[52rem] text-sm">
                 <thead>
                   <tr className="border-b border-zinc-200 text-left text-xs text-zinc-400">
