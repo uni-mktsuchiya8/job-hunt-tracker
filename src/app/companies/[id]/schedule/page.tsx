@@ -60,7 +60,6 @@ export default async function CompanyScheduleHistoryPage({
           stages={stages ?? []}
           stageActions={stageActions}
           createStageAction={createStage.bind(null, id)}
-          mode="all"
         />
       </main>
     </div>

@@ -10,6 +10,20 @@ export function statusRank(status: string): number {
   return index === -1 ? STATUS_PROGRESSION.length : index;
 }
 
+// Shared "newest first" ordering for 選考予定 lists — undated entries sort
+// by when they were added instead, so they still land in a sensible spot
+// rather than always at one end. Used both for the full history list and
+// for picking out just the single latest entry.
+export function sortStagesNewestFirst<
+  T extends { scheduled_at: string | null; created_at: string },
+>(stages: T[]): T[] {
+  return [...stages].sort((a, b) => {
+    const aTime = new Date(a.scheduled_at ?? a.created_at).getTime();
+    const bTime = new Date(b.scheduled_at ?? b.created_at).getTime();
+    return bTime - aTime;
+  });
+}
+
 // 選考ステータス (this company's current status) is derived from its
 // 選考予定 list (interview_stages rows) rather than stored separately —
 // 選考ステータス is a single dropdown-selectable value, while 選考予定 is

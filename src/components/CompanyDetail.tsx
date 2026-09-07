@@ -1,20 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { CompanyForm } from "@/components/CompanyForm";
-import { StageSection } from "@/components/StageSection";
 import { CommuteInfo } from "@/components/CommuteInfo";
-import { StatusSelect } from "@/components/StatusSelect";
 import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { CompanyMemoLog } from "@/components/CompanyMemoLog";
+import { formatDateTime } from "@/lib/format";
 import {
   formatRemoteDays,
   type Company,
   type CompanyMemo,
   type InterviewStage,
-  type StageResult,
 } from "@/lib/database.types";
-import { computeCurrentStatus } from "@/lib/currentStatus";
+import { sortStagesNewestFirst } from "@/lib/currentStatus";
 
 // One-line "ラベル: 値" row for short fields — most of these are empty on
 // a freshly-added company, and a 2-line label-above-value block per field
@@ -52,9 +51,6 @@ export function CompanyDetail({
   homeStation,
   updateCompanyAction,
   deleteCompanyAction,
-  createStageAction,
-  stageActions,
-  quickStatusAction,
   updateMemoAction,
   addTimelineEntryAction,
   deleteTimelineEntryAction,
@@ -65,134 +61,130 @@ export function CompanyDetail({
   homeStation: string | null;
   updateCompanyAction: (formData: FormData) => void;
   deleteCompanyAction: () => void;
-  createStageAction: (formData: FormData) => void;
-  stageActions: Record<
-    string,
-    {
-      update: (formData: FormData) => void;
-      delete: () => void;
-      setResult: (result: StageResult) => void;
-    }
-  >;
-  quickStatusAction: (status: string) => void;
   updateMemoAction: (memo: string) => void;
   addTimelineEntryAction: (content: string) => void;
   deleteTimelineEntryAction: (memoId: string) => void;
 }) {
   const [editingCompany, setEditingCompany] = useState(false);
 
-  const currentStatus = computeCurrentStatus(stages);
+  const latestStage = sortStagesNewestFirst(stages)[0] ?? null;
 
   return (
     <div className="space-y-8">
-      {/* 選考ステータス(プルダウン)と最新の選考予定をページ上部にまとめて
-          コンパクトに配置。古い選考予定は /schedule ページ側に移した。 */}
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-500">選考ステータス</span>
-          <StatusSelect value={currentStatus} onChange={quickStatusAction} />
-        </div>
-        <StageSection
-          companyId={company.id}
-          companyName={company.name}
-          stages={stages}
-          stageActions={stageActions}
-          createStageAction={createStageAction}
-          mode="latest"
-        />
-      </section>
-
-      <section className="rounded-lg border border-slate-200 bg-white p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-slate-500">会社情報</h2>
-          <div className="flex gap-2">
-            {!editingCompany && (
+      {/* 会社情報が主、選考予定は最新1件だけを1/6幅の細い列で添える。
+          選考ステータス(プルダウン)は社名の隣(ページヘッダー側)に表示。
+          古い選考予定は /schedule ページ側に移した。 */}
+      <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-6">
+        <section className="rounded-lg border border-slate-200 bg-white p-6 sm:col-span-5">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-slate-500">会社情報</h2>
+            <div className="flex gap-2">
+              {!editingCompany && (
+                <button
+                  onClick={() => setEditingCompany(true)}
+                  className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
+                >
+                  編集
+                </button>
+              )}
               <button
-                onClick={() => setEditingCompany(true)}
-                className="rounded-md border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100"
+                onClick={() => {
+                  if (confirm(`「${company.name}」を削除しますか?`)) {
+                    deleteCompanyAction();
+                  }
+                }}
+                className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50"
               >
-                編集
+                会社を削除
               </button>
-            )}
-            <button
-              onClick={() => {
-                if (confirm(`「${company.name}」を削除しますか?`)) {
-                  deleteCompanyAction();
-                }
+            </div>
+          </div>
+
+          {editingCompany ? (
+            <CompanyForm
+              company={company}
+              submitLabel="保存"
+              action={(formData) => {
+                updateCompanyAction(formData);
+                setEditingCompany(false);
               }}
-              className="rounded-md border border-red-200 px-3 py-1.5 text-xs text-red-600 hover:bg-red-50"
-            >
-              会社を削除
-            </button>
-          </div>
-        </div>
+            />
+          ) : (
+            <div className="space-y-3 text-sm">
+              <InfoBlock label="会社情報" value={company.info} />
 
-        {editingCompany ? (
-          <CompanyForm
-            company={company}
-            submitLabel="保存"
-            action={(formData) => {
-              updateCompanyAction(formData);
-              setEditingCompany(false);
-            }}
-          />
-        ) : (
-          <div className="space-y-3 text-sm">
-            <InfoBlock label="会社情報" value={company.info} />
-
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 sm:grid-cols-3">
-              <InfoLine label="企業サイト">
-                {company.website ? (
-                  <a
-                    href={company.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-700 hover:underline"
-                  >
-                    {company.website}
-                  </a>
-                ) : (
-                  "-"
-                )}
-              </InfoLine>
-              <InfoLine label="応募経路">{company.application_route || "-"}</InfoLine>
-              <InfoLine label="年収">{company.salary || "-"}</InfoLine>
-              <InfoLine label="勤務地">{company.work_location || "-"}</InfoLine>
-              <InfoLine label="リモート可能日数">
-                {formatRemoteDays(company.remote_type) || "-"}
-              </InfoLine>
-              <InfoLine label="福利厚生">{company.benefits || "-"}</InfoLine>
-              <InfoLine label="残業時間の目安">
-                {company.overtime_hours || "-"}
-              </InfoLine>
-              <InfoLine label="志望順位">
-                {company.priority_rank ? `第${company.priority_rank}志望` : "-"}
-              </InfoLine>
-            </div>
-
-            <div>
-              <InfoLine label="最寄駅">{company.nearest_station || "-"}</InfoLine>
-              <div className="mt-1">
-                <CommuteInfo
-                  homeStation={homeStation}
-                  companyStation={company.nearest_station}
-                />
+              <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 sm:grid-cols-3">
+                <InfoLine label="企業サイト">
+                  {company.website ? (
+                    <a
+                      href={company.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-green-700 hover:underline"
+                    >
+                      {company.website}
+                    </a>
+                  ) : (
+                    "-"
+                  )}
+                </InfoLine>
+                <InfoLine label="応募経路">{company.application_route || "-"}</InfoLine>
+                <InfoLine label="年収">{company.salary || "-"}</InfoLine>
+                <InfoLine label="勤務地">{company.work_location || "-"}</InfoLine>
+                <InfoLine label="リモート可能日数">
+                  {formatRemoteDays(company.remote_type) || "-"}
+                </InfoLine>
+                <InfoLine label="福利厚生">{company.benefits || "-"}</InfoLine>
+                <InfoLine label="残業時間の目安">
+                  {company.overtime_hours || "-"}
+                </InfoLine>
+                <InfoLine label="志望順位">
+                  {company.priority_rank ? `第${company.priority_rank}志望` : "-"}
+                </InfoLine>
               </div>
+
+              <div>
+                <InfoLine label="最寄駅">{company.nearest_station || "-"}</InfoLine>
+                <div className="mt-1">
+                  <CommuteInfo
+                    homeStation={homeStation}
+                    companyStation={company.nearest_station}
+                  />
+                </div>
+              </div>
+
+              <InfoBlock label="求人要件" value={company.job_requirements} />
+              <InfoBlock label="志望理由" value={company.priority_reason} />
+              <InfoBlock label="決め手・懸念点" value={company.decision_notes} />
             </div>
+          )}
 
-            <InfoBlock label="求人要件" value={company.job_requirements} />
-            <InfoBlock label="志望理由" value={company.priority_reason} />
-            <InfoBlock label="決め手・懸念点" value={company.decision_notes} />
+          <div className="mt-4 border-t border-slate-100 pt-3">
+            <p className="mb-1 text-xs text-slate-400">
+              メモ(その場の自由記入。一覧画面にも表示されます)
+            </p>
+            <CompanyMemoBox memo={company.memo} onSave={updateMemoAction} rows={2} />
           </div>
-        )}
+        </section>
 
-        <div className="mt-4 border-t border-slate-100 pt-3">
-          <p className="mb-1 text-xs text-slate-400">
-            メモ(その場の自由記入。一覧画面にも表示されます)
-          </p>
-          <CompanyMemoBox memo={company.memo} onSave={updateMemoAction} rows={2} />
-        </div>
-      </section>
+        <section className="rounded-lg border border-slate-200 bg-white p-3 sm:col-span-1">
+          <h2 className="mb-2 text-xs font-semibold text-slate-500">選考予定</h2>
+          {latestStage ? (
+            <div className="text-xs">
+              <p className="font-medium text-slate-700">{latestStage.stage_name}</p>
+              <p className="text-slate-500">{formatDateTime(latestStage.scheduled_at)}</p>
+            </div>
+          ) : (
+            <p className="text-xs text-slate-400">記録なし</p>
+          )}
+          <Link
+            href={`/companies/${company.id}/schedule`}
+            className="mt-2 block text-xs text-green-700 hover:underline"
+          >
+            すべて見る →
+          </Link>
+        </section>
+      </div>
 
       <section>
         <h2 className="mb-1 text-sm font-semibold text-slate-500">
