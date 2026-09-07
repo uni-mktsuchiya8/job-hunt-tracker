@@ -105,7 +105,7 @@ export function StageForm({
           <input
             name="duration_minutes"
             type="number"
-            min={5}
+            min={0}
             step={5}
             defaultValue={stage?.duration_minutes ?? 60}
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 outline-none focus:border-slate-500"
