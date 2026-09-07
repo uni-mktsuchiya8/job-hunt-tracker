@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { StageSection } from "@/components/StageSection";
+import { BackToListLink } from "@/components/BackToListLink";
 import {
   createStage,
   deleteStage,
@@ -47,6 +48,7 @@ export default async function CompanyScheduleHistoryPage({
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
+        <BackToListLink />
         <div className="mt-2 mb-6">
           <h1 className="text-xl font-semibold text-slate-900">
             {company.name}

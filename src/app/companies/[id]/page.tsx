@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusSelect } from "@/components/StatusSelect";
+import { BackToListLink } from "@/components/BackToListLink";
 import { computeCurrentStatus, sortStagesNewestFirst } from "@/lib/currentStatus";
 import { formatDateTime } from "@/lib/format";
 import {
@@ -56,9 +57,7 @@ export default async function CompanyDetailPage({
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
-        <Link href="/" className="text-sm text-slate-500 hover:text-slate-800">
-          ← 一覧に戻る
-        </Link>
+        <BackToListLink />
         {/* プロフィールカード風ヘッダー: 左に色帯+丸アイコン、右にステータス
             /予定の箱を並べる(候補者プロフィールカードのレイアウトを参考)。 */}
         <div className="mt-2 mb-6 flex overflow-hidden rounded-lg border border-slate-200 bg-white">

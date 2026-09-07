@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { HomeStationForm } from "@/components/HomeStationForm";
 import { disconnectGoogleCalendar } from "@/app/settings/actions";
 import { brandGreenStyle } from "@/lib/brandColor";
+import { BackToListLink } from "@/components/BackToListLink";
 
 const GOOGLE_MESSAGES: Record<string, { text: string; tone: "ok" | "error" }> = {
   connected: { text: "Googleカレンダーと連携しました", tone: "ok" },
@@ -42,9 +42,7 @@ export default async function SettingsPage({
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
-        <Link href="/" className="text-sm text-slate-500 hover:text-slate-800">
-          ← 一覧に戻る
-        </Link>
+        <BackToListLink />
         <h1 className="mt-2 mb-6 text-xl font-semibold text-slate-900">設定</h1>
 
         <div className="space-y-6">
