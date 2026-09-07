@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusSelect } from "@/components/StatusSelect";
-import { computeCurrentStatus } from "@/lib/currentStatus";
+import { computeCurrentStatus, sortStagesNewestFirst } from "@/lib/currentStatus";
+import { formatDateTime } from "@/lib/format";
 import {
   addCompanyMemo,
   deleteCompany,
@@ -50,13 +51,15 @@ export default async function CompanyDetailPage({
     .eq("company_id", id)
     .returns<CompanyMemo[]>();
 
+  const latestStage = sortStagesNewestFirst(stages ?? [])[0] ?? null;
+
   return (
     <div className="min-h-screen bg-slate-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
         <Link href="/" className="text-sm text-slate-500 hover:text-slate-800">
           ← 一覧に戻る
         </Link>
-        <div className="mt-2 mb-6 flex items-center gap-3">
+        <div className="mt-2 mb-6 flex flex-wrap items-center gap-3">
           <h1 className="text-xl font-semibold text-slate-900">
             {company.name}
           </h1>
@@ -64,11 +67,22 @@ export default async function CompanyDetailPage({
             value={computeCurrentStatus(stages ?? [])}
             onChange={quickAddStatusStage.bind(null, id)}
           />
+          {/* 選考予定(選考ステップ)を選考ステータスの隣にコンパクト表示 */}
+          <span className="text-xs text-slate-500">
+            {latestStage
+              ? `${latestStage.stage_name} ・ ${formatDateTime(latestStage.scheduled_at)}`
+              : "選考予定なし"}
+          </span>
+          <Link
+            href={`/companies/${id}/schedule`}
+            className="text-xs text-emerald-700 hover:underline"
+          >
+            すべて見る →
+          </Link>
         </div>
 
         <CompanyDetail
           company={company}
-          stages={stages ?? []}
           memos={memos ?? []}
           homeStation={homeStation}
           updateCompanyAction={updateCompany.bind(null, id)}

@@ -6,10 +6,12 @@ import { JobPostingExtractor } from "@/components/JobPostingExtractor";
 import {
   APPLICATION_ROUTES,
   REMOTE_DAYS_OPTIONS,
+  STAGE_NAME_SUGGESTIONS,
   type Company,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
 import { brandGreenStyle } from "@/lib/brandColor";
+import { HOURS, MINUTES } from "@/lib/timeOptions";
 
 export function CompanyForm({
   company,
@@ -337,6 +339,71 @@ export function CompanyForm({
           選考の進み具合は下の「選考予定」で管理します。
         </p>
       </div>
+
+      {!company && (
+        <fieldset className="space-y-3 rounded-md border border-slate-200 p-3">
+          <legend className="px-1 text-xs font-medium text-slate-500">
+            選考ステータス・選考予定(任意)
+          </legend>
+          <p className="text-xs text-slate-400">
+            すでに選考が始まっている場合は、ここで最初の選考予定を一緒に登録できます。あとから追加・変更も可能です。
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              選考ステータス
+            </label>
+            <select
+              name="initial_stage_name"
+              defaultValue=""
+              className="mt-1 w-full max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+            >
+              <option value="">登録しない(あとで追加)</option>
+              {STAGE_NAME_SUGGESTIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700">
+              選考予定日時
+            </label>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <input
+                name="initial_scheduled_date"
+                type="date"
+                className="rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              />
+              <select
+                name="initial_scheduled_hour"
+                defaultValue="10"
+                className="rounded-md border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              >
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {h}時
+                  </option>
+                ))}
+              </select>
+              <select
+                name="initial_scheduled_minute"
+                defaultValue="00"
+                className="rounded-md border border-slate-300 bg-white px-2 py-2 text-sm text-slate-900 outline-none focus:border-emerald-600"
+              >
+                {MINUTES.map((m) => (
+                  <option key={m} value={m}>
+                    {m}分
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="mt-1 text-[11px] text-slate-400">
+              選考ステータスを選んだ場合のみ使われます。日程は空欄でも構いません。
+            </p>
+          </div>
+        </fieldset>
+      )}
 
       <button
         type="submit"

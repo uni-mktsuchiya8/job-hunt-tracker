@@ -8,9 +8,7 @@ import {
 } from "@/lib/database.types";
 import { toDateTimeLocalValue } from "@/lib/format";
 import { brandGreenStyle } from "@/lib/brandColor";
-
-const HOURS = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, "0"));
-const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+import { HOURS, MINUTES } from "@/lib/timeOptions";
 
 export function StageForm({
   stage,

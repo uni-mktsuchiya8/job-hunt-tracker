@@ -74,6 +74,37 @@ export async function createCompany(formData: FormData) {
 
   if (error) throw new Error(error.message);
 
+  // 選考ステータス・選考予定(任意): if the user filled in an initial
+  // stage on the add-company form, create the first 選考予定 entry right
+  // away instead of requiring a separate "+ 予定を追加" step afterward.
+  const initialStageName = str(formData, "initial_stage_name");
+  if (initialStageName) {
+    const scheduledAt = datetimeFromParts(
+      formData,
+      "initial_scheduled_date",
+      "initial_scheduled_hour",
+      "initial_scheduled_minute",
+    );
+
+    let googleEventId: string | null = null;
+    if (scheduledAt) {
+      googleEventId = await syncCreateEvent(supabase, user.id, {
+        summary: `【${initialStageName}】${name}`,
+        startISO: scheduledAt,
+        durationMinutes: 60,
+      });
+    }
+
+    const { error: stageError } = await supabase.from("interview_stages").insert({
+      company_id: data.id,
+      user_id: user.id,
+      stage_name: initialStageName,
+      scheduled_at: scheduledAt,
+      google_event_id: googleEventId,
+    });
+    if (stageError) throw new Error(stageError.message);
+  }
+
   revalidatePath("/");
   redirect(`/companies/${data.id}`);
 }
