@@ -25,10 +25,18 @@ export function formatShortDateTime(iso: string): string {
 // 登録日(companies.registered_at, "YYYY-MM-DD")からの経過日数。日付だけの
 // 比較にするため両方とも現地日のmidnightに揃えてから引き算する。
 export function elapsedDays(registeredAt: string): number {
-  const registered = new Date(`${registeredAt}T00:00:00`);
+  return elapsedDaysSince(`${registeredAt}T00:00:00`);
+}
+
+// 現在の選考ステータス(選考予定の中で一番新しいもの)の created_at のような、
+// 時刻付きのISOタイムスタンプからの経過日数。「このステータスになってから
+// 何日経ったか」の表示に使う。上と同じく現地日のmidnightに揃えてから比較する。
+export function elapsedDaysSince(iso: string): number {
+  const target = new Date(iso);
+  target.setHours(0, 0, 0, 0);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const diffMs = today.getTime() - registered.getTime();
+  const diffMs = today.getTime() - target.getTime();
   return Math.round(diffMs / (24 * 60 * 60 * 1000));
 }
 

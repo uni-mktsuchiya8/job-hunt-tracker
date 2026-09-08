@@ -7,8 +7,13 @@ import { CompanyMemoBox } from "@/components/CompanyMemoBox";
 import { StatusSelect } from "@/components/StatusSelect";
 import { STATUS_STYLES } from "@/components/StatusBadge";
 import { NeedsAttentionPanel, type AttentionItem } from "@/components/NeedsAttentionPanel";
-import { formatDateTime, elapsedDays } from "@/lib/format";
-import { computeCurrentStatus, statusRank, STATUS_PROGRESSION } from "@/lib/currentStatus";
+import { formatDateTime, elapsedDays, elapsedDaysSince } from "@/lib/format";
+import {
+  computeCurrentStatus,
+  sortStagesNewestFirst,
+  statusRank,
+  STATUS_PROGRESSION,
+} from "@/lib/currentStatus";
 import { ARCHIVED_STATUSES } from "@/lib/archive";
 import { brandButtonStyle } from "@/lib/brandColor";
 import type { Company, CompanyMemo, InterviewStage } from "@/lib/database.types";
@@ -380,6 +385,15 @@ export function DashboardView({
                   {visibleCompanies.map((company) => {
                     const next = nextUpcomingStage(company.interview_stages ?? []);
                     const status = computeCurrentStatus(company.interview_stages ?? []);
+                    // このステータスを記録した日からの経過日数(選考予定が
+                    // まだ無ければ会社の登録日を起点にする)。会社ページの
+                    // 選考ステータス欄と同じ考え方。
+                    const latestStage = sortStagesNewestFirst(
+                      company.interview_stages ?? [],
+                    )[0];
+                    const statusElapsedDays = latestStage
+                      ? elapsedDaysSince(latestStage.created_at)
+                      : elapsedDays(company.registered_at);
                     return (
                       <tr
                         key={company.id}
@@ -413,6 +427,9 @@ export function DashboardView({
                               statusActions[company.id]?.(newStatus)
                             }
                           />
+                          <p className="mt-1 text-[11px] text-zinc-400">
+                            {statusElapsedDays}日経過
+                          </p>
                         </td>
                         <td className="px-4 py-3 text-xs">
                           {next ? (

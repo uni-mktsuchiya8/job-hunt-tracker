@@ -4,9 +4,10 @@ import { createClient } from "@/lib/supabase/server";
 import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusSelect } from "@/components/StatusSelect";
 import { ResultSelect } from "@/components/ResultSelect";
+import { RegisteredAtInput } from "@/components/RegisteredAtInput";
 import { BackToListLink } from "@/components/BackToListLink";
 import { computeCurrentStatus, sortStagesNewestFirst } from "@/lib/currentStatus";
-import { elapsedDays, formatDateTime } from "@/lib/format";
+import { elapsedDays, elapsedDaysSince, formatDateTime } from "@/lib/format";
 import {
   addCompanyMemo,
   deleteCompany,
@@ -14,6 +15,7 @@ import {
   quickAddStatusStage,
   updateCompany,
   updateCompanyMemo,
+  updateRegisteredAt,
   updateStageResult,
 } from "@/app/companies/actions";
 import type {
@@ -65,6 +67,12 @@ export default async function CompanyDetailPage({
     .returns<ApplicationRoute[]>();
 
   const latestStage = sortStagesNewestFirst(stages ?? [])[0] ?? null;
+  // 「このステータスになってから何日か」= そのステータス(選考予定)を記録
+  // した日から数える。選考予定がまだ無い(検討中)会社は、代わりに会社の
+  // 登録日を起点にする。
+  const statusElapsedDays = latestStage
+    ? elapsedDaysSince(latestStage.created_at)
+    : elapsedDays(company.registered_at);
 
   return (
     <div className="min-h-screen bg-green-50">
@@ -101,6 +109,9 @@ export default async function CompanyDetailPage({
                   value={computeCurrentStatus(stages ?? [])}
                   onChange={quickAddStatusStage.bind(null, id)}
                 />
+                <p className="mt-1 text-[11px] text-zinc-500">
+                  {statusElapsedDays}日経過
+                </p>
               </div>
               {/* 選考予定(選考ステップ)。残りの横幅をすべて使う(flex-1)ので、
                   最新1件の日程・結果プルダウン・編集リンクを1行に並べても
@@ -135,11 +146,17 @@ export default async function CompanyDetailPage({
                   <p className="text-sm text-zinc-700">選考予定なし</p>
                 )}
               </div>
-              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2 sm:w-32 sm:shrink-0">
-                <p className="text-[11px] text-zinc-400">登録から</p>
+              {/* 登録日はここから直接なおせる(編集フォームを開かなくてよい)。
+                  経過日数はこの日付から計算される。 */}
+              <div className="rounded-lg border border-zinc-200 bg-green-50 px-3 py-2 sm:w-36 sm:shrink-0">
+                <p className="text-[11px] text-zinc-400">登録日</p>
                 <p className="text-sm font-semibold text-zinc-700">
                   {elapsedDays(company.registered_at)}日経過
                 </p>
+                <RegisteredAtInput
+                  value={company.registered_at}
+                  onChange={updateRegisteredAt.bind(null, id)}
+                />
               </div>
             </div>
           </div>

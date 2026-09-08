@@ -177,6 +177,27 @@ export async function updateCompany(companyId: string, formData: FormData) {
   revalidatePath(`/companies/${companyId}`);
 }
 
+// 登録日(経過日数の起点)の単項目クイック更新。会社の編集フォームを開かなく
+// ても、会社ページの「登録から」欄から直接なおせるようにするため。
+export async function updateRegisteredAt(companyId: string, registeredAt: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { error } = await supabase
+    .from("companies")
+    .update({ registered_at: registeredAt })
+    .eq("id", companyId);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath(`/companies/${companyId}`);
+  revalidatePath("/archive");
+}
+
 // The "その場のメモ" quick field — a single value that gets overwritten on
 // each save (not a log). Shown on both the dashboard list and the company
 // detail page via the same quick-save box, independent of the full edit
