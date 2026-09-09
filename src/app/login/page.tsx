@@ -24,12 +24,29 @@ export default function LoginPage() {
   // Supabaseのクライアントがリンク内のトークンを自動で読み取って
   // PASSWORD_RECOVERY イベントを発火する。検知したら、通常のログイン
   // フォームの代わりに「新しいパスワードを設定」フォームに切り替える。
+  const [linkError, setLinkError] = useState<string | null>(null);
+
   useEffect(() => {
+    // リンクの有効期限切れ・二重クリックなどでSupabaseがエラーを返した
+    // 場合、"#error=...&error_code=...&error_description=..." という形で
+    // URLのハッシュに載ってくる(成功時はここに access_token などが載る)。
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const errorDescription = hashParams.get("error_description");
+    if (errorDescription) {
+      // マウント時に一度だけURLを読み取る、正当な「外部システムとの同期」
+      // なので、この行に限りルールを外す。
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLinkError(errorDescription.replace(/\+/g, " "));
+      // 再読み込みで同じエラーが再表示され続けないよう、URLからハッシュを消す。
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+
     const supabase = createClient();
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
+        setLinkError(null);
         setMode("recovery");
       }
     });
@@ -205,6 +222,22 @@ export default function LoginPage() {
             ? "ログインしてデータを同期"
             : "アカウントを作成"}
         </p>
+
+        {linkError && (
+          <div className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+            <p>メール内のリンクの有効期限が切れているか、既に使用済みです。</p>
+            <button
+              type="button"
+              onClick={() => {
+                setLinkError(null);
+                setMode("forgot");
+              }}
+              className="mt-1 font-medium underline hover:text-amber-900"
+            >
+              もう一度再設定メールを送る
+            </button>
+          </div>
+        )}
 
         <form action={action} className="mt-6 space-y-4">
           <div>
