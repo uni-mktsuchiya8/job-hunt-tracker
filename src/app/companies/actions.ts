@@ -39,28 +39,32 @@ function datetimeFromParts(
   return new Date(`${date}T${hour}:${minute}:00`).toISOString();
 }
 
-// 応募経路: CompanyForm の <select> は既存の application_routes に加えて
-// 「+ 新しい応募経路を追加」を選べる。その場合 new_application_route の
-// テキストを実際の値として使い、次回から選べるようリストにも追加しておく。
-const NEW_APPLICATION_ROUTE_VALUE = "__new__";
+// 応募経路・職種: どちらもCompanyFormの<select>で、既存のリスト(自分で
+// 追加・削除できる、固定の選択肢ではない)に加えて「+ 新しい◯◯を追加」を
+// 選べる。その場合はテキスト入力の値を実際の値として使い、次回から選べる
+// ようリストにも追加しておく。
+const NEW_LIST_VALUE = "__new__";
 
-async function resolveApplicationRoute(
+async function resolveManagedListValue(
   supabase: Awaited<ReturnType<typeof createClient>>,
   userId: string,
   formData: FormData,
+  table: "application_routes" | "job_types",
+  selectField: string,
+  newValueField: string,
 ): Promise<string | null> {
-  const selected = str(formData, "application_route");
-  if (selected !== NEW_APPLICATION_ROUTE_VALUE) return selected;
+  const selected = str(formData, selectField);
+  if (selected !== NEW_LIST_VALUE) return selected;
 
-  const newRoute = str(formData, "new_application_route");
-  if (!newRoute) return null;
+  const newValue = str(formData, newValueField);
+  if (!newValue) return null;
 
   const { error } = await supabase
-    .from("application_routes")
-    .insert({ user_id: userId, name: newRoute });
+    .from(table)
+    .insert({ user_id: userId, name: newValue });
   if (error && error.code !== "23505") throw new Error(error.message);
 
-  return newRoute;
+  return newValue;
 }
 
 export async function createCompany(formData: FormData) {
@@ -73,7 +77,22 @@ export async function createCompany(formData: FormData) {
   const name = str(formData, "name");
   if (!name) throw new Error("会社名は必須です");
 
-  const applicationRoute = await resolveApplicationRoute(supabase, user.id, formData);
+  const applicationRoute = await resolveManagedListValue(
+    supabase,
+    user.id,
+    formData,
+    "application_routes",
+    "application_route",
+    "new_application_route",
+  );
+  const jobType = await resolveManagedListValue(
+    supabase,
+    user.id,
+    formData,
+    "job_types",
+    "job_type",
+    "new_job_type",
+  );
   const registeredAt = str(formData, "registered_at");
 
   const { data, error } = await supabase
@@ -94,6 +113,7 @@ export async function createCompany(formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: applicationRoute,
+      job_type: jobType,
       ...(registeredAt ? { registered_at: registeredAt } : {}),
       status: "カジュアル面談", // legacy NOT NULL column — current status is derived from stages now
     })
@@ -147,7 +167,22 @@ export async function updateCompany(companyId: string, formData: FormData) {
   const name = str(formData, "name");
   if (!name) throw new Error("会社名は必須です");
 
-  const applicationRoute = await resolveApplicationRoute(supabase, user.id, formData);
+  const applicationRoute = await resolveManagedListValue(
+    supabase,
+    user.id,
+    formData,
+    "application_routes",
+    "application_route",
+    "new_application_route",
+  );
+  const jobType = await resolveManagedListValue(
+    supabase,
+    user.id,
+    formData,
+    "job_types",
+    "job_type",
+    "new_job_type",
+  );
   const registeredAt = str(formData, "registered_at");
 
   const { error } = await supabase
@@ -167,6 +202,7 @@ export async function updateCompany(companyId: string, formData: FormData) {
       priority_rank: int(formData, "priority_rank"),
       priority_reason: str(formData, "priority_reason"),
       application_route: applicationRoute,
+      job_type: jobType,
       ...(registeredAt ? { registered_at: registeredAt } : {}),
     })
     .eq("id", companyId);

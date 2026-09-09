@@ -3,12 +3,14 @@ import { HomeStationForm } from "@/components/HomeStationForm";
 import { ManagedListEditor } from "@/components/ManagedListEditor";
 import {
   addApplicationRoute,
+  addJobType,
   deleteApplicationRoute,
+  deleteJobType,
   disconnectGoogleCalendar,
 } from "@/app/settings/actions";
 import { brandButtonStyle } from "@/lib/brandColor";
 import { BackToListLink } from "@/components/BackToListLink";
-import type { ApplicationRoute } from "@/lib/database.types";
+import type { ApplicationRoute, JobType } from "@/lib/database.types";
 
 const GOOGLE_MESSAGES: Record<string, { text: string; tone: "ok" | "error" }> = {
   connected: { text: "Googleカレンダーと連携しました", tone: "ok" },
@@ -51,6 +53,12 @@ export default async function SettingsPage({
     .order("name")
     .returns<ApplicationRoute[]>();
 
+  const { data: jobTypes } = await supabase
+    .from("job_types")
+    .select("*")
+    .order("name")
+    .returns<JobType[]>();
+
   return (
     <div className="min-h-screen bg-green-50">
       <main className="mx-auto max-w-2xl px-4 py-8">
@@ -72,6 +80,19 @@ export default async function SettingsPage({
               onAdd={addApplicationRoute}
               onDelete={deleteApplicationRoute}
               placeholder="例: 直接応募、スカウト"
+            />
+          </div>
+
+          <div className="rounded-2xl border border-zinc-100 bg-white shadow-md p-6">
+            <h2 className="text-sm font-medium text-zinc-700">職種</h2>
+            <p className="mt-1 mb-3 text-xs text-zinc-400">
+              固定の選択肢ではなく、ここで自分の職種を追加・削除できます。会社の追加/編集フォームからも新規追加できます。
+            </p>
+            <ManagedListEditor
+              items={jobTypes ?? []}
+              onAdd={addJobType}
+              onDelete={deleteJobType}
+              placeholder="例: エンジニア、営業"
             />
           </div>
 

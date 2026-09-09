@@ -67,6 +67,7 @@ function searchHaystack(company: CompanyWithStages): string {
     company.salary,
     company.work_location,
     company.nearest_station,
+    company.job_type,
     company.application_route,
     company.decision_notes,
     company.priority_reason,
@@ -375,6 +376,7 @@ export function DashboardView({
                 <thead>
                   <tr className="border-b border-zinc-200 text-left text-xs text-zinc-400">
                     <th className="px-4 py-2 font-medium">会社</th>
+                    <th className="px-4 py-2 font-medium">職種</th>
                     <th className="px-4 py-2 font-medium">応募経路</th>
                     <th className="px-4 py-2 font-medium">選考ステータス</th>
                     <th className="px-4 py-2 font-medium">選考予定</th>
@@ -416,6 +418,9 @@ export function DashboardView({
                               {company.name}
                             </Link>
                           </div>
+                        </td>
+                        <td className="px-4 py-3 text-zinc-600">
+                          {company.job_type || "-"}
                         </td>
                         <td className="px-4 py-3 text-zinc-600">
                           {company.application_route || "-"}

@@ -22,6 +22,7 @@ import type {
   ApplicationRoute,
   CompanyMemo,
   InterviewStage,
+  JobType,
 } from "@/lib/database.types";
 
 export default async function CompanyDetailPage({
@@ -66,6 +67,12 @@ export default async function CompanyDetailPage({
     .order("name")
     .returns<ApplicationRoute[]>();
 
+  const { data: jobTypes } = await supabase
+    .from("job_types")
+    .select("*")
+    .order("name")
+    .returns<JobType[]>();
+
   const latestStage = sortStagesNewestFirst(stages ?? [])[0] ?? null;
   // 「このステータスになってから何日か」= そのステータス(選考予定)を記録
   // した日から数える。選考予定がまだ無い(検討中)会社は、代わりに会社の
@@ -94,9 +101,16 @@ export default async function CompanyDetailPage({
                 <h1 className="text-xl font-semibold text-zinc-900">
                   {company.name}
                 </h1>
-                {company.application_route && (
+                {(company.job_type || company.application_route) && (
                   <p className="text-xs text-zinc-500">
-                    応募経路: {company.application_route}
+                    {[
+                      company.job_type,
+                      company.application_route
+                        ? `応募経路: ${company.application_route}`
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" ・ ")}
                   </p>
                 )}
               </div>
@@ -167,6 +181,7 @@ export default async function CompanyDetailPage({
           memos={memos ?? []}
           homeStation={homeStation}
           applicationRoutes={applicationRoutes ?? []}
+          jobTypes={jobTypes ?? []}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           updateMemoAction={updateCompanyMemo.bind(null, id)}
