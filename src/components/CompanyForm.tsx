@@ -8,7 +8,6 @@ import {
   STAGE_NAME_SUGGESTIONS,
   type ApplicationRoute,
   type Company,
-  type JobType,
 } from "@/lib/database.types";
 import type { JobFieldGuess } from "@/lib/jobFieldGuesser";
 import { brandButtonStyle } from "@/lib/brandColor";
@@ -25,13 +24,11 @@ function todayDateString(): string {
 export function CompanyForm({
   company,
   applicationRoutes,
-  jobTypes,
   action,
   submitLabel,
 }: {
   company?: Company;
   applicationRoutes: ApplicationRoute[];
-  jobTypes: JobType[];
   action: (formData: FormData) => void;
   submitLabel: string;
 }) {
@@ -40,8 +37,6 @@ export function CompanyForm({
     company?.application_route ?? "",
   );
   const [addingNewRoute, setAddingNewRoute] = useState(false);
-  const [jobType, setJobType] = useState(company?.job_type ?? "");
-  const [addingNewJobType, setAddingNewJobType] = useState(false);
   const [website, setWebsite] = useState(company?.website ?? "");
   const [info, setInfo] = useState(company?.info ?? "");
   const [extracting, setExtracting] = useState(false);
@@ -342,53 +337,12 @@ export function CompanyForm({
         <label className="block text-sm font-medium text-zinc-700">
           職種
         </label>
-        {!addingNewJobType ? (
-          <select
-            name="job_type"
-            value={jobType}
-            onChange={(e) => {
-              if (e.target.value === NEW_LIST_VALUE) {
-                setAddingNewJobType(true);
-              } else {
-                setJobType(e.target.value);
-              }
-            }}
-            className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
-          >
-            <option value="">選択してください</option>
-            {jobTypes.map((j) => (
-              <option key={j.id} value={j.name}>
-                {j.name}
-              </option>
-            ))}
-            {jobType && !jobTypes.some((j) => j.name === jobType) && (
-              <option value={jobType}>{jobType}</option>
-            )}
-            <option value={NEW_LIST_VALUE}>＋ 新しい職種を追加</option>
-          </select>
-        ) : (
-          <div className="mt-1 flex gap-2">
-            <input type="hidden" name="job_type" value={NEW_LIST_VALUE} />
-            <input
-              name="new_job_type"
-              autoFocus
-              placeholder="例: バックエンドエンジニア"
-              className="w-full max-w-xs rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
-            />
-            <button
-              type="button"
-              onClick={() => setAddingNewJobType(false)}
-              className="shrink-0 rounded-lg border border-zinc-300 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100"
-            >
-              キャンセル
-            </button>
-          </div>
-        )}
-        <p className="mt-1 text-xs text-zinc-400">
-          {jobTypes.length === 0 && !addingNewJobType
-            ? "まだ職種がありません。「＋ 新しい職種を追加」から登録できます(設定ページでも管理できます)。"
-            : "職種の追加・削除は設定ページでも管理できます。"}
-        </p>
+        <input
+          name="job_type"
+          defaultValue={company?.job_type ?? ""}
+          placeholder="例: バックエンドエンジニア"
+          className="mt-1 w-full max-w-xs rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 outline-none focus:border-green-500"
+        />
       </div>
 
       <div>

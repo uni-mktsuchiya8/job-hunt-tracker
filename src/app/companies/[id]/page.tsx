@@ -5,6 +5,7 @@ import { CompanyDetail } from "@/components/CompanyDetail";
 import { StatusSelect } from "@/components/StatusSelect";
 import { ResultSelect } from "@/components/ResultSelect";
 import { RegisteredAtInput } from "@/components/RegisteredAtInput";
+import { EndSelectionButton } from "@/components/EndSelectionButton";
 import { BackToListLink } from "@/components/BackToListLink";
 import { computeCurrentStatus, sortStagesNewestFirst } from "@/lib/currentStatus";
 import { elapsedDays, elapsedDaysSince, formatDateTime } from "@/lib/format";
@@ -22,7 +23,6 @@ import type {
   ApplicationRoute,
   CompanyMemo,
   InterviewStage,
-  JobType,
 } from "@/lib/database.types";
 
 export default async function CompanyDetailPage({
@@ -66,12 +66,6 @@ export default async function CompanyDetailPage({
     .select("*")
     .order("name")
     .returns<ApplicationRoute[]>();
-
-  const { data: jobTypes } = await supabase
-    .from("job_types")
-    .select("*")
-    .order("name")
-    .returns<JobType[]>();
 
   const latestStage = sortStagesNewestFirst(stages ?? [])[0] ?? null;
   // 「このステータスになってから何日か」= そのステータス(選考予定)を記録
@@ -126,6 +120,9 @@ export default async function CompanyDetailPage({
                 <p className="mt-1 text-[11px] text-zinc-500">
                   {statusElapsedDays}日経過
                 </p>
+                <EndSelectionButton
+                  onEnd={quickAddStatusStage.bind(null, id, "終了")}
+                />
               </div>
               {/* 選考予定(選考ステップ)。残りの横幅をすべて使う(flex-1)ので、
                   最新1件の日程・結果プルダウン・編集リンクを1行に並べても
@@ -181,7 +178,6 @@ export default async function CompanyDetailPage({
           memos={memos ?? []}
           homeStation={homeStation}
           applicationRoutes={applicationRoutes ?? []}
-          jobTypes={jobTypes ?? []}
           updateCompanyAction={updateCompany.bind(null, id)}
           deleteCompanyAction={deleteCompany.bind(null, id)}
           updateMemoAction={updateCompanyMemo.bind(null, id)}

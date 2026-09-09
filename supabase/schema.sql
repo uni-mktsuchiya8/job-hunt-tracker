@@ -19,7 +19,7 @@ create table if not exists companies (
   decision_notes text,      -- 決め手・懸念点(意思決定メモ)
   priority_rank int,        -- 志望順位
   priority_reason text,     -- 志望理由
-  job_type text,            -- 職種。job_types テーブルの name を文字列でそのまま保存(外部キーではない)
+  job_type text,            -- 職種。一度設定したら変えないことが多いので自由記述(プルダウンではない)
   application_route text,   -- 応募経路。application_routes テーブルの name を文字列でそのまま保存(外部キーではない)
   memo text,                -- その場のメモ(上書き保存・蓄積しない。蓄積したい場合は company_memos へ)
   registered_at date not null default (now() at time zone 'utc')::date, -- 登録日(経過日数の起点。手動で編集可能)
@@ -59,16 +59,6 @@ create table if not exists company_memos (
 -- 応募経路の自分専用リスト(固定の選択肢ではなく設定ページで追加・削除する)。
 -- companies.application_route はここの name を文字列でそのまま保存する。
 create table if not exists application_routes (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  name text not null,
-  created_at timestamptz not null default now(),
-  unique (user_id, name)
-);
-
--- 職種の自分専用リスト(固定の選択肢ではなく設定ページで追加・削除する)。
--- companies.job_type はここの name を文字列でそのまま保存する。
-create table if not exists job_types (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
   name text not null,
@@ -156,25 +146,11 @@ create table if not exists google_calendar_connections (
 -- select auth.uid(), r.name
 -- from (values ('直接応募'), ('転職エージェント'), ('リファラル'), ('スカウト'), ('転職サイト経由'), ('その他')) as r(name)
 -- on conflict (user_id, name) do nothing;
--- 既存プロジェクトで job_type(職種)を追加する場合:
+-- 既存プロジェクトで job_type(職種。自由記述、プルダウンではない)を追加する場合:
 -- alter table companies add column if not exists job_type text;
--- create table if not exists job_types (
---   id uuid primary key default gen_random_uuid(),
---   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
---   name text not null,
---   created_at timestamptz not null default now(),
---   unique (user_id, name)
--- );
--- alter table job_types enable row level security;
--- create policy "Users manage their own job types"
---   on job_types for all
---   using (auth.uid() = user_id)
---   with check (auth.uid() = user_id);
--- 使ったことがまだ無い場合の定番の初期候補が欲しければ、自分の user_id で以下を実行:
--- insert into job_types (user_id, name)
--- select auth.uid(), j.name
--- from (values ('エンジニア'), ('デザイナー'), ('PM・ディレクター'), ('営業'), ('マーケティング'), ('コーポレート(人事・経理など)')) as j(name)
--- on conflict (user_id, name) do nothing;
+-- 既存プロジェクトで「終了」ステータス(結果を問わず選考を打ち切ったことを
+-- 表す)を追加する場合、テーブル変更は不要(interview_stages.stage_name は
+-- 元々自由記述のため)。アプリのコード側の対応だけで動作します。
 
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);
@@ -185,7 +161,6 @@ alter table companies enable row level security;
 alter table interview_stages enable row level security;
 alter table company_memos enable row level security;
 alter table application_routes enable row level security;
-alter table job_types enable row level security;
 alter table google_calendar_connections enable row level security;
 
 create policy "Users manage their own companies"
@@ -205,11 +180,6 @@ create policy "Users manage their own company memos"
 
 create policy "Users manage their own application routes"
   on application_routes for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create policy "Users manage their own job types"
-  on job_types for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 

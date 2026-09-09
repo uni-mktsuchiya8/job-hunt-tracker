@@ -24,21 +24,11 @@ export const DEFAULT_APPLICATION_ROUTES = [
   "その他",
 ];
 
-// 職種も応募経路と同じく固定の選択肢ではなく、job_types テーブルで自分の
-// 選択肢を追加・削除できる(設定ページから管理)。これも新規ユーザー向け
-// の初期値の参考用で、コードからは使わない(SQL側でシードする)。
-export const DEFAULT_JOB_TYPES = [
-  "エンジニア",
-  "デザイナー",
-  "PM・ディレクター",
-  "営業",
-  "マーケティング",
-  "コーポレート(人事・経理など)",
-];
-
 // Also doubles as the set of 選考ステータス values shown around the app
 // (dashboard badges, StatusSelect) — each name here is both a possible
-// 選考予定 entry and a possible computed 選考ステータス value.
+// 選考予定 entry and a possible computed 選考ステータス value。「終了」は
+// 結果を問わず選考を打ち切ったことを表す、進行ステップではない特別な値
+// (ARCHIVED_STATUSES に含まれ、不合格・辞退と同じく /archive に移動する)。
 export const STAGE_NAME_SUGGESTIONS = [
   "カジュアル面談",
   "書類選考",
@@ -49,6 +39,7 @@ export const STAGE_NAME_SUGGESTIONS = [
   "内定",
   "不合格",
   "辞退",
+  "終了",
 ];
 
 export const STAGE_METHODS = ["対面", "オンライン", "電話", "その他"] as const;
@@ -85,7 +76,7 @@ export interface Company {
   priority_rank: number | null;
   priority_reason: string | null;
   application_route: string | null;
-  job_type: string | null; // 職種。job_types テーブルの name を文字列でそのまま保存(外部キーではない)
+  job_type: string | null; // 職種。一度設定したら変えないことが多いので自由記述(プルダウンではない)
   memo: string | null; // その場のメモ(上書き保存)。蓄積したい記録は company_memos(タイムライン)へ
   registered_at: string; // 登録日(経過日数の起点)。created_at と違い手動で編集できる
   created_at: string;
@@ -95,15 +86,6 @@ export interface Company {
 // 応募経路の自分専用リスト(設定ページで追加・削除)。companies.application_route
 // にはここにある name をそのまま文字列で保存する(外部キーではない)。
 export interface ApplicationRoute {
-  id: string;
-  user_id: string;
-  name: string;
-  created_at: string;
-}
-
-// 職種の自分専用リスト(設定ページで追加・削除)。companies.job_type には
-// ここにある name をそのまま文字列で保存する(外部キーではない)。
-export interface JobType {
   id: string;
   user_id: string;
   name: string;
@@ -173,11 +155,6 @@ export interface Database {
         Row: ApplicationRoute;
         Insert: Partial<ApplicationRoute> & { name: string };
         Update: Partial<ApplicationRoute>;
-      };
-      job_types: {
-        Row: JobType;
-        Insert: Partial<JobType> & { name: string };
-        Update: Partial<JobType>;
       };
     };
   };

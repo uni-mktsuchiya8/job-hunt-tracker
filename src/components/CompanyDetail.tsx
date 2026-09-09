@@ -10,7 +10,6 @@ import {
   type ApplicationRoute,
   type Company,
   type CompanyMemo,
-  type JobType,
 } from "@/lib/database.types";
 
 // One-line "ラベル: 値" row for short fields — most of these are empty on
@@ -47,7 +46,6 @@ export function CompanyDetail({
   memos,
   homeStation,
   applicationRoutes,
-  jobTypes,
   updateCompanyAction,
   deleteCompanyAction,
   updateMemoAction,
@@ -58,7 +56,6 @@ export function CompanyDetail({
   memos: CompanyMemo[];
   homeStation: string | null;
   applicationRoutes: ApplicationRoute[];
-  jobTypes: JobType[];
   updateCompanyAction: (formData: FormData) => void;
   deleteCompanyAction: () => void;
   updateMemoAction: (memo: string) => void;
@@ -101,7 +98,6 @@ export function CompanyDetail({
           <CompanyForm
             company={company}
             applicationRoutes={applicationRoutes}
-            jobTypes={jobTypes}
             submitLabel="保存"
             action={(formData) => {
               updateCompanyAction(formData);

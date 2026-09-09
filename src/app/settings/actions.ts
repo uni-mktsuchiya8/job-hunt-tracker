@@ -64,32 +64,3 @@ export async function deleteApplicationRoute(id: string) {
   if (error) throw new Error(error.message);
   revalidatePath("/settings");
 }
-
-// 職種: 固定の選択肢ではなく、ここで自分のリストを管理する。
-// companies.job_type には name をそのまま文字列で保存するので、削除しても
-// すでに登録済みの会社の値が消えるわけではない。
-export async function addJobType(name: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return;
-
-  const trimmed = name.trim();
-  if (!trimmed) return;
-
-  const { error } = await supabase
-    .from("job_types")
-    .insert({ user_id: user.id, name: trimmed });
-  if (error && error.code !== "23505") throw new Error(error.message);
-
-  revalidatePath("/settings");
-  revalidatePath("/companies/new");
-}
-
-export async function deleteJobType(id: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.from("job_types").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-  revalidatePath("/settings");
-}
