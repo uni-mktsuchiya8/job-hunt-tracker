@@ -39,6 +39,8 @@ create table if not exists interview_stages (
   interviewer text,             -- 面接官名
   conversation_notes text,      -- 会話内容の詳細
   impression text,              -- 面接の印象メモ(所感)
+  positive_notes text,          -- 良かった点(ポジティブ)。あとで振り返って分析しやすいよう印象とは別枠
+  negative_notes text,          -- 気になった点(ネガティブ)。同上
   memo text,                    -- 自由記入メモ
   result text not null default '未定', -- 未定 / 通過 / 不合格 / 辞退 / 保留
   google_event_id text,         -- 連携済みGoogleカレンダーの予定ID(自動同期用)
@@ -151,6 +153,9 @@ create table if not exists google_calendar_connections (
 -- 既存プロジェクトで「終了」ステータス(結果を問わず選考を打ち切ったことを
 -- 表す)を追加する場合、テーブル変更は不要(interview_stages.stage_name は
 -- 元々自由記述のため)。アプリのコード側の対応だけで動作します。
+-- 既存プロジェクトで良かった点・気になった点(positive_notes/negative_notes)を追加する場合:
+-- alter table interview_stages add column if not exists positive_notes text;
+-- alter table interview_stages add column if not exists negative_notes text;
 
 create index if not exists companies_user_id_idx on companies (user_id);
 create index if not exists interview_stages_company_id_idx on interview_stages (company_id);

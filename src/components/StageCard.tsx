@@ -109,6 +109,26 @@ export function StageCard({
               </p>
             </div>
           )}
+          {(stage.positive_notes || stage.negative_notes) && (
+            <div className="mt-2 grid grid-cols-2 gap-3">
+              {stage.positive_notes && (
+                <div>
+                  <p className="text-xs text-emerald-600">良かった点</p>
+                  <p className="whitespace-pre-wrap text-sm text-zinc-700">
+                    {stage.positive_notes}
+                  </p>
+                </div>
+              )}
+              {stage.negative_notes && (
+                <div>
+                  <p className="text-xs text-red-600">気になった点</p>
+                  <p className="whitespace-pre-wrap text-sm text-zinc-700">
+                    {stage.negative_notes}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
           {stage.memo && (
             <div className="mt-2">
               <p className="text-xs text-zinc-400">メモ</p>

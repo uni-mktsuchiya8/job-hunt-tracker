@@ -113,6 +113,8 @@ export interface InterviewStage {
   interviewer: string | null;
   conversation_notes: string | null;
   impression: string | null;
+  positive_notes: string | null; // 良かった点(ポジティブ)。あとで振り返って分析しやすいよう印象とは別枠
+  negative_notes: string | null; // 気になった点(ネガティブ)。同上
   memo: string | null;
   result: StageResult;
   google_event_id: string | null;

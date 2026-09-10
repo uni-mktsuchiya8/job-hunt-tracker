@@ -167,6 +167,35 @@ export function StageForm({
         />
       </div>
 
+      {/* あとで振り返って分析しやすいよう、印象とは別枠でポジティブ/ネガ
+          ティブを分けて記録できるようにしている。 */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-emerald-700">
+            良かった点(ポジティブ)
+          </label>
+          <textarea
+            name="positive_notes"
+            rows={3}
+            defaultValue={stage?.positive_notes ?? ""}
+            placeholder="評価できる点、好印象だった点など"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-red-700">
+            気になった点(ネガティブ)
+          </label>
+          <textarea
+            name="negative_notes"
+            rows={3}
+            defaultValue={stage?.negative_notes ?? ""}
+            placeholder="懸念点、違和感があった点など"
+            className="mt-1 w-full rounded-lg border border-zinc-300 px-3 py-1.5 text-sm text-zinc-900 outline-none focus:border-green-500"
+          />
+        </div>
+      </div>
+
       <div>
         <label className="block text-xs font-medium text-zinc-700">
           メモ
