@@ -370,8 +370,91 @@ export function DashboardView({
               条件に一致する会社がありません。
             </div>
           )}
+          {/* スマホ幅では横スクロールが必要な表の代わりに、1社1枚の縦積み
+              カードで表示する(md未満で切り替え)。 */}
           {visibleCompanies.length > 0 && (
-            <div className="overflow-x-auto rounded-2xl border border-zinc-100 bg-white shadow-md">
+            <div className="space-y-3 md:hidden">
+              {visibleCompanies.map((company) => {
+                const next = nextUpcomingStage(company.interview_stages ?? []);
+                const status = computeCurrentStatus(company.interview_stages ?? []);
+                const latestStage = sortStagesNewestFirst(
+                  company.interview_stages ?? [],
+                )[0];
+                const statusElapsedDays = latestStage
+                  ? elapsedDaysSince(latestStage.created_at)
+                  : elapsedDays(company.registered_at);
+                return (
+                  <div
+                    key={company.id}
+                    className="rounded-2xl border border-zinc-100 bg-white shadow-md p-4"
+                  >
+                    <p className="text-xs text-zinc-400">
+                      {formatShortDate(company.registered_at)} 登録・{elapsedDays(company.registered_at)}日経過
+                    </p>
+                    <div className="mt-0.5 flex items-center gap-1.5">
+                      {company.priority_rank && (
+                        <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-[11px] font-semibold text-amber-700">
+                          {company.priority_rank}
+                        </span>
+                      )}
+                      <Link
+                        href={`/companies/${company.id}`}
+                        className="font-medium text-zinc-900 hover:underline"
+                      >
+                        {company.name}
+                      </Link>
+                    </div>
+                    {(company.job_type || company.application_route) && (
+                      <p className="mt-0.5 text-xs text-zinc-500">
+                        {[company.job_type, company.application_route]
+                          .filter(Boolean)
+                          .join(" ・ ")}
+                      </p>
+                    )}
+
+                    <div className="mt-3 flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[11px] text-zinc-400">選考ステータス</p>
+                        <StatusSelect
+                          value={status}
+                          onChange={(newStatus) =>
+                            statusActions[company.id]?.(newStatus)
+                          }
+                        />
+                        <p className="mt-1 text-[11px] text-zinc-400">
+                          {statusElapsedDays}日経過
+                        </p>
+                      </div>
+                      <div className="text-right text-xs">
+                        <p className="text-[11px] text-zinc-400">選考予定</p>
+                        {next ? (
+                          <>
+                            <p className="font-medium text-zinc-700">
+                              {next.stage_name}
+                            </p>
+                            <p className="text-zinc-500">
+                              {formatDateTime(next.scheduled_at)}
+                            </p>
+                          </>
+                        ) : (
+                          <span className="text-zinc-400">なし</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mt-3 border-t border-zinc-100 pt-3">
+                      <CompanyMemoBox
+                        memo={company.memo}
+                        onSave={(memo) => memoActions[company.id]?.(memo)}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {visibleCompanies.length > 0 && (
+            <div className="hidden overflow-x-auto rounded-2xl border border-zinc-100 bg-white shadow-md md:block">
               <table className="w-full min-w-[52rem] text-sm">
                 <thead>
                   <tr className="border-b border-zinc-200 text-left text-xs text-zinc-400">

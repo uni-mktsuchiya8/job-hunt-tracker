@@ -43,11 +43,11 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-green-50">
       <header className="border-b border-zinc-100 bg-white shadow-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-y-2 px-4 py-4">
           <div className="flex items-center gap-2.5">
             <span
               style={brandButtonStyle}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600 text-sm font-bold text-white"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-600 text-sm font-bold text-white"
               aria-hidden
             >
               転
@@ -56,22 +56,24 @@ export default async function DashboardPage() {
               転職活動トラッカー
             </h1>
           </div>
-          <div className="flex items-center gap-3 text-sm text-zinc-500">
-            <span>{user?.email}</span>
+          {/* スマホ幅ではメールアドレスを隠し、ボタンも詰めて折り返せる
+              ようにする(元は1行固定で横スクロールが出ていた)。 */}
+          <div className="flex flex-wrap items-center gap-2 text-sm text-zinc-500 sm:gap-3">
+            <span className="hidden sm:inline">{user?.email}</span>
             <Link
               href="/archive"
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100"
+              className="rounded-lg border border-zinc-300 px-2.5 py-1.5 text-xs transition-colors hover:bg-zinc-100 sm:px-3 sm:text-sm"
             >
               終了した選考 ({archivedCount})
             </Link>
             <Link
               href="/settings"
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100"
+              className="rounded-lg border border-zinc-300 px-2.5 py-1.5 text-xs transition-colors hover:bg-zinc-100 sm:px-3 sm:text-sm"
             >
               設定
             </Link>
             <form action={signOut}>
-              <button className="rounded-lg border border-zinc-300 px-3 py-1.5 transition-colors hover:bg-zinc-100">
+              <button className="rounded-lg border border-zinc-300 px-2.5 py-1.5 text-xs transition-colors hover:bg-zinc-100 sm:px-3 sm:text-sm">
                 ログアウト
               </button>
             </form>

@@ -96,7 +96,7 @@ export function StageForm({
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className="block text-xs font-medium text-zinc-700">
             所要時間(分)
@@ -169,7 +169,7 @@ export function StageForm({
 
       {/* あとで振り返って分析しやすいよう、印象とは別枠でポジティブ/ネガ
           ティブを分けて記録できるようにしている。 */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className="block text-xs font-medium text-emerald-700">
             良かった点(ポジティブ)

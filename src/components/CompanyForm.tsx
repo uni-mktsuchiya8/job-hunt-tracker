@@ -180,7 +180,7 @@ export function CompanyForm({
 
         <JobPostingExtractor onExtract={handleJobExtract} />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-zinc-700">
               年収
@@ -249,7 +249,7 @@ export function CompanyForm({
             ))}
           </select>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="block text-sm font-medium text-zinc-700">
               福利厚生
@@ -292,7 +292,7 @@ export function CompanyForm({
         <legend className="px-1 text-xs font-medium text-zinc-500">
           志望度・検討メモ
         </legend>
-        <div className="grid grid-cols-[8rem_1fr] gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[8rem_1fr]">
           <div>
             <label className="block text-sm font-medium text-zinc-700">
               志望順位

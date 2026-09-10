@@ -110,7 +110,7 @@ export function StageCard({
             </div>
           )}
           {(stage.positive_notes || stage.negative_notes) && (
-            <div className="mt-2 grid grid-cols-2 gap-3">
+            <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {stage.positive_notes && (
                 <div>
                   <p className="text-xs text-emerald-600">良かった点</p>
