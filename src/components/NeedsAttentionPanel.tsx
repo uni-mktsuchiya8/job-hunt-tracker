@@ -16,8 +16,8 @@ export function NeedsAttentionPanel({ items }: { items: AttentionItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 shadow-md p-4">
-      <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-amber-900">
+    <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 shadow-md p-3 sm:mb-6 sm:p-4">
+      <h2 className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-amber-900">
         <span aria-hidden>■</span> 対応が必要な会社
       </h2>
       <ul className="space-y-1.5">

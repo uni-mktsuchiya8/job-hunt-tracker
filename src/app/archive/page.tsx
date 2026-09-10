@@ -36,7 +36,7 @@ export default async function ArchivePage() {
 
   return (
     <div className="min-h-screen bg-green-50">
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <main className="mx-auto max-w-6xl px-4 py-4 sm:py-8">
         <BackToListLink />
         <h1 className="mt-2 mb-6 text-xl font-semibold text-zinc-900">
           終了した選考(不合格・辞退)
